@@ -1,8 +1,11 @@
 import { pool } from '../db.js';
 
 export const listarTareas = async (req, res) => {
+    if (!req.userId) {
+        return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
     const result = await pool.query('SELECT * FROM tareas');
-    console.log(result);
+    console.log(req.userId);
     res.json(result.rows);
 };
 
