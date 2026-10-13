@@ -1,0 +1,292 @@
+@import "tailwindcss";
+
+/* =====================================================================
+   Sistema de diseño — "Carta náutica"
+   ---------------------------------------------------------------------
+   La referencia no es un SaaS de océano: es una carta batimétrica del
+   Servicio de Hidrografía Naval. Fondo de agua profunda, líneas de sonda
+   claras, y un único acento ámbar que es el color real del cachiyuyo
+   (Macrocystis) visto contra el agua del Golfo Nuevo.
+
+   El ámbar está reservado para una sola cosa: lo que está vivo o
+   restaurado. Nunca se usa de decoración.
+
+   Modo noche
+   ---------------------------------------------------------------------
+   La carta se lee siempre bajo el agua: no queda cara de papel. Los
+   tokens no cambiaron de nombre, cambiaron de valor. Los que eran
+   superficie clara (`papel`, `trazo`) hoy son superficie profunda, y la
+   tinta del cuerpo se mudó a `tinta`, que es clara. `carta` se conserva
+   claro porque su uso real siempre fue texto sobre agua, no fondo.
+   ===================================================================== */
+
+@theme {
+  /* Agua, de la superficie al lecho */
+  --color-abismo:   #04202B;  /* fondo de la aplicación entera */
+  --color-hondo:    #10394A;  /* panel elevado y estados hover */
+  --color-columna:  #14485A;  /* bordes y superficies elevadas */
+  --color-sonda:    #7FB5B0;  /* líneas de contorno, texto secundario */
+
+  /* Superficies: lo que era papel impreso, ahora es columna de agua */
+  --color-carta:    #EDF3F1;  /* tinta clara sobre agua (texto, no fondo) */
+  --color-papel:    #0A2E3C;  /* fondo de panel y de los controles */
+  --color-trazo:    #17404F;  /* hairlines sobre agua */
+  --color-tinta:    #D7E4E2;  /* tinta del cuerpo de texto */
+
+  /* Vida — sobre agua hay que subirles el valor o se apagan */
+  --color-kelp:     #C8872F;  /* ámbar cachiyuyo — el único acento */
+  --color-kelp-alto:#E5A445;
+  --color-alga:     #4FA588;  /* verde alga, estados positivos */
+  --color-alerta:   #E07A62;  /* amenazas */
+  --color-tiburon:  #6FA3DC;  /* tiburones: con columna no se veían sobre el mapa */
+
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Archivo", system-ui, -apple-system, sans-serif;
+
+  --radius-carta: 3px;
+}
+
+@layer base {
+  /* Le avisa al navegador que pinte en oscuro lo que no controlamos:
+     scrollbars, controles nativos, autocompletado. Sin esto quedan
+     parches blancos en medio del agua. */
+  html { -webkit-text-size-adjust: 100%; color-scheme: dark; }
+
+  body {
+    background-color: var(--color-abismo);
+    background-image:
+      radial-gradient(circle at 8% -10%, rgb(79 165 136 / 0.16), transparent 25rem),
+      radial-gradient(circle at 100% 12%, rgb(111 163 220 / 0.10), transparent 31rem);
+    background-attachment: fixed;
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    font-feature-settings: "tnum" 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Textura analógica global (ruido de monitor/papel) */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Scrollbar estilo instrumental náutico */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-abismo);
+    border-left: 1px solid var(--color-columna);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-columna);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-kelp);
+  }
+
+  /* Los números de la interfaz son sondas: siempre tabulares, para que
+     las columnas de datos queden alineadas verticalmente. */
+  .cifra {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
+  }
+
+  /* Sobre agua el placeholder tiene que bajar de valor, no de opacidad:
+     con opacity queda lechoso. */
+  ::placeholder { color: var(--color-sonda); opacity: 0.6; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-kelp);
+    outline-offset: 2px;
+  }
+
+  ::selection { background: var(--color-kelp); color: var(--color-abismo); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Encabezados públicos: una corriente muy leve que agrega profundidad sin
+   competir con el mapa ni con los datos. Sumamos curvas batimétricas. */
+.hero-ocean {
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--color-abismo);
+  background-image:
+    /* Gradiente para asentar el texto */
+    radial-gradient(ellipse at 50% 0%, rgb(16 57 74 / 0.6) 0%, transparent 60%),
+    /* Topografía/Batimetría en SVG (data URI) */
+    url("data:image/svg+xml,%3Csvg width='800' height='800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 100C150 150 250 50 400 100S650 150 800 100M0 300C200 350 300 200 400 250S650 300 800 250M0 500C100 450 300 550 400 500S700 450 800 500M0 700C200 650 300 750 400 700S600 650 800 700' stroke='%237FB5B0' stroke-width='1.5' fill='none' opacity='0.04'/%3E%3Cpath d='M0 200C150 250 250 150 400 200S650 250 800 200M0 400C200 450 300 300 400 350S650 400 800 350M0 600C100 550 300 650 400 600S700 550 800 600' stroke='%237FB5B0' stroke-width='0.5' fill='none' opacity='0.02'/%3E%3C/svg%3E"),
+    /* Degradado lineal sutil */
+    linear-gradient(115deg, rgb(4 32 43 / 0.25), transparent 55%),
+    repeating-linear-gradient(0deg, transparent 0 42px, rgb(127 181 176 / 0.045) 43px, transparent 44px);
+  background-size: 100% 100%, 800px 800px, 100% 100%, 100% 100%;
+}
+.hero-ocean::before,
+.hero-ocean::after {
+  border: 1px solid rgb(127 181 176 / 0.14);
+  border-radius: 999px;
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+.hero-ocean::before { height: 34rem; right: -15rem; top: -20rem; width: 34rem; }
+.hero-ocean::after  { height: 22rem; right: -9rem; top: -14rem; width: 22rem; }
+
+/* ---------------------------------------------------------------------
+   Animaciones de fluido/revelado (Scroll Reveals y carga inicial)
+   --------------------------------------------------------------------- */
+@keyframes revelar-agua {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animar-flotar {
+  opacity: 0;
+  animation: revelar-agua 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.retraso-1 { animation-delay: 150ms; }
+.retraso-2 { animation-delay: 300ms; }
+.retraso-3 { animation-delay: 450ms; }
+.retraso-4 { animation-delay: 600ms; }
+
+.mapa-marco {
+  border: 1px solid rgb(127 181 176 / 0.35);
+  padding: 4px;
+  position: relative;
+}
+.mapa-marco::before {
+  background: var(--color-kelp);
+  content: '';
+  height: 8px;
+  left: -1px;
+  position: absolute;
+  top: -1px;
+  width: 42px;
+  z-index: 2;
+}
+.mapa-marco > * { position: relative; z-index: 1; }
+
+.metric-grid > div {
+  border-left: 1px solid rgb(127 181 176 / 0.18);
+  padding-left: 1rem;
+}
+.metric-grid > div:first-child { border-left: 0; padding-left: 0; }
+
+@media (max-width: 640px) {
+  .metric-grid > div:nth-child(odd) { border-left: 0; padding-left: 0; }
+}
+
+/* La línea de sonda: regla vertical que marca la profundidad de cada
+   capa del producto. Es información, no adorno: la Capa 1 vive en la
+   superficie, la 3 en el lecho. */
+.linea-sonda {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-trazo) 0 1px,
+    transparent 1px 8px
+  );
+}
+
+/* Pulso del mapa en vivo: un solo movimiento, y solo sobre reportes
+   de las últimas 24 h. Leaflet dibuja los puntos como <path>, que no
+   tiene radio animable: el anillo crece engordando el trazo. */
+@keyframes sonar {
+  0%   { stroke-width: 2;  stroke-opacity: 0.9; }
+  70%  { stroke-width: 24; stroke-opacity: 0; }
+  100% { stroke-width: 24; stroke-opacity: 0; }
+}
+.pulso-mapa { animation: sonar 2.8s ease-out infinite; }
+
+/* ---------------------------------------------------------------------
+   Leaflet en modo noche. Todo va bajo .mapa-oceanos: leaflet.css se carga
+   después de este archivo, así que con la misma especificidad ganaría él
+   y los controles volverían a ser blancos.
+   --------------------------------------------------------------------- */
+.mapa-oceanos .leaflet-container {
+  background: var(--color-abismo);
+  font-family: var(--font-sans);
+}
+
+/* OpenStreetMap solo existe en claro. Invertido y con el tono girado 180°
+   la tierra queda oscura y el agua azul profundo; los puntos van en otra
+   capa (overlay-pane) y conservan sus colores. */
+.mapa-oceanos .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9) saturate(0.7);
+}
+
+.mapa-oceanos .leaflet-bar {
+  border: 1px solid var(--color-columna);
+  border-radius: var(--radius-carta);
+  box-shadow: none;
+}
+.mapa-oceanos .leaflet-bar a {
+  background: var(--color-papel);
+  color: var(--color-carta);
+  border-bottom-color: var(--color-columna);
+}
+.mapa-oceanos .leaflet-bar a:hover,
+.mapa-oceanos .leaflet-bar a:focus-visible {
+  background: var(--color-columna);
+  color: var(--color-carta);
+}
+.mapa-oceanos .leaflet-bar a.leaflet-disabled {
+  background: var(--color-abismo);
+  color: var(--color-columna);
+}
+
+.mapa-oceanos .leaflet-control-attribution {
+  background: rgb(4 32 43 / 0.8);
+  color: var(--color-sonda);
+  font-size: 10px;
+}
+.mapa-oceanos .leaflet-control-attribution a { color: var(--color-sonda); }
+
+.mapa-oceanos .leaflet-control-scale-line {
+  background: rgb(4 32 43 / 0.7);
+  border-color: var(--color-sonda);
+  color: var(--color-sonda);
+}
+
+/* El foco con teclado sobre un punto se muestra como la ficha abierta,
+   no como el recuadro del navegador alrededor del path. */
+.mapa-oceanos path:focus { outline: none; }
+
+/* Al reportar, el cursor dice "marcá acá" en vez de "arrastrá". */
+.mapa-marcar .leaflet-container,
+.mapa-marcar .leaflet-container.leaflet-grab { cursor: crosshair; }
+
+/* ---------------------------------------------------------------------
+   Recharts en modo noche (Glow y Glassmorphism)
+   --------------------------------------------------------------------- */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: rgb(10 46 60 / 0.85) !important;
+  border: 1px solid var(--color-trazo) !important;
+  border-radius: var(--radius-carta);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgb(4 32 43 / 0.5);
+  color: var(--color-carta) !important;
+}
+.recharts-tooltip-item-name, .recharts-tooltip-item-separator {
+  color: var(--color-sonda) !important;
+}
