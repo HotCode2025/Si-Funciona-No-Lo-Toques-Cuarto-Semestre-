@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
+    <title>Resultado del pago | Los Sin Chamba</title>
+</head>
+<body>
+    <!--Parte 7: acá vuelve Mercado Pago después de pagar (back_urls)-->
+    <div class="result-card">
+        <h1 class="result-icon" id="result-icon">⏳</h1>
+        <h2 id="result-title">Procesando el pago...</h2>
+        <p id="result-detail"></p>
+        <a class="checkout-btn" href="./index.html">Volver a la tienda</a>
+    </div>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const urlStatus = params.get("status") || params.get("collection_status");
+      const paymentId = params.get("payment_id") || params.get("collection_id");
+
+      const estados = {
+        approved: { icon: "✅", title: "¡Pago aprobado!", detail: "Tu compra se acreditó correctamente." },
+        pending: { icon: "🕒", title: "Pago pendiente", detail: "Mercado Pago todavía está confirmando el pago." },
+        in_process: { icon: "🕒", title: "Pago en revisión", detail: "Mercado Pago está revisando el pago." },
+        rejected: { icon: "❌", title: "Pago rechazado", detail: "El pago no pudo procesarse, probá con otro medio. Tu carrito sigue guardado." },
+        unknown: { icon: "❓", title: "No se completó el pago", detail: "Volvé a la tienda e intentá de nuevo. Tu carrito sigue guardado." },
+      };
+
+      const showResult = (status, id) => {
+        const resultado = estados[status] || estados.unknown;
+
+        document.getElementById("result-icon").innerText = resultado.icon;
+        document.getElementById("result-title").innerText = resultado.title;
+        document.getElementById("result-detail").innerText = id
+          ? `${resultado.detail} (N° de pago: ${id})`
+          : resultado.detail;
+
+        // Recién con el pago aprobado vaciamos el carrito guardado
+        if (status === "approved") {
+          try {
+            localStorage.removeItem("cart");
+          } catch {}
+        }
+      };
+
+      // Le preguntamos al servidor el estado real (la URL se puede modificar a mano)
+      const verifyPayment = async () => {
+        if (!paymentId || !/^\d+$/.test(paymentId)) {
+          showResult(urlStatus, null);
+          return;
+        }
+
+        try {
+          const response = await fetch(`/api/payment/${paymentId}`);
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+          const payment = await response.json();
+          showResult(payment.status, payment.id);
+        } catch (error) {
+          console.error("No se pudo verificar el pago:", error);
+          // Sin verificación no damos el pago por aprobado ni vaciamos el carrito
+          showResult(urlStatus === "approved" ? "pending" : urlStatus, paymentId);
+        }
+      };
+
+      verifyPayment();
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+@startuml laboratorio_usuarios
+' ==========================================================================
+' Punto 1.1 - Diagrama de clases del laboratorio de usuario
+'
+' Es el UML de la cátedra TAL CUAL, más el paquete de excepciones que pide
+' la consigna ("SE DEBE AGREGAR EXCEPCIONES PARA QUE NO SE DETENGA LA
+' EJECUCIÓN"). Lo agregado está marcado con >>> AGREGADO 1.1 <<<
+'
+' Pegar en https://www.plantuml.com/plantuml
+' ==========================================================================
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+package laboratorio_usuarios {
+
+    class Conexion {
+        - {static} DATABASE : String
+        - {static} USERNAME : String
+        - {static} PASSWORD : String
+        - {static} DB_PORT : String
+        - {static} HOST : String
+        - {static} MIN_CON : int
+        - {static} MAX_CON : int
+        - {static} pool : Pool
+        --
+        + {static} obtenerPool(cls) : Pool
+        + {static} obtenerConexion(cls) : Connection
+        + {static} liberarConexion(cls, conexion)
+        + {static} cerrarConexiones(cls)
+        --
+        Responsabilidades:
+        Administrar el pool de conexiones.
+        >>> AGREGADO 1.1 <<<
+        Traduce los errores de psycopg2
+        a ErrorConexion.
+    }
+
+    class CursorDelPool {
+        - conn
+        - cursor
+        --
+        + __init__(self)
+        + __enter__(self)
+        + __exit__(self)
+        --
+        Responsabilidades:
+        Administrar el objeto conexion y cursor
+        obtenidos a partir del pool de conexiones.
+        Los métodos enter y exit son la
+        implementación del uso de 'with'
+        para trabajar con el cursor.
+        >>> AGREGADO 1.1 <<<
+        Hace rollback ante cualquier excepción
+        y libera la conexión en un finally.
+    }
+
+    class Usuario {
+        - id_usuario : int
+        - username : String
+        - password : String
+        --
+        + __str__() : String
+        + metodo Get/Set de cada atributo
+        + validar_para_persistir(requiere_id) : bool
+        --
+        Responsabilidades:
+        Crear objetos de entidad Usuario.
+        >>> AGREGADO 1.1 <<<
+        Cada setter valida y lanza
+        ErrorValidacion.
+    }
+
+    class UsuarioDao {
+        - {static} SELECCIONAR : String
+        - {static} INSERTAR : String
+        - {static} ACTUALIZAR : String
+        - {static} ELIMINAR : String
+        --
+        + {static} seleccionar(cls) : List<Usuario>
+        + {static} insertar(cls, usuario) : int
+        + {static} actualizar(cls, usuario) : int
+        + {static} eliminar(cls, usuario) : int
+        --
+        Responsabilidades:
+        Realizar las operaciones CRUD
+        sobre la entidad Usuario (tabla usuario).
+        >>> AGREGADO 1.1 <<<
+        Traduce los errores SQL a ErrorDeDatos
+        y lanza UsuarioNoEncontrado si el
+        UPDATE o el DELETE afectan 0 filas.
+    }
+
+    class MenuAppUsuario {
+        + leer_entero(mensaje) : int
+        --
+        Responsabilidades:
+        - Contiene un menú con 5 opciones:
+        1) Listar usuarios
+        2) Agregar usuario
+        3) Actualizar usuario
+        4) Eliminar usuario
+        5) Salir
+        >>> AGREGADO 1.1 <<<
+        ATRAPA todas las excepciones y
+        vuelve a mostrar el menú. La
+        aplicación nunca se detiene.
+    }
+
+    class logger_base {
+        + logger : logging
+        --
+        Responsabilidades:
+        - Configuración de logging para
+        toda la aplicación
+    }
+}
+
+' ================== >>> AGREGADO 1.1 <<< ==================
+package Excepciones <<Rectangle>> {
+
+    class Exception <<built-in>>
+
+    class ErrorAplicacion {
+        + mensaje : String
+        + causa : Exception
+        --
+        + __init__(mensaje, causa)
+        + __str__() : String
+        --
+        Responsabilidades:
+        Excepción base de la aplicación.
+    }
+
+    class ErrorConexion {
+        Falló el pool o la conexión.
+    }
+    class ErrorDeDatos {
+        Falló una sentencia SQL.
+    }
+    class ErrorValidacion {
+        Datos inválidos.
+    }
+    class UsuarioNoEncontrado {
+        El id no existe en la tabla.
+    }
+}
+
+Exception       <|-- ErrorAplicacion
+ErrorAplicacion <|-- ErrorConexion
+ErrorAplicacion <|-- ErrorDeDatos
+ErrorAplicacion <|-- ErrorValidacion
+ErrorAplicacion <|-- UsuarioNoEncontrado
+
+' ------------------ Relaciones originales del UML ------------------
+MenuAppUsuario o-- Usuario
+MenuAppUsuario o-- UsuarioDao
+UsuarioDao     o-- Usuario
+UsuarioDao     o-- CursorDelPool
+CursorDelPool  o-- Conexion
+
+' ------------------ Quién lanza y quién atrapa ------------------
+Conexion       ..> ErrorConexion : <<lanza>>
+Usuario        ..> ErrorValidacion : <<lanza>>
+UsuarioDao     ..> ErrorDeDatos : <<lanza>>
+UsuarioDao     ..> UsuarioNoEncontrado : <<lanza>>
+MenuAppUsuario ..> ErrorAplicacion : <<ATRAPA>>
+
+@enduml

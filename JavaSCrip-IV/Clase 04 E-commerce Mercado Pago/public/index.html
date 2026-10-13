@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
+    <title>Los Sin Chamba | E-commerce</title>
+</head>
+<body>
+    <!--shop content-->
+    <div class="card-products-container">
+        <div class="card-products" id="shopContent"></div>
+    </div>
+
+    <!--cart btn (4.1: con contador de productos)-->
+    <div class="cart-btn" id="cart-btn">
+        🛒
+        <span class="cart-counter" id="cart-counter">0</span>
+    </div>
+
+    <!--modal-->
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="modal-container" id="modal-container"></div>
+
+    <!--4.2: SDK de Mercado Pago (necesita la public_key)-->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+
+    <script src="./js/products.js"></script>
+    <script src="./js/index.js"></script>
+    <script src="./js/cart.js"></script>
+    <script src="./js/checkout.js"></script>
+</body>
+</html>

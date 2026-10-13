@@ -1,0 +1,222 @@
+/*products styles*/
+.card-products-container {
+    margin: 5vh auto;
+}
+
+.card-products {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.card-products img {
+    margin-top: 40px;
+    width: 250px;
+    height: 250px;
+}
+
+.card-products button {
+    border: none;
+    outline: 0;
+    padding: 10px;
+    color: white;
+    background-color: #1bcb7f;
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 15px;
+}
+
+.card-products button:hover{
+    opacity: 0.7;
+}
+
+/*cart btn styles*/
+.cart-btn {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/*modal styles*/
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background-color: white;
+    padding: 20px;
+}
+
+.modal-close {
+    float: right;
+    cursor: pointer;
+}
+
+.modal-title {
+    font-size: 22px;
+}
+/* Contenedor del Modal */
+.modal-container {
+  width: 90%;
+  max-width: 500px;
+  background-color: #fff;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Fondo oscuro */
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+}
+
+/* Header del Modal */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-header-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.modal-header-button {
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #ff4d4d;
+  font-weight: bold;
+}
+
+/* Fila de cada producto dentro del carrito */
+.modal-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+/* Imagen pequeña del producto en el carrito */
+.modal-body img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+/* Control de cantidad (- 1 +) */
+.quantity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-btn-decrease,
+.quantity-btn-increase {
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0 5px;
+  user-select: none;
+}
+
+/* Botón de eliminar (cruz roja) */
+.delete-product {
+  cursor: pointer;
+  color: #ff4d4d;
+  font-weight: bold;
+}
+
+/* Total abajo */
+.modal-footer {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+/* Contenedor de cada fila del producto en el carrito */
+.product {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+  gap: 15px;
+}
+
+/* Tamaño de la imagen del producto en el carrito */
+.product-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+/* Nombre del producto */
+.product-info h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+/* Controles de cantidad (- 1 +) */
+.quantity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantity-btn-decrese,
+.quantity-btn-increse {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.1rem;
+  user-select: none;
+}
+
+.quantity-input {
+  font-weight: bold;
+}
+
+/* Precio total de la fila */
+.price {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* Cruz roja para eliminar */
+.delete-product {
+  cursor: pointer;
+  color: #ff4d4d;
+  font-weight: bold;
+  font-size: 1.1rem;
+  user-select: none;
+}

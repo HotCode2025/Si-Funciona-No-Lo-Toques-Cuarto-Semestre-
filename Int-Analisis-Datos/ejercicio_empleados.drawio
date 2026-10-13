@@ -1,0 +1,35 @@
+<mxfile host="app.diagrams.net" modified="2024-10-01T12:00:00.000Z" agent="Mozilla/5.0" version="21.6.8" type="device">
+  <diagram id="ejercicio_herencia" name="Page-1">
+    <mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="empleado" value="&lt;b&gt;Empleado&lt;/b&gt;&lt;hr&gt;+ nombre&lt;br&gt;+ identificacion&lt;br&gt;+ salario_base&lt;hr&gt;+ registrarIngreso()&lt;br&gt;+ cobrarSalario()" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="40" width="180" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="desarrollador" value="&lt;b&gt;Desarrollador&lt;/b&gt;&lt;hr&gt;+ lenguaje_programacion&lt;br&gt;+ horas_extra&lt;hr&gt;+ escribirCodigo()&lt;br&gt;+ solucionarErrores()" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;" vertex="1" parent="1">
+          <mxGeometry x="160" y="240" width="180" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="gerente" value="&lt;b&gt;Gerente&lt;/b&gt;&lt;hr&gt;+ departamento&lt;br&gt;+ bono_anual&lt;hr&gt;+ organizarReunion()&lt;br&gt;+ aprobarVacaciones()" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;html=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="240" width="180" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;" edge="1" parent="1" source="desarrollador" target="empleado">
+          <mxGeometry relative="1" as="geometry">
+             <Array as="points">
+                <mxPoint x="250" y="200" />
+                <mxPoint x="410" y="200" />
+             </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=0;" edge="1" parent="1" source="gerente" target="empleado">
+          <mxGeometry relative="1" as="geometry">
+             <Array as="points">
+                <mxPoint x="570" y="200" />
+                <mxPoint x="410" y="200" />
+             </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,8 @@
+2026-08-20 01:19:40,055 INFO [main] o.s.b.StartupInfoLogger : Starting EstudiantesApplication using Java 17.0.20 with PID 26136 (C:\Users\leano\Desktop\Java Avanzado-IV\Leccion01\estudiantes\estudiantes\target\classes started by leano in C:\Users\leano\Desktop\Java Avanzado-IV\Leccion01\estudiantes)
+2026-08-20 01:19:40,059 DEBUG [main] o.s.b.StartupInfoLogger : Running with Spring Boot v4.1.0, Spring v7.0.8
+2026-08-20 01:19:40,060 INFO [main] o.s.b.SpringApplication : No active profile set, falling back to 1 default profile: "default"
+2026-08-20 01:19:42,369 INFO [main] o.s.b.StartupInfoLogger : Started EstudiantesApplication in 2.912 seconds (process running for 3.592)
+2026-08-20 01:20:42,550 INFO [main] o.s.b.StartupInfoLogger : Starting EstudiantesApplication using Java 17.0.20 with PID 24076 (C:\Users\leano\Desktop\Java Avanzado-IV\Leccion01\estudiantes\estudiantes\target\classes started by leano in C:\Users\leano\Desktop\Java Avanzado-IV\Leccion01\estudiantes)
+2026-08-20 01:20:42,553 DEBUG [main] o.s.b.StartupInfoLogger : Running with Spring Boot v4.1.0, Spring v7.0.8
+2026-08-20 01:20:42,554 INFO [main] o.s.b.SpringApplication : No active profile set, falling back to 1 default profile: "default"
+2026-08-20 01:20:44,682 INFO [main] o.s.b.StartupInfoLogger : Started EstudiantesApplication in 2.695 seconds (process running for 3.331)

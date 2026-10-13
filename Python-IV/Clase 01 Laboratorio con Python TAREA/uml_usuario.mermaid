@@ -1,0 +1,103 @@
+---
+title: laboratorio_usuarios
+---
+classDiagram
+    direction TB
+
+    class Conexion {
+        -String DATABASE$
+        -String USERNAME$
+        -String PASSWORD$
+        -String DB_PORT$
+        -String HOST$
+        -int MIN_CON$
+        -int MAX_CON$
+        -Pool pool$
+        +obtenerPool(cls) Pool
+        +obtenerConexion(cls) Connection
+        +liberarConexion(cls, conexion)
+        +cerrarConexiones(cls)
+    }
+
+    class CursorDelPool {
+        -conn
+        -cursor
+        +__init__(self)
+        +__enter__(self)
+        +__exit__(self)
+    }
+
+    class Usuario {
+        -int id_usuario
+        -String username
+        -String password
+        +__str__() String
+        +metodo Get/Set de cada atributo
+        +validar_para_persistir(requiere_id) bool
+    }
+
+    class UsuarioDao {
+        -String SELECCIONAR$
+        -String INSERTAR$
+        -String ACTUALIZAR$
+        -String ELIMINAR$
+        +seleccionar(cls) List~Usuario~
+        +insertar(cls, usuario) int
+        +actualizar(cls, usuario) int
+        +eliminar(cls, usuario) int
+    }
+
+    class MenuAppUsuario {
+        +1) Listar usuarios
+        +2) Agregar usuario
+        +3) Actualizar usuario
+        +4) Eliminar usuario
+        +5) Salir
+        +leer_entero(mensaje) int
+    }
+
+    class logger_base {
+        +logging logger
+    }
+
+    %% ================= AGREGADO DEL PUNTO 1.1 =================
+    class Exception {
+        <<built-in>>
+    }
+
+    class ErrorAplicacion {
+        +String mensaje
+        +Exception causa
+        +__init__(mensaje, causa)
+        +__str__() String
+    }
+
+    class ErrorConexion
+    class ErrorDeDatos
+    class ErrorValidacion
+    class UsuarioNoEncontrado
+
+    %% ---------------- Jerarquía de excepciones ----------------
+    Exception <|-- ErrorAplicacion
+    ErrorAplicacion <|-- ErrorConexion
+    ErrorAplicacion <|-- ErrorDeDatos
+    ErrorAplicacion <|-- ErrorValidacion
+    ErrorAplicacion <|-- UsuarioNoEncontrado
+
+    %% ---------------- Relaciones originales del UML ----------------
+    MenuAppUsuario o-- Usuario
+    MenuAppUsuario o-- UsuarioDao
+    UsuarioDao o-- Usuario
+    UsuarioDao o-- CursorDelPool
+    CursorDelPool o-- Conexion
+
+    %% ---------------- Quién lanza y quién atrapa ----------------
+    Conexion ..> ErrorConexion : lanza
+    Usuario ..> ErrorValidacion : lanza
+    UsuarioDao ..> ErrorDeDatos : lanza
+    UsuarioDao ..> UsuarioNoEncontrado : lanza
+    MenuAppUsuario ..> ErrorAplicacion : ATRAPA (la app no se detiene)
+
+    note for MenuAppUsuario "Punto 1.1: el while atrapa ErrorAplicacion,
+    KeyboardInterrupt y Exception. Ninguna excepción
+    corta la ejecución del programa."

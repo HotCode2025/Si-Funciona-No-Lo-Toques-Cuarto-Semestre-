@@ -1,0 +1,24 @@
+{
+  "name": "e-commerce-los-sin-chamba",
+  "version": "1.0.0",
+  "private": true,
+  "description": "E-commerce básico con carrito y pagos por Mercado Pago - JavaScript IV",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "dev": "node --env-file-if-exists=.env --watch server.js"
+  },
+  "keywords": [
+    "ecommerce",
+    "mercadopago",
+    "express"
+  ],
+  "author": "Los Sin Chamba",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "mercadopago": "^2.9.0"
+  }
+}
