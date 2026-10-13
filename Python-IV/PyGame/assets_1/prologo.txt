@@ -1,0 +1,11 @@
+La Amenaza Fantasma
+
+En el marco del trayecto formativo de la Tecnicatura Superior en Programación de la Universidad Tecnológica Nacional, Regional San Rafael, Mendoza, nace este proyecto que busca ir más allá de la mera escritura de código.
+
+Este videojuego, un tributo interactivo a la icónica saga de Star Wars, fue creado como un recurso de aprendizaje integral para inspirar a los estudiantes a sumergirse en la creación de videojuegos.
+
+Utiliza programación orientada a objetos: los programas son una colección de objetos que interactúan entre sí, creados a partir de clases que funcionan como planos.
+
+Los invito a explorar el código, a modificarlo y a extenderlo. Este proyecto es la semilla; les propongo que la hagan crecer.
+
+Que la Fuerza los acompañe en sus futuros proyectos.
