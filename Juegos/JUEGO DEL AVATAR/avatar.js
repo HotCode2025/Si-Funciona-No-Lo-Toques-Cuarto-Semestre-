@@ -181,6 +181,14 @@ class Efectos {
         const info = ELEMENTOS[elemento] ?? ELEMENTOS.guerrero;
         this.sonar(ataqueId, elemento);
 
+        // El que ataca "embiste": se lanza hacia el rival y vuelve
+        const sentido = lado === 'izquierda' ? 1 : -1;
+        origen.animate?.([
+            { translate: '0 0', scale: 1 },
+            { translate: `${70 * sentido}px 0`, scale: 1.1, offset: 0.35 },
+            { translate: '0 0', scale: 1 }
+        ], { duration: 520, easing: 'ease-out' });
+
         const base = this.arena.getBoundingClientRect();
         const centro = el => {
             const r = el.getBoundingClientRect();
@@ -312,6 +320,319 @@ class Efectos {
 
 
 /* ============================================================
+   MOVIMIENTO CINEMÁTICO (el personaje se mueve por el mapa)
+   ------------------------------------------------------------
+   Clase aparte: maneja las entradas (teclado, botones y click en el
+   mapa), la física suave y todos los efectos del canvas.
+   Se mueve con: flechas o W A S D · botones de pantalla · click/toque
+   en el mapa (va hasta ahí). Shift o Espacio = impulso (dash).
+   ============================================================ */
+const TECLAS_MAPA = {
+    ArrowUp: 'arriba',    KeyW: 'arriba',
+    ArrowDown: 'abajo',   KeyS: 'abajo',
+    ArrowLeft: 'izquierda', KeyA: 'izquierda',
+    ArrowRight: 'derecha',  KeyD: 'derecha'
+};
+
+// Partículas que deja cada elemento al moverse
+const PARTICULAS_MAPA = {
+    fuego:    { colores: ['#f97316', '#fbbf24', '#ef4444'], gravedad: -90, forma: 'circulo' },
+    agua:     { colores: ['#38bdf8', '#7dd3fc', '#e0f2fe'], gravedad: 160, forma: 'circulo' },
+    aire:     { colores: ['#ffffff', '#fde68a', '#e5e7eb'], gravedad: -30, forma: 'circulo' },
+    tierra:   { colores: ['#84cc16', '#a16207', '#78350f'], gravedad: 220, forma: 'cuadrado' },
+    guerrero: { colores: ['#d6b28c', '#ffffff', '#a8a29e'], gravedad: 80,  forma: 'cuadrado' }
+};
+
+class MovimientoCinematico {
+    constructor(mapa, efectos) {
+        this.mapa    = mapa;
+        this.lienzo  = mapa.getContext('2d');
+        this.efectos = efectos;
+        this.alConfirmar = null;          // lo que pasa al apretar Enter (ir al combate)
+
+        this.personaje = null;
+        this.activo    = false;
+        this.cuadro    = null;            // id del requestAnimationFrame
+        this.ultimo    = 0;
+        this.tiempo    = 0;
+
+        this.teclas  = new Set();         // entradas del teclado
+        this.botones = new Set();         // entradas de los botones de pantalla / táctiles
+        this.destino = null;              // punto donde se hizo click en el mapa
+
+        this.mirandoIzquierda = false;
+        this.ultimaDireccion  = { x: 1, y: 0 };
+        this.impulsoRestante  = 0;        // segundos que dura el dash
+        this.enfriamiento     = 0;        // espera antes de otro dash
+
+        this.estela     = [];             // posiciones anteriores (imagen "fantasma")
+        this.particulas = [];
+        this.ondas      = [];             // círculos del click
+
+        window.addEventListener('keydown', e => this.alPresionar(e));
+        window.addEventListener('keyup',   e => this.alSoltar(e));
+        window.addEventListener('blur',    () => this.teclas.clear());
+        mapa.addEventListener('pointerdown', e => this.alTocarMapa(e));
+    }
+
+    // ---------- ENTRADAS ----------
+
+    hayModalAbierto() {
+        return !!document.querySelector('#modal-crear-personaje:not(.oculto), #modal-reglas:not(.oculto)');
+    }
+
+    escribiendo(evento) {
+        return !!evento.target.closest?.('input, textarea, select');
+    }
+
+    alPresionar(e) {
+        if (!this.activo || this.hayModalAbierto() || this.escribiendo(e)) return;
+        if (TECLAS_MAPA[e.code]) {
+            this.teclas.add(TECLAS_MAPA[e.code]);
+            e.preventDefault();               // que las flechas no muevan la página
+        } else if (e.code === 'ShiftLeft' || e.code === 'ShiftRight' || e.code === 'Space') {
+            e.preventDefault();
+            if (!e.repeat) this.impulso();
+        } else if (e.code === 'Enter' && e.target.tagName !== 'BUTTON' && this.alConfirmar) {
+            this.alConfirmar();
+        }
+    }
+
+    alSoltar(e) {
+        if (TECLAS_MAPA[e.code]) this.teclas.delete(TECLAS_MAPA[e.code]);
+    }
+
+    // Click o toque en el mapa: el personaje se desliza hasta ese punto
+    alTocarMapa(e) {
+        if (!this.activo) return;
+        const caja = this.mapa.getBoundingClientRect();
+        this.destino = {
+            x: (e.clientX - caja.left) * (this.mapa.width  / caja.width),
+            y: (e.clientY - caja.top)  * (this.mapa.height / caja.height)
+        };
+        this.ondas.push({ x: this.destino.x, y: this.destino.y, t: 0 });
+    }
+
+    // Impulso: durante un instante va al doble de velocidad y deja estela
+    impulso() {
+        if (this.enfriamiento > 0 || !this.personaje) return;
+        this.impulsoRestante = 0.25;
+        this.enfriamiento    = 0.8;
+        this.efectos.reproducir('patada');
+        this.efectos.temblarPantalla('leve');
+        this.emitir(14, 1.6);
+    }
+
+    // ---------- CICLO ----------
+
+    iniciar(personaje) {
+        this.detener();
+        this.personaje  = personaje;
+        this.estela     = [];
+        this.particulas = [];
+        this.ondas      = [];
+        this.activo     = true;
+        this.ultimo     = performance.now();
+
+        const bucle = ahora => {
+            if (!this.activo) return;
+            const dt = Math.min((ahora - this.ultimo) / 1000, 0.05);
+            this.ultimo = ahora;
+            this.actualizar(dt);
+            this.pintar();
+            this.cuadro = requestAnimationFrame(bucle);
+        };
+        this.cuadro = requestAnimationFrame(bucle);
+        this.pintar();
+    }
+
+    detener() {
+        this.activo = false;
+        cancelAnimationFrame(this.cuadro);
+        this.teclas.clear();
+        this.botones.clear();
+        this.destino = null;
+        if (this.personaje) {
+            this.personaje.velocidadX = 0;
+            this.personaje.velocidadY = 0;
+        }
+    }
+
+    // ---------- FÍSICA ----------
+
+    actualizar(dt) {
+        const p = this.personaje;
+        if (!p) return;
+        this.tiempo += dt;
+        this.enfriamiento    = Math.max(0, this.enfriamiento - dt);
+        this.impulsoRestante = Math.max(0, this.impulsoRestante - dt);
+
+        // 1) ¿hacia dónde quiere ir? (teclado + botones, o el punto del click)
+        const entradas = new Set([...this.teclas, ...this.botones]);
+        let dx = (entradas.has('derecha') ? 1 : 0) - (entradas.has('izquierda') ? 1 : 0);
+        let dy = (entradas.has('abajo')   ? 1 : 0) - (entradas.has('arriba')    ? 1 : 0);
+
+        let frenado = 1;                              // 1 = velocidad plena; baja al acercarse al destino
+        if (dx || dy) {
+            this.destino = null;                      // el teclado manda sobre el click
+        } else if (this.destino) {
+            const vx = this.destino.x - (p.x + p.ancho / 2);
+            const vy = this.destino.y - (p.y + p.alto  / 2);
+            const distancia = Math.hypot(vx, vy);
+            if (distancia > 6) {
+                dx = vx / distancia; dy = vy / distancia;
+                frenado = Math.max(0.15, Math.min(1, distancia / 90));   // llega frenando, sin pasarse
+            }
+            else this.destino = null;
+        }
+
+        const largo = Math.hypot(dx, dy);
+        if (largo) {                                  // la diagonal no es más rápida
+            dx /= largo; dy /= largo;
+            this.ultimaDireccion = { x: dx, y: dy };
+        } else if (this.impulsoRestante > 0) {        // dash sin dirección: sigue hacia donde miraba
+            dx = this.ultimaDireccion.x; dy = this.ultimaDireccion.y;
+        }
+
+        // 2) velocidad con inercia: acelera y frena suave (en vez de cortarse de golpe)
+        const maxima = this.impulsoRestante > 0 ? 560 : 260;       // píxeles por segundo
+        const suavizado = 1 - Math.exp(-dt * (largo || this.impulsoRestante > 0 ? 9 : 6));
+        p.velocidadX += (dx * maxima * frenado - p.velocidadX) * suavizado;
+        p.velocidadY += (dy * maxima * frenado - p.velocidadY) * suavizado;
+
+        // 3) mover y no salirse del mapa
+        p.x += p.velocidadX * dt;
+        p.y += p.velocidadY * dt;
+        const maxX = this.mapa.width  - p.ancho;
+        const maxY = this.mapa.height - p.alto;
+        if (p.x < 0 || p.x > maxX) { p.x = Math.max(0, Math.min(p.x, maxX)); p.velocidadX = 0; }
+        if (p.y < 0 || p.y > maxY) { p.y = Math.max(0, Math.min(p.y, maxY)); p.velocidadY = 0; }
+
+        if (Math.abs(p.velocidadX) > 30) this.mirandoIzquierda = p.velocidadX < 0;
+
+        // 4) efectos que dependen de la velocidad
+        const velocidad = Math.hypot(p.velocidadX, p.velocidadY);
+        if (velocidad > 40) this.emitir(velocidad > 400 ? 2 : 1, 1);
+        if (velocidad > 120) {
+            this.estela.push({ x: p.x, y: p.y, espejo: this.mirandoIzquierda });
+            if (this.estela.length > 9) this.estela.shift();
+        } else if (this.estela.length) {
+            this.estela.shift();
+        }
+
+        const info = PARTICULAS_MAPA[p.elemento] ?? PARTICULAS_MAPA.guerrero;
+        this.particulas.forEach(q => {
+            q.vida -= dt;
+            q.vy += info.gravedad * dt;
+            q.x += q.vx * dt;
+            q.y += q.vy * dt;
+        });
+        this.particulas = this.particulas.filter(q => q.vida > 0);
+        this.ondas.forEach(o => { o.t += dt; });
+        this.ondas = this.ondas.filter(o => o.t < 0.6);
+    }
+
+    // Suelta partículas del elemento desde los pies
+    emitir(cantidad, fuerza) {
+        const p = this.personaje;
+        const info = PARTICULAS_MAPA[p.elemento] ?? PARTICULAS_MAPA.guerrero;
+        for (let i = 0; i < cantidad; i++) {
+            this.particulas.push({
+                x: p.x + p.ancho / 2 + (Math.random() - 0.5) * p.ancho * 0.6,
+                y: p.y + p.alto - 6,
+                vx: -p.velocidadX * 0.25 + (Math.random() - 0.5) * 80 * fuerza,
+                vy: -p.velocidadY * 0.25 + (Math.random() - 0.7) * 70 * fuerza,
+                vida: 0.45 + Math.random() * 0.4,
+                total: 0.85,
+                tam: 2 + Math.random() * 4 * fuerza,
+                color: info.colores[Math.floor(Math.random() * info.colores.length)],
+                forma: info.forma
+            });
+        }
+    }
+
+    // ---------- DIBUJO ----------
+
+    pintar() {
+        const p = this.personaje;
+        if (!p) return;
+        const ctx = this.lienzo;
+        const info = ELEMENTOS[p.elemento] ?? ELEMENTOS.guerrero;
+        const cx = p.x + p.ancho / 2;
+
+        ctx.clearRect(0, 0, this.mapa.width, this.mapa.height);
+
+        // Círculos del click
+        this.ondas.forEach(o => {
+            ctx.globalAlpha = 1 - o.t / 0.6;
+            ctx.strokeStyle = info.color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(o.x, o.y, 6 + o.t * 60, 0, Math.PI * 2);
+            ctx.stroke();
+        });
+        ctx.globalAlpha = 1;
+
+        // Resplandor y sombra en el suelo
+        const flotar = p.elemento === 'aire' ? 10 : 0;                       // Aang levita
+        const respira = Math.sin(this.tiempo * 3) * (p.elemento === 'aire' ? 5 : 2);
+        const suelo = p.y + p.alto - 2;
+        const brillo = ctx.createRadialGradient(cx, suelo, 2, cx, suelo, p.ancho * 0.8);
+        brillo.addColorStop(0, info.color + '66');
+        brillo.addColorStop(1, info.color + '00');
+        ctx.fillStyle = brillo;
+        ctx.fillRect(cx - p.ancho, suelo - p.ancho * 0.5, p.ancho * 2, p.ancho);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
+        ctx.beginPath();
+        ctx.ellipse(cx, suelo, p.ancho * 0.36 * (1 - (flotar + respira) / 80), 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Partículas
+        this.particulas.forEach(q => {
+            ctx.globalAlpha = Math.max(0, q.vida / q.total);
+            ctx.fillStyle = q.color;
+            if (q.forma === 'cuadrado') ctx.fillRect(q.x, q.y, q.tam, q.tam);
+            else { ctx.beginPath(); ctx.arc(q.x, q.y, q.tam, 0, Math.PI * 2); ctx.fill(); }
+        });
+        ctx.globalAlpha = 1;
+
+        // Estela: copias "fantasma" cada vez más transparentes
+        this.estela.forEach((f, i) => {
+            ctx.save();
+            ctx.globalAlpha = (i / this.estela.length) * (this.impulsoRestante > 0 ? 0.5 : 0.28);
+            ctx.translate(f.x + p.ancho / 2, f.y + p.alto / 2 - flotar);
+            ctx.scale(f.espejo ? -1 : 1, 1);
+            p.pintarEnMapa(ctx, -p.ancho / 2, -p.alto / 2);
+            ctx.restore();
+        });
+
+        // Personaje: se inclina y se estira según la velocidad, y se da vuelta al ir a la izquierda
+        const velocidad = Math.hypot(p.velocidadX, p.velocidadY);
+        const estira = Math.min(velocidad / 560, 1);
+        ctx.save();
+        ctx.translate(cx, p.y + p.alto / 2 + respira - flotar);
+        ctx.rotate(Math.max(-1, Math.min(1, p.velocidadX / 260)) * 0.16);
+        ctx.scale((1 + estira * 0.18) * (this.mirandoIzquierda ? -1 : 1), 1 - estira * 0.12);
+        p.pintarEnMapa(ctx, -p.ancho / 2, -p.alto / 2);
+        ctx.restore();
+
+        // Nombre sobre la cabeza
+        ctx.font = '600 14px Outfit, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillStyle = '#fff';
+        const rotulo = `${info.emoji} ${p.nombre}`;
+        const yRotulo = Math.max(16, p.y - 8 - flotar + respira);
+        ctx.strokeText(rotulo, cx, yRotulo);
+        ctx.fillText(rotulo, cx, yRotulo);
+        ctx.textAlign = 'start';
+    }
+}
+
+
+/* ============================================================
    1) CLASE Ataque — el molde de los movimientos
    ------------------------------------------------------------
    ATRIBUTOS : id, nombre, emoji, venceA, colorClaro, colorOscuro
@@ -399,6 +720,18 @@ class Personaje {
         // foto: null, el personaje se dibuja directamente con su emoji.
         this.foto = (foto === undefined) ? `./img/${id}.webp` : foto;
 
+        // ---- Para el MAPA (canvas) ----
+        // Guardamos x e y porque necesitamos el valor para después actualizarlo
+        this.x = 20;           // posición por defecto
+        this.y = 30;
+        this.ancho = 80;
+        this.alto  = 80;
+        this.velocidadX = 0;   // cuánto se mueve por cada "cuadro" (0 = quieto)
+        this.velocidadY = 0;
+        this.mapaFoto = new Image();   // la imagen del canvas vive dentro del objeto
+        // (el .src se asigna en prepararMapa(): así no se piden 1000 fotos de golpe
+        //  cuando se fabrican muchos personajes, solo la del que va a jugar)
+
         // El personaje se guarda las referencias de SU tarjeta en la arena,
         // así después sabe actualizar su propia barra de vida.
         this.barraVida  = null;
@@ -453,6 +786,29 @@ class Personaje {
     // Es como construir DOS casas con el mismo plano: se parecen, pero
     // si a una le rompés una ventana, la otra sigue intacta porque son
     // objetos distintos, aunque vengan del mismo molde (misma clase).
+    // Carga la foto del personaje para dibujarla en el canvas
+    prepararMapa() {
+        if (this.foto && !this.mapaFoto.src) this.mapaFoto.src = this.foto;
+    }
+
+    // Dibuja al personaje en el canvas, en su x e y actuales
+    pintarEnMapa(lienzo, x = this.x, y = this.y) {
+        const foto = this.mapaFoto;
+        if (foto.complete && foto.naturalWidth > 0) {
+            // La imagen se ajusta dentro del cuadro ancho x alto sin deformarse
+            const escala = Math.min(this.ancho / foto.naturalWidth, this.alto / foto.naturalHeight);
+            const w = foto.naturalWidth * escala;
+            const h = foto.naturalHeight * escala;
+            lienzo.drawImage(foto, x + (this.ancho - w) / 2, y + (this.alto - h) / 2, w, h);
+        } else {
+            // Sin foto (o todavía cargando): se dibuja su emoji
+            lienzo.font = `${Math.round(this.alto * 0.75)}px serif`;
+            lienzo.textBaseline = 'top';
+            lienzo.textAlign = 'start';
+            lienzo.fillText(this.emoji, x, y);
+        }
+    }
+
     // Nombre del movimiento según SU elemento (ej: Aang + Puño = "Palma de Aire")
     habilidad(ataque) {
         return ELEMENTOS[this.elemento]?.habilidades[ataque.id] ?? ataque.nombre;
@@ -648,6 +1004,8 @@ class Juego {
         // Referencias al DOM: se buscan una sola vez al arrancar (DRY)
         this.seccionPersonaje   = document.getElementById('seleccionar-personaje');
         this.seccionAtaque      = document.getElementById('seleccionar-ataque');
+        this.seccionMapa        = document.getElementById('ver-mapa');
+        this.mapa               = document.getElementById('mapa');
         this.seccionMensajes    = document.getElementById('mensajes');
         this.seccionReiniciar   = document.getElementById('reiniciar');
         this.seccionDespedida   = document.getElementById('despedida');
@@ -665,6 +1023,8 @@ class Juego {
         this.musica             = document.getElementById('musica-fondo');
         this.botonMusica        = document.getElementById('boton-musica');
         this.efectos            = new Efectos(this.arena);
+        this.cinematica         = new MovimientoCinematico(this.mapa, this.efectos);
+        this.cinematica.alConfirmar = () => this.irAlCombate();   // Enter = ir al combate
         this.retratoSubido      = null;   // imagen subida al crear un personaje
         this.musicaSilenciada   = false;   // true si la persona la apagó a propósito
     }
@@ -886,6 +1246,7 @@ class Juego {
         });
 
         // ---- Terminar el juego ----
+        document.getElementById('boton-ir-combate').addEventListener('click', () => this.irAlCombate());
         document.getElementById('boton-terminar-juego').addEventListener('click', () => this.terminarJuego());
         document.getElementById('boton-volver-inicio').addEventListener('click', () => location.reload());
     }
@@ -914,7 +1275,46 @@ class Juego {
 
         this.rotularBotones();
         this.terminado = false;
+        this.iniciarMapa();   // primero se explora el mapa; el combate empieza con "Ir al combate"
+    }
+
+    // ---------- MAPA (canvas) ----------
+
+    iniciarMapa() {
+        this.jugador.prepararMapa();
         this.seccionPersonaje.classList.add('oculto');
+        this.seccionMensajes.classList.add('oculto');
+        this.seccionMapa.classList.remove('oculto');
+
+        // El bucle de animación (requestAnimationFrame) repinta el mapa ~60 veces por segundo
+        this.cinematica.iniciar(this.jugador);
+    }
+
+    // Un cuadro del mapa: calcula el movimiento y dibuja (el bucle lo hace solo)
+    pintarPersonaje() {
+        this.cinematica.actualizar(1 / 60);
+        this.cinematica.pintar();
+    }
+
+    // Los botones solo avisan "quiero ir hacia acá"; la clase MovimientoCinematico mueve
+    moverArriba()    { this.cinematica.botones.add('arriba'); }
+    moverAbajo()     { this.cinematica.botones.add('abajo'); }
+    moverIzquierda() { this.cinematica.botones.add('izquierda'); }
+    moverDerecha()   { this.cinematica.botones.add('derecha'); }
+
+    // Al soltar el botón el personaje frena suave (no se corta de golpe)
+    detenerMovimiento() {
+        this.cinematica.botones.clear();
+    }
+
+    detenerMapa() {
+        this.cinematica.detener();
+    }
+
+    irAlCombate() {
+        if (!this.jugador) return;
+        this.detenerMapa();
+        this.seccionMapa.classList.add('oculto');
         this.seccionAtaque.classList.remove('oculto');
         this.seccionMensajes.classList.remove('oculto');
 
@@ -1018,6 +1418,8 @@ class Juego {
 
     reiniciar() {
         this.efectos.limpiar();
+        this.detenerMapa();
+        this.seccionMapa.classList.add('oculto');
         this.jugador   = null;
         this.enemigo   = null;
         this.terminado = false;
@@ -1263,6 +1665,8 @@ class Juego {
     // "Terminar el juego": oculta todo lo demás y muestra la despedida.
     // No borra el catálogo ni el progreso, solo saca la interfaz de juego.
     terminarJuego() {
+        this.detenerMapa();
+        this.seccionMapa.classList.add('oculto');
         this.seccionPersonaje.classList.add('oculto');
         this.seccionAtaque.classList.add('oculto');
         this.seccionMensajes.classList.add('oculto');

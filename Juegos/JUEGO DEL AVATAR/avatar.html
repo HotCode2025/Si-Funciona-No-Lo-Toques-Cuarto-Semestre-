@@ -41,7 +41,7 @@
     <!-- Selección de personaje -->
     <section id="seleccionar-personaje">
         <h2>Elige tu Personaje</h2>
-Ñ
+
         <!-- Los 4 elementos del juego (solo decorativo, referencia visual) -->
         <div class="fila-elementos" aria-hidden="true">
             <span>🔥</span><span>💧</span><span>🌪️</span><span>🌱</span>
@@ -77,6 +77,27 @@
         <h2>¡Gracias por jugar!</h2>
         <p class="mensaje-despedida">Esperamos que hayas disfrutado el combate elemental. ¡Volvé cuando quieras!</p>
         <button id="boton-volver-inicio" class="boton-primario">Volver a jugar</button>
+    </section>
+
+    <!-- Mapa: se muestra al confirmar el personaje. Mantené presionado un botón
+         para moverlo (onmousedown cambia la velocidad, onmouseup la deja en 0). -->
+    <section id="ver-mapa" class="oculto">
+        <h2>Mapa de Exploración</h2>
+        <p class="mapa-ayuda">
+            Movelo con las <kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> o <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>,
+            con los botones, o haciendo <strong>click en el mapa</strong>.
+            <kbd>Shift</kbd> o <kbd>Espacio</kbd> = impulso · <kbd>Enter</kbd> = ir al combate.
+        </p>
+        <canvas id="mapa" width="600" height="400"></canvas>
+
+        <div class="controles-mapa">
+            <button class="control-mapa c-arriba" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverArriba()" ontouchstart="juego.moverArriba(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">▲ Arriba</button>
+            <button class="control-mapa c-izquierda" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverIzquierda()" ontouchstart="juego.moverIzquierda(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">◀ Izquierda</button>
+            <button class="control-mapa c-abajo" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverAbajo()" ontouchstart="juego.moverAbajo(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">▼ Abajo</button>
+            <button class="control-mapa c-derecha" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverDerecha()" ontouchstart="juego.moverDerecha(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">Derecha ▶</button>
+        </div>
+
+        <button id="boton-ir-combate" class="boton-primario">⚔️ Ir al combate</button>
     </section>
 
     <!-- Selección de movimiento (oculto hasta elegir personaje) -->

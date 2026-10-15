@@ -154,6 +154,27 @@ Las tarjetas se dibujan solas, aparece el buscador y la grilla pasa a scrollear.
 
 ---
 
+## 🗺️ Clase 5 — Movimiento en el mapa (canvas)
+
+Al confirmar el personaje aparece un **mapa** (`<canvas id="mapa">`). El movimiento es **cinematográfico**: acelera y frena con inercia, se inclina y se estira al correr, deja estela y partículas de su elemento, y Aang levita. Se controla con:
+
+| Control | Qué hace |
+|---|---|
+| ← ↑ ↓ → o W A S D | Mover (se pueden combinar para ir en diagonal) |
+| Botones en pantalla | Mover (`onmousedown` empieza, `onmouseup` frena) |
+| Click o toque en el mapa | El personaje se desliza hasta ese punto |
+| Shift o Espacio | Impulso (dash): doble velocidad, estela y temblor |
+| Enter o botón **Ir al combate** | Pasar a la arena |
+
+| Pieza | Dónde está | Qué hace |
+|---|---|---|
+| `x`, `y`, `ancho`, `alto`, `velocidadX`, `velocidadY`, `mapaFoto` | `Personaje` | Posición, tamaño, velocidad (px/seg) e imagen del canvas |
+| `class MovimientoCinematico` | `avatar.js` | Entradas, física con inercia y efectos del canvas, en una clase aparte |
+| `moverArriba()`… `detenerMovimiento()` | `Juego` | Los botones le avisan a `MovimientoCinematico` hacia dónde ir |
+| `requestAnimationFrame` | `MovimientoCinematico.iniciar()` | Repinta ~60 veces por segundo (más suave que `setInterval`) |
+
+---
+
 ## 📄 Explicación del código
 
 ### `avatar.html`
