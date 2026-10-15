@@ -120,6 +120,9 @@
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
+      animation-delay: 0s !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
     }
   }
 }
@@ -290,3 +293,111 @@
 .recharts-tooltip-item-name, .recharts-tooltip-item-separator {
   color: var(--color-sonda) !important;
 }
+
+
+/* =====================================================================
+   Movimiento — capa profesional
+   Principios: una sola curva (expo-out), nada rebota, nada se mueve sin
+   motivo, y todo se apaga con prefers-reduced-motion.
+   ===================================================================== */
+
+/* Transición entre páginas */
+@keyframes pagina-entra { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.pagina-entra { animation: pagina-entra .55s cubic-bezier(.16, 1, .3, 1) both; }
+
+/* Hilo de lectura */
+.progreso-scroll { position: fixed; inset: 0 0 auto 0; height: 2px; z-index: 60; pointer-events: none; }
+.progreso-scroll > div { height: 100%; transform-origin: left; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--color-kelp), var(--color-kelp-alto)); box-shadow: 0 0 10px rgb(229 164 69 / .6); }
+
+/* Titular: cada palabra sube desde una máscara */
+.palabra { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
+.palabra > span { display: inline-block; transform: translateY(110%); animation: palabra-sube .9s cubic-bezier(.16, 1, .3, 1) forwards; animation-delay: calc(var(--i) * 55ms + 150ms); }
+@keyframes palabra-sube { to { transform: translateY(0); } }
+
+/* Fondo del hero: las curvas batimétricas derivan muy lento */
+@keyframes deriva { to { background-position: 0 0, 800px 400px, 0 0, 0 0; } }
+.hero-ocean { animation: deriva 90s linear infinite; background-position: 0 0, 0 0, 0 0, 0 0; }
+
+/* Nav pública */
+.nav-publica { transition: background-color .4s, border-color .4s, box-shadow .4s, padding .4s; }
+.nav-publica[data-scroll="0"] { background-color: transparent; border-color: transparent; backdrop-filter: none; }
+.nav-publica[data-scroll="1"] { box-shadow: 0 10px 30px -18px rgb(0 0 0 / .8); }
+.enlace-nav { position: relative; padding-block: .25rem; }
+.enlace-nav::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: var(--color-kelp-alto);
+  transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.16, 1, .3, 1); }
+.enlace-nav:hover::after, .enlace-nav.activo::after { transform: scaleX(1); }
+
+/* Botón ámbar: barrido de luz al pasar */
+.btn-brillo { position: relative; overflow: hidden; isolation: isolate; }
+.btn-brillo::after { content: ''; position: absolute; inset: 0; z-index: -1; transform: translateX(-120%);
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / .38) 50%, transparent 70%); transition: transform .8s cubic-bezier(.16, 1, .3, 1); }
+.btn-brillo:hover::after { transform: translateX(120%); }
+
+/* Logo */
+.logo-animado .logo-tallo { stroke-dasharray: 1; stroke-dashoffset: 1; animation: dibujar 1.5s .15s cubic-bezier(.65, 0, .35, 1) forwards; }
+.logo-animado .logo-fronda > :not(.logo-tallo) { opacity: 0; animation: aparece .6s ease forwards; animation-delay: .85s; }
+.logo-animado .logo-fronda { transform-origin: 24px 39px; animation: mecer 7s ease-in-out 2s infinite; }
+.logo-animado .logo-anillo { transform-origin: 24px 24px; animation: girar 80s linear infinite; }
+.logo-sonar { transform-origin: 24px 24px; animation: sonar-logo 3.6s ease-out 1.6s infinite; opacity: 0; }
+@keyframes dibujar { to { stroke-dashoffset: 0; } }
+@keyframes aparece { to { opacity: 1; } }
+@keyframes mecer { 0%, 100% { transform: rotate(-1.8deg); } 50% { transform: rotate(1.8deg); } }
+@keyframes girar { to { transform: rotate(360deg); } }
+@keyframes sonar-logo { 0% { transform: scale(.75); opacity: .65; } 100% { transform: scale(1.4); opacity: 0; } }
+
+/* Reel de videos */
+.reel { --rx: 0deg; --ry: 0deg; perspective: 1100px; }
+.reel-marco { position: relative; aspect-ratio: 9 / 16; overflow: hidden; border-radius: 1.4rem; background: var(--color-hondo);
+  border: 1px solid rgb(127 181 176 / .35); transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .4s cubic-bezier(.16, 1, .3, 1);
+  box-shadow: 0 40px 90px -30px rgb(0 0 0 / .8), 0 0 0 6px rgb(16 57 74 / .35), 0 0 60px -10px rgb(79 165 136 / .25); }
+.reel-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.07);
+  transition: opacity 1s ease, transform 7s cubic-bezier(.2, .6, .2, 1); }
+.reel-video.activo { opacity: 1; transform: scale(1); }
+.reel-velo { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgb(4 32 43 / .88), transparent 48%), linear-gradient(to bottom, rgb(4 32 43 / .55), transparent 22%); }
+.reel-barra { position: relative; height: 2px; flex: 1; overflow: hidden; border-radius: 2px; background: rgb(237 243 241 / .28); }
+.reel-barra > i { position: absolute; inset: 0; background: var(--color-carta); transform-origin: left; transform: scaleX(0); }
+.reel-pie { animation: pagina-entra .8s cubic-bezier(.16, 1, .3, 1) both; }
+
+/* Olas divisorias */
+.olas { position: relative; height: 56px; overflow: hidden; pointer-events: none; }
+.olas svg { position: absolute; left: 0; top: 0; width: 200%; height: 100%; fill: none; stroke-linecap: round; }
+.olas path { stroke: var(--color-sonda); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.olas-a { opacity: .38; animation: ola 26s linear infinite; }
+.olas-b { opacity: .16; top: 10px !important; animation: ola 40s linear infinite reverse; }
+@keyframes ola { to { transform: translateX(-50%); } }
+
+/* Teléfono de la sección de descarga */
+@keyframes flotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.flotar { animation: flotar 8s ease-in-out infinite; }
+.telefono { position: relative; width: 17rem; aspect-ratio: 9 / 18.5; border-radius: 2.6rem; padding: .55rem; background: linear-gradient(160deg, #1d4f62, #082a37);
+  border: 1px solid rgb(127 181 176 / .4); box-shadow: 0 50px 100px -30px rgb(0 0 0 / .85), 0 0 80px -20px rgb(79 165 136 / .3); }
+.telefono-pantalla { position: relative; height: 100%; overflow: hidden; border-radius: 2.1rem; background: var(--color-abismo); isolation: isolate; }
+.telefono-isla { position: absolute; z-index: 20; top: .6rem; left: 50%; width: 4.2rem; height: 1.15rem; transform: translateX(-50%); border-radius: 99px; background: #000; }
+.vidrio { background: rgb(10 46 60 / .62); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgb(127 181 176 / .28); }
+@keyframes ficha { 0% { opacity: 0; transform: translateY(14px) scale(.96); } 10%, 78% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; transform: translateY(-6px); } }
+.ficha-1 { animation: ficha 9s cubic-bezier(.16, 1, .3, 1) infinite; }
+.ficha-2 { animation: ficha 9s cubic-bezier(.16, 1, .3, 1) 1.4s infinite; }
+
+/* Splash de la app */
+.splash { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: var(--color-abismo); overflow: hidden;
+  transition: opacity .65s ease, transform .65s cubic-bezier(.16, 1, .3, 1); }
+.splash-sale { opacity: 0; transform: scale(1.04); pointer-events: none; }
+.splash-texto { opacity: 0; animation: pagina-entra .9s cubic-bezier(.16, 1, .3, 1) .45s forwards; }
+.splash-barra { width: 9rem; height: 2px; border-radius: 2px; overflow: hidden; background: rgb(127 181 176 / .2); }
+.splash-barra > i { display: block; height: 100%; background: var(--color-kelp-alto); transform-origin: left; transform: scaleX(0); animation: carga 2.1s cubic-bezier(.65, 0, .35, 1) forwards; }
+@keyframes carga { to { transform: scaleX(1); } }
+
+/* Barra inferior de la app: indicador que se desliza + respuesta al toque */
+.barra-inferior { padding-bottom: env(safe-area-inset-bottom, 0px); background: rgb(4 32 43 / .88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.barra-indicador { position: absolute; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--color-kelp-alto), transparent);
+  transition: transform .5s cubic-bezier(.16, 1, .3, 1), opacity .3s; }
+.barra-item svg { transition: transform .35s cubic-bezier(.16, 1, .3, 1); }
+.barra-item:active svg { transform: scale(.82); }
+.barra-item.activo svg { transform: translateY(-2px) scale(1.08); }
+
+/* Banner de saludo de la app */
+.banner-app { position: relative; overflow: hidden; border-radius: 1.1rem; border: 1px solid rgb(127 181 176 / .28); isolation: isolate; }
+.banner-app > .banner-video { position: absolute; inset: 0; z-index: -2; }
+.banner-app::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(100deg, rgb(4 32 43 / .92), rgb(4 32 43 / .45) 70%, rgb(4 32 43 / .25)); }

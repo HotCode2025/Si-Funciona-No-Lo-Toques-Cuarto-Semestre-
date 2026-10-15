@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { BrowserRouter, HashRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import { DemoProvider, useDemo } from './contexts/DemoContext.jsx';
 
 import PublicoLayout from './layouts/PublicoLayout.jsx';
@@ -27,6 +28,8 @@ import { Boton, Cargando } from './components/ui/index.jsx';
 // version publicada sigue siendo BrowserRouter y las direcciones quedan
 // limpias.
 const EsArchivoUnico = import.meta.env.VITE_ARCHIVO_UNICO === '1';
+// Dentro del APK no tiene sentido arrancar en la web pública: se abre la app.
+const EsNativo = Capacitor.isNativePlatform();
 const Router = EsArchivoUnico ? HashRouter : BrowserRouter;
 
 // Carga diferida: recharts pesa y solo hace falta en el detalle de zona y
@@ -63,7 +66,7 @@ function Rutas() {
     <Routes key={version}>
       {/* Público */}
       <Route element={<PublicoLayout />}>
-        <Route path="/" element={<Portada />} />
+        <Route path="/" element={EsNativo ? <Navigate to="/app" replace /> : <Portada />} />
         <Route path="/funciones" element={<Funciones />} />
         <Route path="/ecosistema" element={<Ecosistema />} />
         <Route path="/ecosistema/:slug" element={<ZonaDetalle />} />

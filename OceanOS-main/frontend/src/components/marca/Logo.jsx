@@ -1,38 +1,60 @@
+import { useId } from 'react';
+
 /**
- * La marca es una hoja de cachiyuyo sobre líneas de sonda. No un ícono de
- * ola genérico: Macrocystis tiene neumatocistos (las vejigas de flotación)
- * y eso es lo que se dibuja.
+ * Marca: una fronda de cachiyuyo (Macrocystis) dentro de un anillo de sonar.
+ * Los tres neumatocistos —las vejigas de flotación— son los nodos del
+ * sistema: tres capas, un solo tallo. Las ondas de la base son la línea de
+ * agua y el anillo punteado es la lectura de la sonda.
+ *
+ * `animado` dibuja el tallo al montar, mece la fronda y emite un pulso de
+ * sonar. Se desactiva solo con prefers-reduced-motion (ver index.css).
  */
-export default function Logo({ tamaño = 30, claro = true }) {
+export default function Logo({ tamaño = 30, claro = true, animado = false }) {
+  const id = useId().replace(/:/g, '');
   const tinta = claro ? 'var(--color-carta)' : 'var(--color-abismo)';
   const sonda = 'var(--color-sonda)';
-  const kelp = 'var(--color-kelp)';
+
   return (
-    <svg width={tamaño} height={tamaño} viewBox="0 0 32 32" aria-hidden="true">
-      {/* Anillos batimétricos estilo brújula/radar */}
-      <circle cx="16" cy="16" r="14" stroke={sonda} strokeWidth="1" strokeDasharray="2 3" fill="none" opacity="0.4" />
-      <circle cx="16" cy="16" r="10" stroke={sonda} strokeWidth="1" fill="none" opacity="0.15" />
-      
-      {/* Sondas del fondo (ondas más orgánicas y contenidas) */}
-      <path d="M 6 19 Q 11 16, 16 19 T 26 19" stroke={sonda} strokeWidth="1.5" fill="none" strokeLinecap="round" />
-      <path d="M 8 24 Q 13 21, 16 24 T 24 24" stroke={sonda} strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.4" />
-      
-      {/* Tallo central y neumatocistos (Cachiyuyo) */}
-      <path d="M16 24c-1.4-3.9-1.8-8-1.4-12.2.3-3 1.1-5.1 1.4-6.2.3 1.1 1.1 3.2 1.4 6.2.4 4.2 0 8.3-1.4 12.2Z"
-            fill={kelp} />
-      <circle cx="13.1" cy="13.4" r="1.9" fill={tinta} />
-      <circle cx="18.9" cy="10.2" r="1.9" fill={tinta} />
-      <circle cx="16" cy="4.5" r="1.5" fill={tinta} />
+    <svg width={tamaño} height={tamaño} viewBox="0 0 48 48" fill="none" aria-hidden="true"
+         className={animado ? 'logo-animado' : undefined}>
+      <defs>
+        <linearGradient id={`k${id}`} x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0" style={{ stopColor: 'var(--color-kelp)' }} />
+          <stop offset="1" style={{ stopColor: 'var(--color-kelp-alto)' }} />
+        </linearGradient>
+        <clipPath id={`c${id}`}><circle cx="24" cy="24" r="20.5" /></clipPath>
+      </defs>
+
+      {animado && <circle className="logo-sonar" cx="24" cy="24" r="21" stroke={sonda} strokeWidth="1" />}
+      <circle className="logo-anillo" cx="24" cy="24" r="22" stroke={sonda} strokeWidth="1.2" strokeDasharray="1.5 3.5" strokeLinecap="round" opacity="0.55" />
+      <circle cx="24" cy="24" r="17" stroke={sonda} strokeWidth="0.8" opacity="0.18" />
+
+      <g clipPath={`url(#c${id})`}>
+        <path d="M6 38.5q4.5-3.4 9 0t9 0 9 0 9 0" stroke={sonda} strokeWidth="1.5" strokeLinecap="round" opacity="0.85" />
+        <path d="M6 43q4.5-3.4 9 0t9 0 9 0 9 0" stroke={sonda} strokeWidth="1.2" strokeLinecap="round" opacity="0.3" />
+      </g>
+
+      <g className="logo-fronda">
+        <path className="logo-tallo" pathLength="1" d="M24 39c-3.6-6.4 3.6-10.4 0-16.6S22 12 24 7.5"
+              stroke={`url(#k${id})`} strokeWidth="2.4" strokeLinecap="round" />
+        <path d="M23.2 31C17.4 30.2 13.4 26.6 12.4 21.6c5.4.2 9.4 3.6 10.8 9.4Z" fill={`url(#k${id})`} />
+        <path d="M24.8 24.4c5.8-.8 9.8-4.4 10.8-9.4-5.4.2-9.4 3.6-10.8 9.4Z" fill={`url(#k${id})`} />
+        <path d="M23.4 17.4c-4-.8-6.2-3.4-6.6-6.6 3.6.4 5.8 2.8 6.6 6.6Z" fill={`url(#k${id})`} opacity="0.9" />
+        <circle cx="22.4" cy="34.6" r="1.9" fill={tinta} />
+        <circle cx="25.6" cy="27.4" r="1.9" fill={tinta} />
+        <circle cx="23.6" cy="19.4" r="1.6" fill={tinta} />
+        <circle cx="24" cy="8.4" r="1.7" fill={tinta} />
+      </g>
     </svg>
   );
 }
 
-export function Marca({ claro = true, tamaño = 30 }) {
+export function Marca({ claro = true, tamaño = 30, animado = false }) {
   return (
-    <span className="inline-flex items-center gap-2">
-      <Logo tamaño={tamaño} claro={claro} />
-      <span className={`font-display text-lg font-600 tracking-tight ${claro ? 'text-carta' : 'text-abismo'}`}>
-        OceanOS
+    <span className="marca inline-flex items-center gap-2.5">
+      <Logo tamaño={tamaño} claro={claro} animado={animado} />
+      <span className={`font-display text-[1.15rem] leading-none font-600 tracking-tight ${claro ? 'text-carta' : 'text-abismo'}`}>
+        Ocean<span className="text-kelp-alto">OS</span>
       </span>
     </span>
   );
