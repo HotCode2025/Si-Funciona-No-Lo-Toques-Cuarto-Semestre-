@@ -7,12 +7,11 @@ sin ventana y se reinicia creando una Partida nueva.
 Tiene su propio reloj (`tiempo`, en ms) que avanza solo cuando se la actualiza:
 en la pausa se congela y no depende de los FPS de la computadora.
 """
-import math
 import random
 
 import reglas
 from constantes import (
-    SCREEN_WIDTH, SCREEN_HEIGHT, PASO_MS, VELOCIDAD_PERSONAJE, DANO_COLISION,
+    SCREEN_WIDTH, SCREEN_HEIGHT, PASO_MS, DANO_COLISION,
     DANO_LASER_ENEMIGO, DANO_JEFE_CONTACTO, INVULNERABILIDAD_JEFE_MS,
     PUNTOS_POR_ENEMIGO, PUNTOS_JEFE, PROB_ITEM, ENERGIA_ITEM, NIVEL_JEFE_CADA,
     DURACION_AVISO_MS, PAUSA_TRAS_JEFE_MS, SPAWN_INICIAL_MS, VARIACION_SPAWN,
@@ -64,7 +63,7 @@ class Partida:
         ahora = self.tiempo
 
         self._actualizar_nivel()
-        self._mover_jugador(dx, dy)
+        self.personaje.dirigir(dx, dy)   # también se llama sin teclas, para que frene
         if disparando and self.personaje.lanzar_laser(ahora):
             self._sonidos.append(EV_LASER)
         self.personaje.actualizar()
@@ -77,11 +76,6 @@ class Partida:
         return self._sonidos
 
     # ------------------------------------------------------ jugador y nivel
-    def _mover_jugador(self, dx, dy):
-        longitud = math.hypot(dx, dy)
-        if longitud:   # normalizado: en diagonal no se va más rápido
-            self.personaje.mover(dx / longitud * VELOCIDAD_PERSONAJE, dy / longitud * VELOCIDAD_PERSONAJE)
-
     def _avisar(self, texto):
         self.aviso = texto
         self.aviso_hasta = self.tiempo + DURACION_AVISO_MS

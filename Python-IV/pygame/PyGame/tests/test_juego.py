@@ -29,10 +29,14 @@ def juego(monkeypatch):
     guardados = []
     monkeypatch.setattr(modulo_juego, 'guardar_record', guardados.append)
     monkeypatch.setattr(modulo_juego, 'cargar_record', lambda: 0)
+    ajustes_guardados = []
+    monkeypatch.setattr(modulo_juego, 'cargar_ajustes', lambda: {'volumen': 0.5, 'silenciado': False})
+    monkeypatch.setattr(modulo_juego, 'guardar_ajustes', lambda v, s: ajustes_guardados.append((v, s)))
     monkeypatch.setattr(pygame.key, 'get_pressed',
                         lambda: TeclasFalsas({pygame.K_LEFT, pygame.K_UP}))
     j = Juego()
     j.guardados = guardados
+    j.ajustes_guardados = ajustes_guardados
     return j
 
 
@@ -161,3 +165,65 @@ def test_dibujar_todos_los_estados_sin_errores(juego):
         juego.snapshot = None
         juego._dibujar()
     assert PASO_MS > 0
+
+
+def rueda(y):
+    return pygame.event.Event(pygame.MOUSEWHEEL, x=0, y=y)
+
+
+def test_teclas_de_volumen(juego):
+    assert juego.audio.volumen == 0.5
+    juego._procesar_eventos([tecla(pygame.K_PLUS)])
+    assert juego.audio.volumen == 0.6
+    juego._procesar_eventos([tecla(pygame.K_KP_MINUS), tecla(pygame.K_MINUS)])
+    assert juego.audio.volumen == 0.4
+    juego._procesar_eventos([tecla(pygame.K_0)])
+    assert juego.audio.silenciado
+    juego._procesar_eventos([tecla(pygame.K_PLUS)])           # subir saca el silencio
+    assert not juego.audio.silenciado and juego.audio.volumen == 0.5
+    assert juego.ajustes_guardados[-1] == (0.5, False)        # y se guarda
+
+
+def test_rueda_del_mouse_cambia_el_volumen_en_cualquier_estado(juego):
+    for estado in (MENU, JUGANDO, PAUSA, GAME_OVER):
+        juego.estado = estado
+        juego.audio.set_volumen(0.5)
+        juego._procesar_eventos([rueda(1)])
+        assert juego.audio.volumen == 0.55
+        juego._procesar_eventos([rueda(-2)])
+        assert juego.audio.volumen == 0.45
+
+
+def test_el_volumen_nunca_sale_de_0_a_1(juego):
+    for _ in range(30):
+        juego._procesar_eventos([tecla(pygame.K_PLUS)])
+    assert juego.audio.volumen == 1.0
+    for _ in range(30):
+        juego._procesar_eventos([tecla(pygame.K_MINUS)])
+    assert juego.audio.volumen == 0.0
+
+
+def test_slider_del_menu_y_de_la_pausa_estan_sincronizados(juego):
+    s = juego.slider_menu
+    juego._procesar_eventos([pygame.event.Event(pygame.MOUSEBUTTONDOWN, pos=(s.rect.right - 1, s.rect.centery), button=1)])
+    assert juego.audio.volumen == 1.0 and juego.slider_pausa.valor == 1.0
+    assert juego.ajustes_guardados == []                      # mientras se arrastra no escribe archivos
+    juego._procesar_eventos([pygame.event.Event(pygame.MOUSEBUTTONUP, pos=(0, 0), button=1)])
+    assert juego.ajustes_guardados[-1] == (1.0, False)        # al soltar, sí
+
+    juego._iniciar_partida()
+    juego._pausar()
+    p = juego.slider_pausa
+    juego._procesar_eventos([pygame.event.Event(pygame.MOUSEBUTTONDOWN, pos=(p.rect.left, p.rect.centery), button=1)])
+    assert juego.audio.volumen == 0.0 and juego.slider_menu.valor == 0.0
+    assert juego.estado == PAUSA                              # tocar el slider no activa botones
+
+
+def test_dibujar_menu_pausa_y_aviso_de_volumen(juego):
+    juego._procesar_eventos([tecla(pygame.K_PLUS)])           # muestra el cartel
+    for estado in (MENU, JUGANDO, PAUSA, GAME_OVER):
+        juego.estado = estado
+        juego.snapshot = None
+        juego._dibujar()
+    juego._procesar_eventos([tecla(pygame.K_0)])              # cartel "Silenciado"
+    juego._dibujar()

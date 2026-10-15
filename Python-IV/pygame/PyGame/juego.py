@@ -6,14 +6,15 @@ import os
 
 import pygame
 
+from ajustes import cargar_ajustes, guardar_ajustes
 from audio import Audio
 from constantes import (
     SCREEN_WIDTH, SCREEN_HEIGHT, FPS, PASO_MS, MAX_PASOS_POR_FRAME, TOLERANCIA_PASO_MS,
     IMAGES_PATH, PROLOGO_PATH, MUSICA_FONDO, MUSICA_JEFE, COLOR_BLANCO, COLOR_NEGRO,
-    COLOR_ROJO, COLOR_AMARILLO, COLOR_GRIS,
+    COLOR_ROJO, COLOR_AMARILLO, COLOR_GRIS, COLOR_BOTON, PASO_VOLUMEN, DURACION_AVISO_VOLUMEN_MS,
 )
 from fondo import Fondo
-from interfaz import Boton, ListaBotones, texto_centrado
+from interfaz import Boton, ListaBotones, Slider, texto_centrado
 from pantallas import mostrar_imagen_inicial, mostrar_logo, mostrar_prologo
 from partida import Partida, EV_MUSICA_JEFE, EV_MUSICA_NORMAL
 from records import cargar_record, guardar_record
@@ -32,7 +33,8 @@ class Juego:
         pygame.display.set_caption('Amenaza Fantasma')
         self._poner_icono()
         self.clock = pygame.time.Clock()
-        self.audio = Audio()
+        ajustes = cargar_ajustes()
+        self.audio = Audio(ajustes['volumen'], ajustes['silenciado'])
         self.fondo = Fondo([cargar_fondo('fondo2.jfif'), cargar_fondo('fondo3.jpg')])
 
         self.f_titulo = pygame.font.Font(None, 130)
@@ -47,6 +49,10 @@ class Juego:
         self.lista_pausa = ListaBotones(('CONTINUAR', 'REINICIAR', 'MENÚ'), self.f_menu, CENTRO_X, CENTRO_Y + 10)
         self.lista_game_over = ListaBotones(('JUGAR DE NUEVO', 'MENÚ', 'SALIR'), self.f_menu, CENTRO_X, CENTRO_Y + 200)
         self.btn_reiniciar = Boton('REINICIAR  [R]', (SCREEN_WIDTH - 250, 10, 240, 44), self.f_chica)
+        self.slider_menu = Slider('VOLUMEN', (CENTRO_X - 110, 775 - 14, 300, 28), self.f_chica, self.audio.volumen)
+        self.slider_pausa = Slider('VOLUMEN', (CENTRO_X - 110, CENTRO_Y + 270 - 14, 300, 28), self.f_chica,
+                                   self.audio.volumen)
+        self._volumen_visible_hasta = 0
 
         self.record = cargar_record()
         self._avisar_faltantes()
@@ -106,12 +112,70 @@ class Juego:
         return any(e.type == pygame.KEYDOWN and e.key in teclas for e in eventos)
 
     def _procesar_eventos(self, eventos):
+        self._eventos_volumen(eventos)
         {
             MENU: self._eventos_menu,
             JUGANDO: self._eventos_jugando,
             PAUSA: self._eventos_pausa,
             GAME_OVER: self._eventos_game_over,
         }[self.estado](eventos)
+
+    # ================================================================ volumen
+    def _eventos_volumen(self, eventos):
+        """+ y - suben/bajan el volumen, 0 silencia, y la rueda del mouse también lo cambia."""
+        cambio = False
+        for evento in eventos:
+            if evento.type == pygame.KEYDOWN:
+                if evento.key in (pygame.K_PLUS, pygame.K_KP_PLUS, pygame.K_EQUALS):
+                    self.audio.set_volumen(self.audio.volumen + PASO_VOLUMEN)
+                    cambio = True
+                elif evento.key in (pygame.K_MINUS, pygame.K_KP_MINUS):
+                    self.audio.set_volumen(self.audio.volumen - PASO_VOLUMEN)
+                    cambio = True
+                elif evento.key in (pygame.K_0, pygame.K_KP0):
+                    self.audio.alternar_silencio()
+                    cambio = True
+            elif evento.type == pygame.MOUSEWHEEL:
+                self.audio.set_volumen(self.audio.volumen + 0.05 * evento.y)
+                cambio = True
+        if cambio:
+            self._volumen_visible_hasta = pygame.time.get_ticks() + DURACION_AVISO_VOLUMEN_MS
+            self._sincronizar_sliders()
+            self._guardar_ajustes()
+
+    def _procesar_slider(self, eventos, slider):
+        cambio, solto = slider.procesar(eventos)
+        if cambio:
+            self.audio.set_volumen(slider.valor)
+            self._sincronizar_sliders(origen=slider)
+        if solto:
+            self._guardar_ajustes()   # se guarda al soltar, no en cada movimiento
+
+    def _sincronizar_sliders(self, origen=None):
+        for slider in (self.slider_menu, self.slider_pausa):
+            if slider is not origen:
+                slider.valor = self.audio.volumen
+
+    def _guardar_ajustes(self):
+        guardar_ajustes(self.audio.volumen, self.audio.silenciado)
+
+    def _dibujar_aviso_volumen(self):
+        """Cartel breve arriba al centro cuando se cambia el volumen con el teclado o la rueda."""
+        if pygame.time.get_ticks() >= self._volumen_visible_hasta:
+            return
+        panel = pygame.Rect(CENTRO_X - 140, 46, 280, 46)
+        pygame.draw.rect(self.screen, COLOR_BOTON, panel, border_radius=10)
+        pygame.draw.rect(self.screen, COLOR_AMARILLO, panel, width=2, border_radius=10)
+        if self.audio.silenciado:
+            texto_centrado(self.screen, self.f_hud, "Silenciado", COLOR_GRIS, panel.centery - 5)
+        else:
+            texto_centrado(self.screen, self.f_hud, f"Volumen {round(self.audio.volumen * 100)}%",
+                           COLOR_BLANCO, panel.centery - 5)
+        barra = pygame.Rect(panel.left + 16, panel.bottom - 11, panel.width - 32, 4)
+        pygame.draw.rect(self.screen, COLOR_GRIS, barra, border_radius=2)
+        barra.width = int(barra.width * self.audio.efectivo)
+        if barra.width:
+            pygame.draw.rect(self.screen, COLOR_AMARILLO, barra, border_radius=2)
 
     def _actualizar(self):
         """Un paso de lógica (1/60 s)."""
@@ -127,6 +191,7 @@ class Juego:
             PAUSA: self._dibujar_pausa,
             GAME_OVER: self._dibujar_game_over,
         }[self.estado]()
+        self._dibujar_aviso_volumen()
 
     # ============================================================ transiciones
     def _iniciar_partida(self):
@@ -195,6 +260,7 @@ class Juego:
     def _eventos_menu(self, eventos):
         if self._tecla(eventos, pygame.K_ESCAPE):
             salir()
+        self._procesar_slider(eventos, self.slider_menu)
         elegido = self.lista_menu.procesar(eventos)
         if elegido == 0:
             self._iniciar_partida()
@@ -210,13 +276,17 @@ class Juego:
         texto_centrado(self.screen, self.f_titulo, "AMENAZA", COLOR_AMARILLO, 210)
         texto_centrado(self.screen, self.f_titulo, "FANTASMA", COLOR_AMARILLO, 330)
         self.lista_menu.dibujar(self.screen)
-        texto_centrado(self.screen, self.f_hud, f"Récord: {self.record}", COLOR_BLANCO, 800)
+        self.slider_menu.dibujar(self.screen, self.audio.silenciado)
+        texto_centrado(self.screen, self.f_hud, f"Récord: {self.record}", COLOR_BLANCO, 840)
         if self.faltantes:
             texto_centrado(self.screen, self.f_chica,
-                           f"Faltan {len(self.faltantes)} archivos en assets_1/ (mirá la consola)", COLOR_ROJO, 850)
+                           f"Faltan {len(self.faltantes)} archivos en assets_1/ (mirá la consola)", COLOR_ROJO, 885)
         texto_centrado(self.screen, self.f_chica,
                        "Flechas o WASD: mover   |   Espacio: disparar   |   P o ESC: pausa   |   R: reiniciar",
-                       COLOR_GRIS, SCREEN_HEIGHT - 40)
+                       COLOR_GRIS, SCREEN_HEIGHT - 62)
+        texto_centrado(self.screen, self.f_chica,
+                       "Volumen:  + / -  o rueda del mouse   |   0: silenciar",
+                       COLOR_GRIS, SCREEN_HEIGHT - 30)
 
     # ================================================================ partida
     def _eventos_jugando(self, eventos):
@@ -278,6 +348,7 @@ class Juego:
         if self._tecla(eventos, pygame.K_m):
             self._volver_al_menu()
             return
+        self._procesar_slider(eventos, self.slider_pausa)
         elegido = self.lista_pausa.procesar(eventos)
         if elegido == 0:
             self._reanudar()
@@ -291,6 +362,7 @@ class Juego:
         self._oscurecer(150)
         texto_centrado(self.screen, self.f_titulo, "PAUSA", COLOR_AMARILLO, CENTRO_Y - 130)
         self.lista_pausa.dibujar(self.screen)
+        self.slider_pausa.dibujar(self.screen, self.audio.silenciado)
 
     # ================================================================ game over
     def _eventos_game_over(self, eventos):

@@ -49,7 +49,7 @@ def jefes_debidos(nivel):
 
 def vida_jefe(nivel_jefe):
     """El jefe tiene más vida cada vez que aparece."""
-    return VIDA_JEFE_BASE + 5 * (nivel_jefe // NIVEL_JEFE_CADA - 1)
+    return VIDA_JEFE_BASE + 8 * (nivel_jefe // NIVEL_JEFE_CADA - 1)
 
 
 def velocidad_jefe(nivel_jefe):
