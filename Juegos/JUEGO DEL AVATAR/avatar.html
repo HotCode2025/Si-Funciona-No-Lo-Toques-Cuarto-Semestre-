@@ -74,6 +74,7 @@
         <!-- MINIJUEGO 2: usa el personaje que esté elegido arriba (lo maneja esquiva.js) -->
         <div class="fila-minijuegos">
             <span class="etiqueta-minijuego">Minijuegos</span>
+            <button id="boton-duelo" class="boton-minijuego">⚔️ Duelo en la Arena <small>Movete y peleá en tiempo real</small></button>
             <button id="boton-esquiva" class="boton-minijuego">🎯 Esquiva Elemental <small>Sobreviví a los proyectiles</small></button>
         </div>
     </section>
@@ -108,6 +109,32 @@
         </div>
 
         <button id="boton-ir-combate" class="boton-primario">⚔️ Ir al combate</button>
+    </section>
+
+    <!-- MODO DUELO: moverse y pelear en tiempo real (la clase Duelo de duelo.js dibuja todo) -->
+    <section id="duelo" class="oculto">
+        <h2>Duelo en la Arena</h2>
+        <div id="ficha-duelo"></div>
+        <p class="mapa-ayuda" id="duelo-record"></p>
+        <canvas id="lienzo-duelo" width="600" height="400"></canvas>
+
+        <div class="controles-mapa">
+            <button class="control-mapa c-arriba" data-dir="arriba">▲ Arriba</button>
+            <button class="control-mapa c-izquierda" data-dir="izquierda">◀ Izquierda</button>
+            <button class="control-mapa c-abajo" data-dir="abajo">▼ Abajo</button>
+            <button class="control-mapa c-derecha" data-dir="derecha">Derecha ▶</button>
+        </div>
+
+        <div class="fila-esquiva">
+            <button class="boton-ataque-duelo" data-ataque="puno">👊 Puño <kbd>J</kbd></button>
+            <button class="boton-ataque-duelo" data-ataque="patada">🦵 Patada <kbd>K</kbd></button>
+            <button class="boton-ataque-duelo" data-ataque="barrida">🌀 Barrida <kbd>L</kbd></button>
+        </div>
+        <div class="fila-esquiva">
+            <button id="boton-duelo-impulso" class="boton-reglas">⚡ Impulso</button>
+            <button id="boton-duelo-jugar" class="boton-primario">▶ Empezar</button>
+            <button id="boton-duelo-salir" class="boton-terminar">Volver al menú</button>
+        </div>
     </section>
 
     <!-- MINIJUEGO 2: Esquiva Elemental (la clase Esquiva de esquiva.js dibuja todo) -->
@@ -237,5 +264,6 @@
 
     <script src="./avatar.js"></script>
     <script src="./esquiva.js"></script>
+    <script src="./duelo.js"></script>
 </body>
 </html>
