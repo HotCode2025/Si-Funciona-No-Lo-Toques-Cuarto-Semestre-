@@ -19,10 +19,15 @@ IMAGES_PATH = os.path.join(ASSETS_PATH, 'images')
 SOUNDS_PATH = os.path.join(ASSETS_PATH, 'sounds')
 PROLOGO_PATH = os.path.join(ASSETS_PATH, 'prologo.txt')
 RECORD_PATH = os.path.join(BASE_PATH, 'record.json')
+AJUSTES_PATH = os.path.join(BASE_PATH, 'ajustes.json')   # volumen guardado
 
 # ------------------------------------------------------------------ Audio
 MUSICA_FONDO = 'efectos.mp3'
 MUSICA_JEFE = 'Imperial_March_-_Kenobi.mp3'  # suena en el jefe y en el GAME OVER
+
+VOLUMEN_INICIAL = 0.8        # 0.0 a 1.0
+PASO_VOLUMEN = 0.1           # cuánto cambia con las teclas + y -
+DURACION_AVISO_VOLUMEN_MS = 1500
 
 # ---------------------------------------------------------------- Colores
 COLOR_BLANCO = (255, 255, 255)
@@ -47,7 +52,13 @@ TIPOS_ENEMIGO = (
 
 # -------------------------------------------------------------- Personaje
 ENERGIA_MAXIMA = 100
-VELOCIDAD_PERSONAJE = 5.0    # píxeles por paso (también en diagonal)
+# Movimiento con inercia: la nave acelera hasta su velocidad máxima y frena de a poco.
+VELOCIDAD_PERSONAJE = 6.0    # velocidad máxima en píxeles por paso (también en diagonal)
+ACELERACION_PERSONAJE = 0.55  # cuánto gana por paso al apretar una tecla (llega al máximo en ~11 pasos)
+FRENADO_PERSONAJE = 0.45     # cuánto pierde por paso al soltar las teclas (se desliza un poco)
+GIRO_BRUSCO = 2.0            # al cambiar de sentido frena el doble de rápido (más control)
+INCLINACION_MAX = 14         # grados que se inclina la nave al girar
+SUAVIZADO_INCLINACION = 0.2  # 0 = no se mueve, 1 = instantáneo
 COOLDOWN_LASER_MS = 250      # tiempo mínimo entre disparos
 DANO_COLISION = 10
 VELOCIDAD_LASER = 10

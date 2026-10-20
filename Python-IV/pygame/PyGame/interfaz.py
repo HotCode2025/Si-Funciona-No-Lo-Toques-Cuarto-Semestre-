@@ -73,3 +73,52 @@ class ListaBotones:
     def dibujar(self, screen):
         for i, boton in enumerate(self.botones):
             boton.dibujar(screen, resaltado=(i == self.opcion))
+
+
+class Slider:
+    """Deslizador horizontal (0.0 a 1.0) que se arrastra con el mouse."""
+
+    def __init__(self, etiqueta, rect, fuente, valor=1.0):
+        self.etiqueta = etiqueta
+        self.rect = pygame.Rect(rect)
+        self.fuente = fuente
+        self.valor = valor
+        self.arrastrando = False
+
+    def _desde_x(self, x):
+        self.valor = round(min(1.0, max(0.0, (x - self.rect.left) / self.rect.width)), 2)
+
+    def procesar(self, eventos):
+        """Devuelve (cambio, solto): si el valor cambió y si se terminó de arrastrar."""
+        cambio = solto = False
+        for evento in eventos:
+            if evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1 and self.rect.collidepoint(evento.pos):
+                self.arrastrando = True
+                self._desde_x(evento.pos[0])
+                cambio = True
+            elif evento.type == pygame.MOUSEMOTION and self.arrastrando:
+                anterior = self.valor
+                self._desde_x(evento.pos[0])
+                cambio = cambio or self.valor != anterior
+            elif evento.type == pygame.MOUSEBUTTONUP and evento.button == 1 and self.arrastrando:
+                self.arrastrando = False
+                solto = True
+        return cambio, solto
+
+    def dibujar(self, screen, silenciado=False):
+        color = COLOR_GRIS if silenciado else COLOR_AMARILLO
+        y = self.rect.centery
+        etiqueta = self.fuente.render(self.etiqueta, True, COLOR_BLANCO)
+        screen.blit(etiqueta, etiqueta.get_rect(midright=(self.rect.left - 16, y)))
+        pista = pygame.Rect(self.rect.left, y - 4, self.rect.width, 8)
+        pygame.draw.rect(screen, COLOR_BOTON, pista, border_radius=4)
+        pygame.draw.rect(screen, COLOR_GRIS, pista, width=1, border_radius=4)
+        relleno = pista.copy()
+        relleno.width = int(pista.width * self.valor)
+        if relleno.width:
+            pygame.draw.rect(screen, color, relleno, border_radius=4)
+        pygame.draw.circle(screen, COLOR_BLANCO, (pista.left + relleno.width, y), 11)
+        pygame.draw.circle(screen, color, (pista.left + relleno.width, y), 11, 3)
+        porcentaje = "Silencio" if silenciado else f"{round(self.valor * 100)}%"
+        texto = self.fuente.render(porcentaje, True, color)
+        screen.blit(texto, texto.get_rect(midleft=(self.rect.right + 16, y)))

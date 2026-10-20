@@ -36,14 +36,18 @@ def test_el_reloj_avanza_un_paso_fijo_por_actualizacion():
 
 def test_diagonal_no_es_mas_rapida_que_recta():
     recta, diagonal = Partida(), Partida()
-    x0, y0 = recta.personaje.shape.center
-    for _ in range(60):
+    for _ in range(25):                     # calentamiento: llegan a la velocidad de crucero
         recta.actualizar(dx=1)
         diagonal.actualizar(dx=1, dy=-1)
-    d_recta = recta.personaje.shape.centerx - x0
-    d_diag = ((diagonal.personaje.shape.centerx - x0) ** 2 + (diagonal.personaje.shape.centery - y0) ** 2) ** 0.5
-    assert d_recta == pytest.approx(60 * VELOCIDAD_PERSONAJE, abs=1)
-    assert d_diag == pytest.approx(d_recta, abs=2)
+    r0, d0 = recta.personaje.shape.center, diagonal.personaje.shape.center
+    for _ in range(30):
+        recta.actualizar(dx=1)
+        diagonal.actualizar(dx=1, dy=-1)
+    r1, d1 = recta.personaje.shape.center, diagonal.personaje.shape.center
+    v_recta = ((r1[0] - r0[0]) ** 2 + (r1[1] - r0[1]) ** 2) ** 0.5 / 30
+    v_diag = ((d1[0] - d0[0]) ** 2 + (d1[1] - d0[1]) ** 2) ** 0.5 / 30
+    assert v_recta == pytest.approx(VELOCIDAD_PERSONAJE, abs=0.3)
+    assert v_diag == pytest.approx(v_recta, abs=0.3)
 
 
 def test_cadencia_de_disparo_independiente_de_los_fps():
