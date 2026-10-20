@@ -1498,10 +1498,11 @@ body.pantalla-derrota::after {
 
 
 /* ====== MINIJUEGO 2: ESQUIVA ELEMENTAL ====== */
-#esquiva { text-align: center; }
+#esquiva, #duelo { text-align: center; }
 
 /* El lienzo comparte el mismo fondo que el mapa */
-#lienzo-esquiva {
+#lienzo-esquiva,
+#lienzo-duelo {
     display: block;
     width: 100%;
     max-width: 600px;
@@ -1522,15 +1523,32 @@ body.pantalla-derrota::after {
     cursor: crosshair;
 }
 
-#esquiva .controles-mapa .control-mapa { touch-action: none; }
+#esquiva .controles-mapa .control-mapa,
+#duelo .controles-mapa .control-mapa,
+.boton-ataque-duelo { touch-action: none; }
 
 .fila-esquiva {
     display: grid;
     grid-template-columns: 1fr 1.4fr 1.2fr;
     gap: 0.7rem;
     max-width: 600px;
-    margin: 0 auto;
+    margin: 0 auto 0.7rem;
 }
+
+.boton-ataque-duelo {
+    padding: 0.7rem 0.5rem;
+    font: inherit;
+    font-weight: 700;
+    color: var(--ink);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.28), rgba(245, 158, 11, 0.22));
+    border: 1px solid var(--border-strong);
+    border-radius: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.boton-ataque-duelo:active { transform: scale(0.96); }
+.boton-ataque-duelo kbd { margin-left: 0.3rem; opacity: 0.8; }
 
 /* Bloque de minijuegos en la pantalla de selección */
 .fila-minijuegos {
@@ -1554,6 +1572,7 @@ body.pantalla-derrota::after {
     flex-direction: column;
     align-items: flex-start;
     flex: 1;
+    min-width: 0;
     padding: 0.7rem 1.1rem;
     font: inherit;
     font-weight: 700;
