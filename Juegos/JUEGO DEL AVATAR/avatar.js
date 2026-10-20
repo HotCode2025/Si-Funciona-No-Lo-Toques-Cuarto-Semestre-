@@ -616,18 +616,25 @@ class MovimientoCinematico {
         p.pintarEnMapa(ctx, -p.ancho / 2, -p.alto / 2);
         ctx.restore();
 
-        // Nombre sobre la cabeza
+        // Placa con el nombre sobre la cabeza, con el color de su elemento
         ctx.font = '600 14px Outfit, sans-serif';
         ctx.textAlign = 'center';
-        ctx.textBaseline = 'alphabetic';
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.fillStyle = '#fff';
+        ctx.textBaseline = 'middle';
         const rotulo = `${info.emoji} ${p.nombre}`;
-        const yRotulo = Math.max(16, p.y - 8 - flotar + respira);
-        ctx.strokeText(rotulo, cx, yRotulo);
-        ctx.fillText(rotulo, cx, yRotulo);
+        const anchoPlaca = ctx.measureText(rotulo).width + 24;
+        const yPlaca = Math.max(15, p.y - 14 - flotar + respira);
+        ctx.fillStyle = 'rgba(10, 5, 2, 0.8)';
+        ctx.strokeStyle = info.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(cx - anchoPlaca / 2, yPlaca - 12, anchoPlaca, 24, 12);
+        else ctx.rect(cx - anchoPlaca / 2, yPlaca - 12, anchoPlaca, 24);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#fff';
+        ctx.fillText(rotulo, cx, yPlaca + 1);
         ctx.textAlign = 'start';
+        ctx.textBaseline = 'alphabetic';
     }
 }
 
@@ -882,7 +889,9 @@ class Personaje {
         titulo.classList.add('subtitulo');
         titulo.textContent = this.titulo;
 
-        tarjeta.append(this.crearAvatar(), radio, nombre, titulo);
+        // Insignia con el elemento: se ve a simple vista quién es cada uno
+        tarjeta.style.setProperty('--elemento', (ELEMENTOS[this.elemento] ?? ELEMENTOS.guerrero).color);
+        tarjeta.append(this.crearAvatar(), radio, nombre, titulo, this.crearInsignia());
         return tarjeta;
     }
 
@@ -894,6 +903,53 @@ class Personaje {
         opcion.value = this.id;
         opcion.textContent = `${this.emoji} ${this.nombre} — ${this.titulo}`;
         return opcion;
+    }
+
+    // Insignia del elemento (ej: "🌪️ Aire") con el color del elemento
+    crearInsignia() {
+        const info = ELEMENTOS[this.elemento] ?? ELEMENTOS.guerrero;
+        const insignia = document.createElement('span');
+        insignia.classList.add('insignia-elemento');
+        insignia.style.setProperty('--elemento', info.color);
+        insignia.textContent = `${info.emoji} ${info.nombre}`;
+        return insignia;
+    }
+
+    // Ficha del mapa: retrato, nombre, título, elemento y sus 3 habilidades.
+    // Es el "cartel de identificación" del personaje que se está moviendo.
+    crearFicha() {
+        const info = ELEMENTOS[this.elemento] ?? ELEMENTOS.guerrero;
+        const ficha = document.createElement('div');
+        ficha.classList.add('ficha-personaje');
+        ficha.style.setProperty('--elemento', info.color);
+        ficha.style.setProperty('--tinte', this.tinte);
+
+        const datos = document.createElement('div');
+        datos.classList.add('ficha-datos');
+        const etiqueta = document.createElement('span');
+        etiqueta.classList.add('ficha-etiqueta');
+        etiqueta.textContent = 'Personaje en el mapa';
+        const nombre = document.createElement('strong');
+        nombre.classList.add('ficha-nombre');
+        nombre.textContent = this.nombre;
+        const titulo = document.createElement('span');
+        titulo.classList.add('ficha-titulo');
+        titulo.textContent = this.titulo;
+        datos.append(etiqueta, nombre, titulo, this.crearInsignia());
+
+        const etiquetas = { puno: '👊 Puño', patada: '🦵 Patada', barrida: '🌀 Barrida' };
+        const lista = document.createElement('ul');
+        lista.classList.add('ficha-habilidades');
+        Object.entries(info.habilidades).forEach(([id, habilidad]) => {
+            const li = document.createElement('li');
+            const tipo = document.createElement('small');
+            tipo.textContent = etiquetas[id] ?? id;
+            li.append(tipo, habilidad);
+            lista.append(li);
+        });
+
+        ficha.append(this.crearAvatar(true), datos, lista);
+        return ficha;
     }
 
     // Tarjeta de la arena (foto grande + barra de vida)
@@ -1005,6 +1061,7 @@ class Juego {
         this.seccionPersonaje   = document.getElementById('seleccionar-personaje');
         this.seccionAtaque      = document.getElementById('seleccionar-ataque');
         this.seccionMapa        = document.getElementById('ver-mapa');
+        this.fichaMapa          = document.getElementById('ficha-mapa');
         this.mapa               = document.getElementById('mapa');
         this.seccionMensajes    = document.getElementById('mensajes');
         this.seccionReiniciar   = document.getElementById('reiniciar');
@@ -1285,6 +1342,7 @@ class Juego {
         this.seccionPersonaje.classList.add('oculto');
         this.seccionMensajes.classList.add('oculto');
         this.seccionMapa.classList.remove('oculto');
+        this.fichaMapa.replaceChildren(this.jugador.crearFicha());   // identifica a quién movemos
 
         // El bucle de animación (requestAnimationFrame) repinta el mapa ~60 veces por segundo
         this.cinematica.iniciar(this.jugador);

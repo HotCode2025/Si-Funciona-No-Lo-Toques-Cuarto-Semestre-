@@ -70,6 +70,12 @@
             <button id="boton-reglas-personaje" class="boton-reglas">Reglas</button>
             <button id="boton-terminar-juego" class="boton-terminar">Terminar el juego</button>
         </div>
+
+        <!-- MINIJUEGO 2: usa el personaje que esté elegido arriba (lo maneja esquiva.js) -->
+        <div class="fila-minijuegos">
+            <span class="etiqueta-minijuego">Minijuegos</span>
+            <button id="boton-esquiva" class="boton-minijuego">🎯 Esquiva Elemental <small>Sobreviví a los proyectiles</small></button>
+        </div>
     </section>
 
     <!-- Pantalla de despedida (aparece al tocar "Terminar el juego") -->
@@ -83,6 +89,10 @@
          para moverlo (onmousedown cambia la velocidad, onmouseup la deja en 0). -->
     <section id="ver-mapa" class="oculto">
         <h2>Mapa de Exploración</h2>
+
+        <!-- Ficha que identifica al personaje: la dibuja Personaje.crearFicha() -->
+        <div id="ficha-mapa" aria-live="polite"></div>
+
         <p class="mapa-ayuda">
             Movelo con las <kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> o <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>,
             con los botones, o haciendo <strong>click en el mapa</strong>.
@@ -98,6 +108,27 @@
         </div>
 
         <button id="boton-ir-combate" class="boton-primario">⚔️ Ir al combate</button>
+    </section>
+
+    <!-- MINIJUEGO 2: Esquiva Elemental (la clase Esquiva de esquiva.js dibuja todo) -->
+    <section id="esquiva" class="oculto">
+        <h2>Esquiva Elemental</h2>
+        <div id="ficha-esquiva"></div>
+        <p class="mapa-ayuda" id="esquiva-record"></p>
+        <canvas id="lienzo-esquiva" width="600" height="400"></canvas>
+
+        <div class="controles-mapa">
+            <button class="control-mapa c-arriba" data-dir="arriba">▲ Arriba</button>
+            <button class="control-mapa c-izquierda" data-dir="izquierda">◀ Izquierda</button>
+            <button class="control-mapa c-abajo" data-dir="abajo">▼ Abajo</button>
+            <button class="control-mapa c-derecha" data-dir="derecha">Derecha ▶</button>
+        </div>
+
+        <div class="fila-esquiva">
+            <button id="boton-esquiva-impulso" class="boton-reglas">⚡ Impulso</button>
+            <button id="boton-esquiva-jugar" class="boton-primario">▶ Empezar</button>
+            <button id="boton-esquiva-salir" class="boton-terminar">Volver al menú</button>
+        </div>
     </section>
 
     <!-- Selección de movimiento (oculto hasta elegir personaje) -->
@@ -205,5 +236,6 @@
     </div>
 
     <script src="./avatar.js"></script>
+    <script src="./esquiva.js"></script>
 </body>
 </html>
