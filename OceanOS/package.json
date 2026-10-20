@@ -1,0 +1,14 @@
+{
+  "name": "oceanos",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OceanOS — plataforma de restauración de ecosistemas marinos del Atlántico Sur",
+  "scripts": {
+    "instalar": "cd backend && npm install && cd ../frontend && npm install",
+    "db:up": "docker compose up -d",
+    "db:reset": "cd backend && npm run db:reset",
+    "dev:api": "cd backend && npm run dev",
+    "dev:web": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build"
+  }
+}

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OceanOS — Encuesta + Base de Datos</title>
+<style>
+:root {
+  --navy: #0A2342;
+  --ocean: #1565C0;
+  --teal: #00897B;
+  --teal-light: #E0F2F1;
+  --sky: #E3F2FD;
+  --accent: #00BCD4;
+  --white: #FFFFFF;
+  --slate: #37474F;
+  --mist: #ECEFF1;
+  --gray: #90A4AE;
+  --error: #E53935;
+  --green: #2E7D32;
+  --gold: #F9A825;
+  --red-light: #FFEBEE;
+  --green-light: #E8F5E9;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #F0F4F8; color: var(--slate); min-height: 100vh; }
+
+/* TABS */
+.tabs-bar { background: var(--navy); display: flex; align-items: center; padding: 0 24px; gap: 4px; position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+.tab-logo { color: #fff; font-weight: 800; font-size: 18px; padding: 16px 20px 16px 0; border-right: 1px solid rgba(255,255,255,0.15); margin-right: 8px; white-space: nowrap; }
+.tab { padding: 14px 20px; color: rgba(255,255,255,0.6); font-size: 14px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+.tab:hover { color: #fff; }
+.tab.active { color: #fff; border-bottom-color: var(--teal); }
+
+/* HERO */
+.hero { background: linear-gradient(135deg, var(--navy) 0%, #0D47A1 60%, #006064 100%); padding: 48px 24px 70px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(0,188,212,0.08) 0%, transparent 60%); }
+.hero-wave { position: absolute; bottom: -2px; left: 0; right: 0; }
+.hero-logo { font-size: 44px; margin-bottom: 6px; }
+.hero-title { font-size: clamp(26px,4vw,40px); font-weight: 800; color: #fff; margin-bottom: 6px; letter-spacing: -0.5px; }
+.hero-sub { font-size: 16px; color: #90CAF9; margin-bottom: 20px; }
+.hero-pills { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.pill { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+
+/* PROGRESS */
+.prog-bar { background: #fff; border-bottom: 1px solid #E0E0E0; padding: 10px 24px; display: none; }
+.prog-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; }
+.prog-label { font-weight: 700; color: var(--ocean); }
+.prog-pct { color: var(--gray); }
+.prog-track { height: 5px; background: var(--mist); border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--accent)); border-radius: 3px; transition: width 0.4s ease; }
+
+/* CONTAINER */
+.container { max-width: 740px; margin: 0 auto; padding: 32px 16px 80px; }
+.db-container { max-width: 1100px; margin: 0 auto; padding: 32px 16px 80px; }
+
+/* WELCOME */
+.welcome-card { background: #fff; border-radius: 14px; padding: 36px; box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+.welcome-card h2 { font-size: 22px; color: var(--navy); margin-bottom: 14px; }
+.welcome-card p { font-size: 15px; line-height: 1.65; color: var(--slate); margin-bottom: 12px; }
+.welcome-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 14px 0 24px; }
+.welcome-list li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--slate); }
+.welcome-list li::before { content: '🌊'; }
+.btn-start { width: 100%; padding: 15px; background: linear-gradient(135deg, var(--navy), var(--ocean)); color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10,35,66,0.25); }
+
+/* DOTS */
+.dots { display: none; justify-content: center; gap: 8px; margin: 16px 0; }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: #CFD8DC; transition: all 0.3s; }
+.dot.active { background: var(--teal); transform: scale(1.3); }
+.dot.done { background: var(--ocean); }
+
+/* BLOCK HEADER */
+.blk-header { display: flex; align-items: center; gap: 10px; padding: 13px 18px; border-radius: 10px 10px 0 0; margin-top: 28px; }
+.blk-tag { background: rgba(255,255,255,0.2); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.blk-title { font-size: 14px; font-weight: 700; color: #fff; }
+
+/* QUESTION CARD */
+.q-card { background: #fff; border: 1px solid #E8EEF4; border-top: none; padding: 22px; transition: border-left 0.2s; }
+.q-card:last-of-type { border-radius: 0 0 10px 10px; margin-bottom: 0; }
+.q-card.answered { border-left: 3px solid var(--teal); }
+.q-card.has-error { border-left: 3px solid var(--error); }
+.q-num { font-size: 10px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+.q-text { font-size: 15px; font-weight: 600; color: var(--navy); line-height: 1.4; margin-bottom: 3px; }
+.q-hint { font-size: 12px; color: var(--gray); margin-bottom: 14px; font-style: italic; }
+.req { color: var(--error); }
+.err-msg { font-size: 12px; color: var(--error); margin-top: 6px; display: none; }
+.err-msg.show { display: block; }
+
+/* OPTIONS */
+.opts { display: flex; flex-direction: column; gap: 7px; }
+.opt { display: flex; align-items: flex-start; gap: 10px; padding: 11px 14px; border-radius: 8px; border: 1.5px solid #E0E8F0; cursor: pointer; transition: all 0.15s; user-select: none; }
+.opt:hover { border-color: var(--teal); background: var(--teal-light); }
+.opt.sel { border-color: var(--teal); background: var(--teal-light); }
+.opt-dot { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #B0BEC5; background: #fff; position: relative; margin-top: 2px; transition: all 0.15s; }
+.opt.sel .opt-dot { background: var(--teal); border-color: var(--teal); }
+.opt.sel .opt-dot::after { content: ''; position: absolute; inset: 3px; background: #fff; border-radius: 50%; }
+.opt-dot.chk { border-radius: 4px; }
+.opt.sel .opt-dot.chk::after { content: '✓'; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #fff; background: transparent; border-radius: 0; }
+.opt-lbl { font-size: 14px; color: var(--slate); line-height: 1.4; }
+
+/* SCALE */
+.scale-wrap { margin-top: 6px; }
+.scale-labels { display: flex; justify-content: space-between; margin-bottom: 7px; font-size: 11px; color: var(--gray); }
+.scale-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+.sc-btn { width: 44px; height: 44px; border-radius: 8px; border: 2px solid #E0E8F0; background: #fff; font-size: 15px; font-weight: 700; color: #B0BEC5; cursor: pointer; transition: all 0.15s; }
+.sc-btn:hover { border-color: var(--teal); color: var(--teal); }
+.sc-btn.sel { background: var(--teal); border-color: var(--teal); color: #fff; transform: scale(1.08); }
+
+/* GRID */
+.grid-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 6px; }
+.grid-table th { background: var(--navy); color: #fff; padding: 8px 6px; text-align: center; font-weight: 700; font-size: 12px; }
+.grid-table td { padding: 8px 6px; border-bottom: 1px solid #E0E8F0; }
+.grid-table tr:nth-child(even) td { background: var(--mist); }
+.grid-table td:first-child { font-size: 13px; color: var(--slate); padding-left: 10px; }
+.grid-table input[type=radio] { accent-color: var(--teal); width: 16px; height: 16px; cursor: pointer; display: block; margin: 0 auto; }
+
+/* INPUTS */
+.t-input, .ta-input { width: 100%; padding: 11px 14px; border-radius: 8px; border: 1.5px solid #E0E8F0; font-family: inherit; font-size: 14px; color: var(--slate); outline: none; transition: border-color 0.2s; }
+.t-input:focus, .ta-input:focus { border-color: var(--teal); }
+.ta-input { resize: vertical; }
+
+/* INFOBOX */
+.infobox { background: var(--sky); border-left: 4px solid var(--teal); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 18px; font-size: 14px; line-height: 1.6; color: var(--slate); }
+
+/* NAV */
+.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; padding-top: 20px; border-top: 2px solid var(--mist); }
+.btn { padding: 13px 26px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
+.btn-prev { background: var(--mist); color: var(--slate); }
+.btn-prev:hover { background: #CFD8DC; }
+.btn-next { background: var(--teal); color: #fff; }
+.btn-next:hover { background: #00796B; transform: translateY(-1px); }
+.btn-submit { background: linear-gradient(135deg, var(--navy), var(--ocean)); color: #fff; }
+
+/* SUCCESS */
+.success { display: none; text-align: center; padding: 50px 24px; }
+.success.show { display: block; }
+.suc-icon { font-size: 70px; margin-bottom: 20px; }
+.suc-title { font-size: 28px; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
+.suc-sub { font-size: 15px; color: var(--gray); margin-bottom: 28px; line-height: 1.6; }
+.token-badge { display: inline-flex; align-items: center; gap: 14px; background: linear-gradient(135deg, var(--navy), var(--teal)); color: #fff; padding: 18px 28px; border-radius: 12px; margin-bottom: 28px; }
+.token-num { font-size: 44px; font-weight: 800; }
+.token-lbl { font-size: 13px; opacity: 0.8; line-height: 1.4; text-align: left; }
+.suc-btn { margin-top: 20px; padding: 12px 28px; background: var(--teal); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+
+/* ===================== DATABASE TAB ===================== */
+.db-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+.db-title { font-size: 22px; font-weight: 800; color: var(--navy); }
+.db-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.db-btn { padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: all 0.2s; }
+.db-btn-export { background: var(--teal); color: #fff; }
+.db-btn-clear { background: var(--red-light); color: var(--error); border: 1px solid #FFCDD2; }
+.db-btn-export:hover { background: #00796B; }
+.db-btn-clear:hover { background: #FFCDD2; }
+
+/* STATS CARDS */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 28px; }
+.stat-card { background: #fff; border-radius: 12px; padding: 18px; border: 1px solid #E8EEF4; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.stat-val { font-size: 32px; font-weight: 800; color: var(--ocean); }
+.stat-lbl { font-size: 12px; color: var(--gray); margin-top: 2px; }
+.stat-sub { font-size: 11px; color: var(--teal); font-weight: 600; margin-top: 4px; }
+
+/* KPI SEMAFORO */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 12px; margin-bottom: 28px; }
+.kpi-card { background: #fff; border-radius: 10px; padding: 14px 16px; border: 1px solid #E8EEF4; display: flex; align-items: center; gap: 12px; }
+.kpi-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.kpi-dot.green { background: var(--green); }
+.kpi-dot.yellow { background: var(--gold); }
+.kpi-dot.red { background: var(--error); }
+.kpi-info { flex: 1; }
+.kpi-name { font-size: 12px; color: var(--gray); }
+.kpi-val { font-size: 18px; font-weight: 800; color: var(--navy); }
+.kpi-target { font-size: 11px; color: var(--gray); }
+
+/* TABLE */
+.tbl-wrap { background: #fff; border-radius: 12px; border: 1px solid #E8EEF4; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 28px; }
+.tbl-head { padding: 16px 20px; border-bottom: 1px solid #E8EEF4; display: flex; align-items: center; justify-content: space-between; }
+.tbl-head-title { font-size: 15px; font-weight: 700; color: var(--navy); }
+.tbl-search { padding: 8px 12px; border: 1.5px solid #E0E8F0; border-radius: 7px; font-family: inherit; font-size: 13px; outline: none; width: 220px; }
+.tbl-search:focus { border-color: var(--teal); }
+.tbl-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { background: var(--navy); color: #fff; padding: 10px 14px; text-align: left; font-size: 12px; white-space: nowrap; }
+tbody tr { border-bottom: 1px solid #F0F4F8; transition: background 0.15s; cursor: pointer; }
+tbody tr:hover { background: var(--sky); }
+tbody td { padding: 10px 14px; color: var(--slate); max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.badge-seg { display: inline-block; padding: 2px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; background: var(--teal-light); color: var(--teal); }
+.badge-score { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; font-weight: 800; font-size: 13px; }
+.score-hi { background: var(--green-light); color: var(--green); }
+.score-mid { background: #FFF8E1; color: #F57F17; }
+.score-lo { background: var(--red-light); color: var(--error); }
+.pag { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-top: 1px solid #F0F4F8; font-size: 13px; color: var(--gray); }
+.pag-btns { display: flex; gap: 6px; }
+.pag-btn { padding: 6px 12px; border-radius: 6px; border: 1.5px solid #E0E8F0; background: #fff; font-size: 12px; cursor: pointer; font-family: inherit; }
+.pag-btn.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+.pag-btn:hover:not(.active) { background: var(--mist); }
+
+/* MODAL */
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+.modal-bg.show { display: flex; }
+.modal { background: #fff; border-radius: 14px; padding: 28px; max-width: 680px; width: 100%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.modal-title { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+.modal-sub { font-size: 13px; color: var(--gray); margin-bottom: 20px; }
+.modal-row { display: flex; gap: 8px; padding: 10px 0; border-bottom: 1px solid #F0F4F8; flex-wrap: wrap; }
+.modal-q { font-size: 12px; color: var(--gray); width: 100%; margin-bottom: 2px; }
+.modal-a { font-size: 14px; color: var(--slate); font-weight: 500; }
+.modal-close { margin-top: 20px; padding: 10px 20px; background: var(--mist); border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--slate); }
+
+/* EMPTY STATE */
+.empty { text-align: center; padding: 60px 20px; color: var(--gray); }
+.empty-icon { font-size: 60px; margin-bottom: 16px; }
+.empty-title { font-size: 18px; font-weight: 700; color: var(--slate); margin-bottom: 8px; }
+.empty-sub { font-size: 14px; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--navy); color: #fff; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 600; z-index: 9999; transition: transform 0.3s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@media(max-width:600px){
+  .scale-btns { gap: 3px; } .sc-btn { width: 36px; height: 36px; font-size: 13px; }
+  .nav { flex-direction: column; gap: 10px; } .btn { width: 100%; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- TAB BAR -->
+<div class="tabs-bar">
+  <div class="tab-logo">🌊 OceanOS</div>
+  <div class="tab active" onclick="showTab('survey')" id="tab-survey">📋 Encuesta</div>
+  <div class="tab" onclick="showTab('db')" id="tab-db">🗄️ Base de Datos</div>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="heroSection">
+  <div class="hero-logo">🌊</div>
+  <div class="hero-title">Validación del MVP</div>
+  <div class="hero-sub">App Ciudadana OceanOS — Patagonia · 2026</div>
+  <div class="hero-pills">
+    <span class="pill">⏱ 7-10 min</span>
+    <span class="pill">🔒 Anónimo</span>
+    <span class="pill">🎁 50 tokens OKN</span>
+    <span class="pill">🐋 Puerto Madryn</span>
+  </div>
+  <svg class="hero-wave" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="#F0F4F8"/>
+  </svg>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-bar" id="progBar">
+  <div class="prog-info"><span class="prog-label" id="progLabel">Bloque 1 de 5</span><span class="prog-pct" id="progPct">0%</span></div>
+  <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+</div>
+
+<!-- ===================== SURVEY TAB ===================== -->
+<div id="pane-survey">
+  <div class="dots" id="dots">
+    <div class="dot" data-dot="0"></div><div class="dot" data-dot="1"></div>
+    <div class="dot" data-dot="2"></div><div class="dot" data-dot="3"></div>
+    <div class="dot" data-dot="4"></div>
+  </div>
+  <div class="container">
+    <!-- WELCOME -->
+    <div id="welcome">
+      <div class="welcome-card">
+        <h2>¿Reportarías para salvar el océano?</h2>
+        <p>OceanOS convierte avistamientos de tiburones y bosques de algas en datos científicos verificados y activos de restauración marina.</p>
+        <p>Necesitamos tu opinión para validar si el producto que estamos construyendo resuelve un problema real en tu comunidad.</p>
+        <ul class="welcome-list">
+          <li>18 preguntas en 5 bloques temáticos</li>
+          <li>Tus respuestas se guardan automáticamente</li>
+          <li>Si dejás tu email, te avisamos del lanzamiento beta</li>
+          <li>Los primeros 50 beta reciben 50 tokens OKN gratis</li>
+        </ul>
+        <button class="btn-start" onclick="startSurvey()">Comenzar la encuesta →</button>
+      </div>
+    </div>
+    <!-- SURVEY -->
+    <div id="surveyPane" style="display:none"></div>
+    <!-- NAV -->
+    <div class="nav" id="navBar" style="display:none">
+      <button class="btn btn-prev" id="btnPrev" onclick="prevSec()">← Anterior</button>
+      <button class="btn btn-next" id="btnNext" onclick="nextSec()">Siguiente →</button>
+    </div>
+    <!-- SUCCESS -->
+    <div class="success" id="successPane">
+      <div class="suc-icon">🌊</div>
+      <div class="suc-title">¡Gracias por ayudar a restaurar el océano!</div>
+      <div class="suc-sub">Tus respuestas quedaron guardadas en la base de datos.<br>Nos ayudás a construir algo que realmente importa.</div>
+      <div class="token-badge">
+        <div class="token-num">+50</div>
+        <div class="token-lbl">Tokens OKN<br>reservados para vos<br>al lanzamiento</div>
+      </div>
+      <button class="suc-btn" onclick="showTab('db')">Ver base de datos →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== DATABASE TAB ===================== -->
+<div id="pane-db" style="display:none">
+  <div class="db-container">
+    <div class="db-header">
+      <div class="db-title">🗄️ Base de Datos — Respuestas</div>
+      <div class="db-actions">
+        <button class="db-btn db-btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
+        <button class="db-btn db-btn-clear" onclick="clearDB()">🗑 Limpiar todo</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <!-- TABLE -->
+    <div class="tbl-wrap">
+      <div class="tbl-head">
+        <span class="tbl-head-title">Todas las respuestas</span>
+        <input class="tbl-search" id="searchInput" placeholder="🔍 Buscar..." oninput="filterTable()">
+      </div>
+      <div class="tbl-scroll"><div id="tableArea"></div></div>
+      <div class="pag" id="pagArea"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg" onclick="closeModal(event)">
+  <div class="modal" id="modal"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+//  SURVEY DEFINITION
+// ============================================================
+const SECS = [
+  { label:'BLOQUE 0', title:'Clasificación del respondente', color:'#0A2342',
+    qs:[
+      { id:'q1', type:'multi', req:true, num:1,
+        text:'¿Cuál de estas actividades realizás en la costa patagónica?',
+        hint:'Podés seleccionar más de una.',
+        opts:['Buceo recreativo o deportivo','Pesca artesanal o deportiva','Ecoturismo / avistamiento de fauna','Investigación científica o estudio universitario','Ninguna de las anteriores'] },
+      { id:'q2', type:'single', req:true, num:2,
+        text:'¿Con qué frecuencia realizás esta actividad en temporada (oct–abr)?',
+        opts:['Todos los días','2-3 veces por semana','1 vez por semana','1-2 veces por mes','Menos de 1 vez por mes'] },
+      { id:'q3', type:'single', req:true, num:3,
+        text:'¿En qué zona de la costa operás principalmente?',
+        opts:['Puerto Madryn / Golfo Nuevo','Península Valdés','Puerto Deseado / Santa Cruz','Tierra del Fuego','Otra zona patagónica'] }
+    ]
+  },
+  { label:'BLOQUE 1', title:'Comportamiento actual', color:'#00897B',
+    qs:[
+      { id:'q4', type:'single', req:true, num:4,
+        text:'¿Alguna vez fotografiaste avistamientos de fauna marina?',
+        opts:['Sí, siempre o casi siempre','Sí, a veces','Raramente','No, nunca'] },
+      { id:'q5', type:'multi', req:false, num:5,
+        text:'¿Qué hacés con esas fotos o datos?',
+        hint:'Podés seleccionar más de una.',
+        opts:['Las subo a redes sociales','Las comparto en WhatsApp','Las guardo para uso personal','Las reporto a ONG o institución','No suelo documentar avistamientos'] },
+      { id:'q6', type:'single', req:false, num:6,
+        text:'¿Conocés alguna app para reportar avistamientos en Argentina?',
+        opts:['Sí','No'] },
+      { id:'q6b', type:'text', req:false, num:'6b',
+        text:'Si respondiste Sí, ¿cuál app conocés?', hint:'Opcional.',
+        placeholder:'Nombre de la app...' }
+    ]
+  },
+  { label:'BLOQUE 2', title:'Propuesta de valor', color:'#1565C0',
+    qs:[
+      { id:'q_info', type:'info',
+        text:'<strong>OceanOS</strong> es una app gratuita donde reportás avistamientos de tiburones y bosques de algas desde tu celular. Subís una foto con GPS y la IA clasifica la especie. Por cada reporte verificado ganás <strong>tokens OKN canjeables por experiencias de ecoturismo en Patagonia.</strong>' },
+      { id:'q7', type:'scale', req:true, num:7,
+        text:'¿Cuán probable es que uses OceanOS en tu actividad habitual?',
+        hint:'1 = Nada probable  ·  10 = Muy probable', min:1, max:10 },
+      { id:'q8', type:'single', req:true, num:8,
+        text:'¿Cuántos reportes podrías enviar por semana?',
+        opts:['0 (no creo que la use)','1-2 reportes/semana','3-5 reportes/semana','Más de 5 reportes/semana'] },
+      { id:'q9', type:'grid', req:false, num:9,
+        text:'¿Qué te motivaría más para reportar? (1=poco · 5=mucho)',
+        rows:['Tokens OKN canjeables','Ver mi contribución en el mapa','Comunidad científica ciudadana','Conservar fauna y ecosistemas','Ranking e insignias'],
+        cols:['1','2','3','4','5'] },
+      { id:'q10', type:'multi', req:false, num:10,
+        text:'¿Con qué datos te sentirías cómodo/a?',
+        hint:'Podés seleccionar más de una.',
+        opts:['Foto del avistamiento','GPS aproximado (±500m)','GPS exacto','Fecha y hora','Observaciones de texto'] },
+      { id:'q11', type:'multi', req:false, num:11, max:2,
+        text:'¿Cuáles funciones valorás más?', hint:'Elegí hasta 2.',
+        opts:['Mapa en tiempo real','Clasificación automática por IA','Wallet de tokens','Ranking con otros usuarios','Notificaciones cercanas','Dashboard de salud del ecosistema'] }
+    ]
+  },
+  { label:'BLOQUE 3 y 4', title:'Barreras y tokens', color:'#37474F',
+    qs:[
+      { id:'q12', type:'multi', req:false, num:12,
+        text:'¿Qué podría impedirte usar OceanOS regularmente?',
+        hint:'Podés seleccionar más de una.',
+        opts:['Sin conectividad en mi actividad','No quiero compartir GPS','Me parece complicado','No creo que mis reportes sean útiles','Los tokens no son suficiente incentivo','Ya uso otra app similar','No veo barreras significativas'] },
+      { id:'q13', type:'single', req:false, num:13,
+        text:'¿Con qué frecuencia tenés señal durante tu actividad costera?',
+        opts:['Siempre o casi siempre','La mitad del tiempo','Raramente','Nunca (actividad off-shore)'] },
+      { id:'q14', type:'multi', req:false, num:14, max:3,
+        text:'¿Con qué te gustaría canjear tus tokens OKN?', hint:'Elegí hasta 3.',
+        opts:['Tours de buceo y ecoturismo','Entradas a áreas protegidas','Merchandising OceanOS','Donación a restauración marina','Reportes científicos del ecosistema','Equipamiento de pesca/buceo','Campañas científicas como voluntario'] },
+      { id:'q15', type:'single', req:false, num:15,
+        text:'¿Es justo recibir 25 tokens OKN por una foto verificada de tiburón?',
+        opts:['Sí, me parece justo','Sí, aunque podría mejorar','No, debería ser más','No puedo evaluarlo sin probarlo'] },
+      { id:'q16', type:'single', req:false, num:16,
+        text:'100 tokens = 10% de descuento en un tour de $50.000 ARS. ¿Es incentivo suficiente?',
+        opts:['Sí, definitivamente','Sí, aunque podría mejorar','No, no es suficiente','No puedo evaluarlo'] }
+    ]
+  },
+  { label:'BLOQUE 5', title:'Acción y contacto', color:'#0A2342',
+    qs:[
+      { id:'q17', type:'single', req:true, num:17,
+        text:'¿Querés ser parte de los primeros 50 usuarios beta en Puerto Madryn?',
+        opts:['Sí, me interesa mucho','Sí, pero quiero más info primero','Tal vez','No por ahora'] },
+      { id:'q17b', type:'email', req:false, num:'17b',
+        text:'Si querés unirte al beta, dejanos tu email.',
+        hint:'Opcional. Solo para avisarte del lanzamiento.',
+        placeholder:'tu@email.com' },
+      { id:'q18', type:'textarea', req:false, num:18,
+        text:'¿Conocés organizaciones que podrían usar los datos de OceanOS?',
+        hint:'Opcional. Pesqueras, ONGs, áreas protegidas.',
+        placeholder:'Nombre y contacto de la organización...' },
+      { id:'q19', type:'textarea', req:false, num:19,
+        text:'¿Tenés comentarios o sugerencias sobre el proyecto?',
+        hint:'Opcional. Tu feedback es muy valioso.',
+        placeholder:'Escribí lo que quieras...' }
+    ]
+  }
+];
+
+// ============================================================
+//  STATE
+// ============================================================
+let curSec = 0;
+const ans = {};
+const gridAns = {};
+let isSurveyActive = false;
+
+// ============================================================
+//  TABS
+// ============================================================
+function showTab(tab) {
+  ['survey','db'].forEach(t => {
+    document.getElementById('pane-'+t).style.display = t===tab ? 'block' : 'none';
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+  });
+  document.getElementById('heroSection').style.display = tab==='survey' ? 'block' : 'none';
+  if (tab==='db') renderDB();
+}
+
+// ============================================================
+//  SURVEY
+// ============================================================
+function startSurvey() {
+  isSurveyActive = true;
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('surveyPane').style.display = 'block';
+  document.getElementById('navBar').style.display = 'flex';
+  document.getElementById('progBar').style.display = 'block';
+  document.getElementById('dots').style.display = 'flex';
+  curSec = 0;
+  renderSec();
+  updateProg();
+}
+
+function renderSec() {
+  const sec = SECS[curSec];
+  const pane = document.getElementById('surveyPane');
+  pane.innerHTML = '';
+
+  const hdr = document.createElement('div');
+  hdr.className = 'blk-header';
+  hdr.style.background = sec.color;
+  hdr.innerHTML = `<span class="blk-tag">${sec.label}</span><span class="blk-title">${sec.title}</span>`;
+  pane.appendChild(hdr);
+
+  let qCount = 0;
+  SECS.slice(0, curSec).forEach(s => s.qs.forEach(q => { if (q.type!=='info') qCount++; }));
+
+  sec.qs.forEach(q => {
+    if (q.type === 'info') {
+      const box = document.createElement('div');
+      box.className = 'infobox'; box.style.borderRadius='0'; box.style.margin='0';
+      box.innerHTML = q.text; pane.appendChild(box); return;
+    }
+    qCount++;
+    const card = document.createElement('div');
+    card.className = 'q-card' + (isAnswered(q) ? ' answered' : '');
+    card.id = 'card_'+q.id;
+    let h = `<div class="q-num">Pregunta ${q.num}</div>`;
+    h += `<div class="q-text">${q.text}${q.req?'<span class="req"> *</span>':''}</div>`;
+    if (q.hint) h += `<div class="q-hint">${q.hint}</div>`;
+
+    if (q.type==='single') {
+      h += '<div class="opts">';
+      q.opts.forEach(o => {
+        const sel = ans[q.id]===o?' sel':'';
+        h += `<div class="opt${sel}" onclick="selSingle('${q.id}','${escQ(o)}',this)"><div class="opt-dot"></div><div class="opt-lbl">${o}</div></div>`;
+      });
+      h += '</div>';
+    } else if (q.type==='multi') {
+      h += '<div class="opts">';
+      const selArr = ans[q.id]||[];
+      q.opts.forEach(o => {
+        const sel = selArr.includes(o)?' sel':'';
+        h += `<div class="opt checkbox${sel}" onclick="selMulti('${q.id}','${escQ(o)}',this,${q.max||99})"><div class="opt-dot chk"></div><div class="opt-lbl">${o}</div></div>`;
+      });
+      h += '</div>';
+    } else if (q.type==='scale') {
+      h += `<div class="scale-wrap"><div class="scale-labels"><span>1 — Nada probable</span><span>10 — Muy probable</span></div><div class="scale-btns">`;
+      for (let i=q.min;i<=q.max;i++) h += `<button class="sc-btn${ans[q.id]==i?' sel':''}" onclick="selScale('${q.id}',${i},this)">${i}</button>`;
+      h += '</div></div>';
+    } else if (q.type==='grid') {
+      h += `<table class="grid-table"><thead><tr><th style="text-align:left">Factor</th>`;
+      q.cols.forEach(c => h += `<th>${c}</th>`);
+      h += `</tr></thead><tbody>`;
+      q.rows.forEach((r,ri) => {
+        h += `<tr><td>${r}</td>`;
+        q.cols.forEach(c => {
+          const chk = (gridAns[q.id]||{})[ri]===c?' checked':'';
+          h += `<td><input type="radio" name="${q.id}_r${ri}" value="${c}"${chk} onchange="selGrid('${q.id}',${ri},'${c}',this)"></td>`;
+        });
+        h += `</tr>`;
+      });
+      h += `</tbody></table>`;
+    } else if (q.type==='text'||q.type==='email') {
+      h += `<input class="t-input" type="${q.type}" placeholder="${q.placeholder||''}" value="${escV(ans[q.id]||'')}" oninput="ans['${q.id}']=this.value;markAnswered('${q.id}')">`;
+    } else if (q.type==='textarea') {
+      h += `<textarea class="ta-input" rows="3" placeholder="${q.placeholder||''}" oninput="ans['${q.id}']=this.value;markAnswered('${q.id}')">${escV(ans[q.id]||'')}</textarea>`;
+    }
+    h += `<div class="err-msg" id="err_${q.id}">Este campo es obligatorio.</div>`;
+    card.innerHTML = h; pane.appendChild(card);
+  });
+
+  document.getElementById('btnPrev').style.visibility = curSec===0?'hidden':'visible';
+  const btn = document.getElementById('btnNext');
+  if (curSec===SECS.length-1) { btn.textContent='Enviar encuesta ✓'; btn.className='btn btn-submit'; }
+  else { btn.textContent='Siguiente →'; btn.className='btn btn-next'; }
+  document.querySelectorAll('.dot').forEach((d,i) => {
+    d.className='dot'+(i<curSec?' done':i===curSec?' active':'');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function isAnswered(q) {
+  if (q.type==='grid') return gridAns[q.id] && Object.keys(gridAns[q.id]).length>0;
+  const v=ans[q.id]; return v && (Array.isArray(v)?v.length>0:String(v).trim()!=='');
+}
+
+function selSingle(qid, val, el) {
+  ans[qid]=val;
+  el.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  markAnswered(qid); hideErr(qid);
+}
+function selMulti(qid, val, el, max) {
+  let arr=ans[qid]||[];
+  if (el.classList.contains('sel')) { arr=arr.filter(v=>v!==val); el.classList.remove('sel'); }
+  else {
+    if (arr.length>=max) { const first=el.closest('.opts').querySelector('.opt.sel'); if(first){arr=arr.filter(v=>v!==first.dataset?.val||unescQ(first.querySelector('.opt-lbl').textContent));first.classList.remove('sel');} }
+    arr.push(val); el.classList.add('sel');
+  }
+  ans[qid]=arr; if(arr.length>0)markAnswered(qid); hideErr(qid);
+}
+function selScale(qid, val, el) {
+  ans[qid]=val;
+  el.closest('.scale-btns').querySelectorAll('.sc-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  markAnswered(qid); hideErr(qid);
+}
+function selGrid(qid, row, val, el) {
+  if (!gridAns[qid]) gridAns[qid]={};
+  gridAns[qid][row]=val; ans[qid]=gridAns[qid];
+  markAnswered(qid);
+}
+function markAnswered(qid) {
+  const c=document.getElementById('card_'+qid); if(c)c.classList.add('answered');
+}
+function hideErr(qid) {
+  const e=document.getElementById('err_'+qid); if(e)e.classList.remove('show');
+  const c=document.getElementById('card_'+qid); if(c)c.classList.remove('has-error');
+}
+function showErr(qid) {
+  const e=document.getElementById('err_'+qid); if(e)e.classList.add('show');
+  const c=document.getElementById('card_'+qid); if(c)c.classList.add('has-error');
+}
+
+function validate() {
+  let ok=true;
+  SECS[curSec].qs.forEach(q => {
+    if (q.type==='info'||!q.req) return;
+    if (!isAnswered(q)) { showErr(q.id); ok=false; }
+  });
+  if (!ok) { const e=document.querySelector('.err-msg.show'); if(e)e.scrollIntoView({behavior:'smooth',block:'center'}); }
+  return ok;
+}
+
+function nextSec() {
+  if (!validate()) return;
+  if (curSec<SECS.length-1) { curSec++; renderSec(); updateProg(); }
+  else submitSurvey();
+}
+function prevSec() {
+  if (curSec>0) { curSec--; renderSec(); updateProg(); }
+}
+function updateProg() {
+  const p=Math.round(curSec/SECS.length*100);
+  document.getElementById('progFill').style.width=p+'%';
+  document.getElementById('progPct').textContent=p+'%';
+  document.getElementById('progLabel').textContent=`Bloque ${curSec+1} de ${SECS.length}`;
+}
+
+// ============================================================
+//  SUBMIT & SAVE
+// ============================================================
+function submitSurvey() {
+  if (!validate()) return;
+  const record = buildRecord();
+  saveRecord(record);
+  document.getElementById('surveyPane').style.display='none';
+  document.getElementById('navBar').style.display='none';
+  document.getElementById('progBar').style.display='none';
+  document.getElementById('dots').style.display='none';
+  document.getElementById('successPane').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+  toast('✅ Respuesta guardada en la base de datos');
+}
+
+function buildRecord() {
+  const now = new Date();
+  const seg = ans['q1'] ? (Array.isArray(ans['q1']) ? ans['q1'][0] : ans['q1']) : 'Sin clasificar';
+  return {
+    id: 'R' + Date.now(),
+    timestamp: now.toISOString(),
+    fecha: now.toLocaleDateString('es-AR'),
+    hora: now.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}),
+    segmento: seg.length>30 ? seg.substring(0,30)+'…' : seg,
+    zona: ans['q3']||'—',
+    frecuencia: ans['q2']||'—',
+    score_intencion: ans['q7']||'—',
+    reportes_semana: ans['q8']||'—',
+    quiere_beta: ans['q17']||'—',
+    email_beta: ans['q17b']||'',
+    q1: fmtArr(ans['q1']),
+    q2: ans['q2']||'',
+    q3: ans['q3']||'',
+    q4: ans['q4']||'',
+    q5: fmtArr(ans['q5']),
+    q6: ans['q6']||'',
+    q6b: ans['q6b']||'',
+    q7: ans['q7']||'',
+    q8: ans['q8']||'',
+    q9: fmtGrid(gridAns['q9'], SECS[2].qs.find(q=>q.id==='q9')),
+    q10: fmtArr(ans['q10']),
+    q11: fmtArr(ans['q11']),
+    q12: fmtArr(ans['q12']),
+    q13: ans['q13']||'',
+    q14: fmtArr(ans['q14']),
+    q15: ans['q15']||'',
+    q16: ans['q16']||'',
+    q17: ans['q17']||'',
+    q17b: ans['q17b']||'',
+    q18: ans['q18']||'',
+    q19: ans['q19']||''
+  };
+}
+
+function fmtArr(v) { if (!v) return ''; return Array.isArray(v) ? v.join(' | ') : v; }
+function fmtGrid(g, q) {
+  if (!g||!q) return '';
+  return q.rows.map((r,i) => r+': '+(g[i]||'—')).join(' | ');
+}
+
+// ============================================================
+//  STORAGE (persistent)
+// ============================================================
+const STORAGE_KEY = 'oceanos_survey_responses';
+
+async function saveRecord(record) {
+  try {
+    const existing = await loadAll();
+    existing.push(record);
+    await window.storage.set(STORAGE_KEY, JSON.stringify(existing));
+  } catch(e) {
+    // fallback to sessionStorage-like in-memory
+    const arr = getMemory();
+    arr.push(record);
+    setMemory(arr);
+  }
+}
+
+async function loadAll() {
+  try {
+    const r = await window.storage.get(STORAGE_KEY);
+    return r ? JSON.parse(r.value) : [];
+  } catch(e) {
+    return getMemory();
+  }
+}
+
+const _mem = [];
+function getMemory() { return [..._mem]; }
+function setMemory(arr) { _mem.length=0; arr.forEach(r=>_mem.push(r)); }
+
+// ============================================================
+//  DATABASE TAB
+// ============================================================
+let allRecords = [];
+let filtered = [];
+let curPage = 0;
+const PAGE_SIZE = 10;
+
+async function renderDB() {
+  allRecords = await loadAll();
+  filtered = [...allRecords];
+  renderStats();
+  renderKPIs();
+  renderTable();
+}
+
+function renderStats() {
+  const total = allRecords.length;
+  const emails = allRecords.filter(r=>r.email_beta && r.email_beta.includes('@')).length;
+  const betaYes = allRecords.filter(r=>r.quiere_beta&&r.quiere_beta.includes('mucho')).length;
+  const scores = allRecords.map(r=>Number(r.score_intencion)).filter(n=>n>0);
+  const avgScore = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1) : '—';
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">Respuestas totales</div><div class="stat-sub">Meta: 200</div></div>
+    <div class="stat-card"><div class="stat-val">${avgScore}</div><div class="stat-lbl">Score intención promedio (P7)</div><div class="stat-sub">Umbral verde: ≥ 7</div></div>
+    <div class="stat-card"><div class="stat-val">${emails}</div><div class="stat-lbl">Emails beta capturados</div><div class="stat-sub">Meta: 80</div></div>
+    <div class="stat-card"><div class="stat-val">${betaYes}</div><div class="stat-lbl">Quieren ser beta</div><div class="stat-sub">Muy interesados</div></div>
+  `;
+}
+
+function renderKPIs() {
+  const total = allRecords.length || 1;
+  const scores = allRecords.map(r=>Number(r.score_intencion)).filter(n=>n>0);
+  const avgScore = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
+  const rep3 = allRecords.filter(r=>r.reportes_semana&&(r.reportes_semana.includes('3-5')||r.reportes_semana.includes('Más'))).length;
+  const emails = allRecords.filter(r=>r.email_beta&&r.email_beta.includes('@')).length;
+
+  const kpis = [
+    { name:'Score intención (P7)', val: avgScore.toFixed(1), target:'≥ 7.0', ok: avgScore>=7, warn: avgScore>=5 },
+    { name:'Reportan 3+/semana (P8)', val: Math.round(rep3/total*100)+'%', target:'≥ 30%', ok: rep3/total>=0.3, warn: rep3/total>=0.15 },
+    { name:'Emails beta', val: emails, target:'≥ 80', ok: emails>=80, warn: emails>=40 },
+    { name:'Total respuestas', val: allRecords.length, target:'≥ 200', ok: allRecords.length>=200, warn: allRecords.length>=100 },
+  ];
+
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k => {
+    const cls = k.ok ? 'green' : k.warn ? 'yellow' : 'red';
+    return `<div class="kpi-card">
+      <div class="kpi-dot ${cls}"></div>
+      <div class="kpi-info"><div class="kpi-name">${k.name}</div><div class="kpi-val">${k.val}</div><div class="kpi-target">Meta: ${k.target}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderTable() {
+  const start = curPage * PAGE_SIZE;
+  const slice = filtered.slice(start, start + PAGE_SIZE);
+
+  if (allRecords.length === 0) {
+    document.getElementById('tableArea').innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🌊</div>
+        <div class="empty-title">Aún no hay respuestas</div>
+        <div class="empty-sub">Completá la encuesta para ver los datos acá.</div>
+      </div>`;
+    document.getElementById('pagArea').innerHTML = '';
+    return;
+  }
+
+  let html = `<table><thead><tr>
+    <th>#</th><th>Fecha</th><th>Hora</th><th>Segmento</th><th>Zona</th>
+    <th>Score P7</th><th>Reportes/sem</th><th>Quiere beta</th><th>Email</th>
+  </tr></thead><tbody>`;
+
+  slice.forEach((r, i) => {
+    const n = start + i + 1;
+    const sc = Number(r.score_intencion);
+    const scClass = sc>=7?'score-hi':sc>=5?'score-mid':'score-lo';
+    const scBadge = r.score_intencion && r.score_intencion!=='—'
+      ? `<span class="badge-score ${scClass}">${r.score_intencion}</span>` : '—';
+    const betaBadge = r.quiere_beta&&r.quiere_beta.includes('mucho')
+      ? `<span class="badge-seg">✅ Sí</span>` : (r.quiere_beta||'—');
+    html += `<tr onclick="openModal('${r.id}')">
+      <td>${n}</td>
+      <td>${r.fecha}</td>
+      <td>${r.hora}</td>
+      <td><span class="badge-seg">${r.segmento}</span></td>
+      <td>${r.zona}</td>
+      <td>${scBadge}</td>
+      <td>${r.reportes_semana}</td>
+      <td>${betaBadge}</td>
+      <td>${r.email_beta ? '📧 '+r.email_beta.substring(0,20)+'…' : '—'}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('tableArea').innerHTML = html;
+
+  // Pagination
+  const pages = Math.ceil(filtered.length / PAGE_SIZE);
+  let pag = `<span>${filtered.length} respuesta${filtered.length!==1?'s':''}</span><div class="pag-btns">`;
+  for (let p=0;p<pages;p++) pag += `<button class="pag-btn${p===curPage?' active':''}" onclick="goPage(${p})">${p+1}</button>`;
+  pag += '</div>';
+  document.getElementById('pagArea').innerHTML = pag;
+}
+
+function goPage(p) { curPage=p; renderTable(); }
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  filtered = allRecords.filter(r =>
+    Object.values(r).some(v => String(v).toLowerCase().includes(q))
+  );
+  curPage = 0; renderTable();
+}
+
+function openModal(id) {
+  const r = allRecords.find(x=>x.id===id); if (!r) return;
+  const LABELS = {
+    q1:'Actividades', q2:'Frecuencia', q3:'Zona', q4:'Fotografió avistamientos',
+    q5:'Qué hace con fotos', q6:'Conoce apps', q6b:'App que conoce',
+    q7:'Score intención (1-10)', q8:'Reportes/semana', q9:'Motivaciones (grilla)',
+    q10:'Datos a compartir', q11:'Funciones valoradas', q12:'Barreras',
+    q13:'Señal en actividad', q14:'Canje de tokens', q15:'Valoración 25 OKN',
+    q16:'Equivalencia tokens', q17:'Quiere beta', q17b:'Email beta',
+    q18:'Organizaciones referidas', q19:'Comentarios libres'
+  };
+  let html = `<div class="modal-title">Respuesta #${r.id}</div>
+    <div class="modal-sub">${r.fecha} ${r.hora} · ${r.segmento}</div>`;
+  Object.entries(LABELS).forEach(([k,lbl]) => {
+    const v = r[k]; if (!v) return;
+    html += `<div class="modal-row"><div class="modal-q">${lbl}</div><div class="modal-a">${v}</div></div>`;
+  });
+  html += `<button class="modal-close" onclick="closeModal()">Cerrar</button>`;
+  document.getElementById('modal').innerHTML = html;
+  document.getElementById('modalBg').classList.add('show');
+}
+
+function closeModal(e) {
+  if (!e || e.target===document.getElementById('modalBg'))
+    document.getElementById('modalBg').classList.remove('show');
+}
+
+async function exportCSV() {
+  const records = await loadAll();
+  if (!records.length) { toast('⚠️ No hay respuestas para exportar'); return; }
+  const headers = ['ID','Fecha','Hora','Segmento','Zona','Frecuencia','Score_P7','Reportes_semana','Quiere_beta','Email_beta',
+    'P1_Actividades','P2_Frecuencia','P3_Zona','P4_Fotografias','P5_Uso_fotos','P6_Conoce_app','P6b_Cual_app',
+    'P7_Score','P8_Reportes','P9_Motivaciones','P10_Datos','P11_Funciones','P12_Barreras',
+    'P13_Señal','P14_Canje','P15_Val_tokens','P16_Equiv','P17_Beta','P17b_Email','P18_Orgs','P19_Comentarios'];
+  const rows = records.map(r => [
+    r.id,r.fecha,r.hora,r.segmento,r.zona,r.frecuencia,r.score_intencion,r.reportes_semana,r.quiere_beta,r.email_beta,
+    r.q1,r.q2,r.q3,r.q4,r.q5,r.q6,r.q6b,r.q7,r.q8,r.q9,r.q10,r.q11,r.q12,r.q13,r.q14,r.q15,r.q16,r.q17,r.q17b,r.q18,r.q19
+  ].map(v => '"'+(String(v||'').replace(/"/g,'""'))+'"'));
+  const csv = [headers.join(','), ...rows.map(r=>r.join(','))].join('\n');
+  const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url;
+  a.download='OceanOS_Encuestas_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click(); URL.revokeObjectURL(url);
+  toast('📥 CSV exportado correctamente');
+}
+
+async function clearDB() {
+  if (!confirm('¿Estás seguro? Se eliminarán TODAS las respuestas guardadas.')) return;
+  try { await window.storage.delete(STORAGE_KEY); } catch(e) {}
+  setMemory([]);
+  allRecords=[]; filtered=[];
+  renderDB();
+  toast('🗑 Base de datos limpiada');
+}
+
+// ============================================================
+//  UTILS
+// ============================================================
+function escQ(s) { return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function escV(s) { return String(s).replace(/"/g,'&quot;'); }
+function unescQ(s) { return s; }
+
+function toast(msg, dur=3000) {
+  const t=document.getElementById('toast'); t.textContent=msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur);
+}
+</script>
+</body>
+</html>

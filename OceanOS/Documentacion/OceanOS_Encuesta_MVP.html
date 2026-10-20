@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OceanOS — Encuesta de Validación MVP</title>
+<style>
+  :root {
+    --navy: #0A2342;
+    --ocean: #1565C0;
+    --teal: #00897B;
+    --teal-light: #E0F2F1;
+    --sky: #E3F2FD;
+    --accent: #00BCD4;
+    --gold: #F9A825;
+    --white: #FFFFFF;
+    --slate: #37474F;
+    --mist: #ECEFF1;
+    --gray: #90A4AE;
+    --error: #E53935;
+    --success: #2E7D32;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #F0F4F8;
+    color: var(--slate);
+    min-height: 100vh;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #0D47A1 50%, #006064 100%);
+    padding: 60px 24px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-wave {
+    position: absolute; bottom: -2px; left: 0; right: 0;
+    height: 60px; overflow: hidden;
+  }
+  .hero-wave svg { width: 100%; height: 100%; }
+  .hero-logo { font-size: 48px; margin-bottom: 8px; }
+  .hero-title { font-size: clamp(28px, 5vw, 44px); font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .hero-sub { font-size: 18px; color: #90CAF9; margin-bottom: 24px; }
+  .hero-badges { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+  .badge { background: rgba(255,255,255,0.12); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2);
+    color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+
+  /* ===== PROGRESS ===== */
+  .progress-bar-wrap {
+    background: var(--white); border-bottom: 1px solid #E0E0E0;
+    padding: 12px 24px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .progress-label { font-size: 13px; font-weight: 600; color: var(--ocean); }
+  .progress-pct { font-size: 13px; color: var(--gray); }
+  .progress-track { height: 6px; background: var(--mist); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--accent));
+    border-radius: 3px; transition: width 0.5s ease; }
+
+  /* ===== LAYOUT ===== */
+  .container { max-width: 760px; margin: 0 auto; padding: 40px 16px 80px; }
+
+  /* ===== BLOQUE HEADER ===== */
+  .block-header {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--navy); color: #fff;
+    padding: 14px 20px; border-radius: 10px 10px 0 0; margin-top: 36px;
+  }
+  .block-header:first-of-type { margin-top: 0; }
+  .block-num { background: var(--teal); color: #fff; font-size: 12px; font-weight: 700;
+    padding: 3px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .block-title { font-size: 15px; font-weight: 700; color: #fff; }
+
+  /* ===== QUESTION CARD ===== */
+  .question-card {
+    background: var(--white); border: 1px solid #E8EEF4;
+    border-top: none; padding: 24px;
+    transition: box-shadow 0.2s;
+  }
+  .question-card:last-child { border-radius: 0 0 10px 10px; }
+  .question-card.active { box-shadow: inset 3px 0 0 var(--teal); }
+  .question-card.answered { border-left: 3px solid var(--teal); }
+  .question-card.error { border-left: 3px solid var(--error); }
+
+  .question-num { font-size: 11px; font-weight: 700; color: var(--teal); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 6px; }
+  .question-text { font-size: 16px; font-weight: 600; color: var(--navy); line-height: 1.4; margin-bottom: 4px; }
+  .question-hint { font-size: 13px; color: var(--gray); margin-bottom: 16px; font-style: italic; }
+  .required-star { color: var(--error); margin-left: 2px; }
+  .error-msg { color: var(--error); font-size: 12px; margin-top: 8px; display: none; }
+  .error-msg.show { display: block; }
+
+  /* ===== OPTIONS ===== */
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 16px; border-radius: 8px; border: 1.5px solid #E0E8F0;
+    cursor: pointer; transition: all 0.18s; user-select: none;
+  }
+  .option:hover { border-color: var(--teal); background: var(--teal-light); }
+  .option.selected { border-color: var(--teal); background: var(--teal-light); }
+  .option.selected .option-check { background: var(--teal); border-color: var(--teal); }
+  .option.selected .option-check::after { opacity: 1; }
+  .option-check {
+    flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; border: 2px solid #B0BEC5;
+    background: #fff; position: relative; margin-top: 1px; transition: all 0.18s;
+  }
+  .option-check::after { content: ''; position: absolute; inset: 3px;
+    background: #fff; border-radius: 50%; opacity: 0; transition: opacity 0.18s; }
+  .checkbox .option-check { border-radius: 4px; }
+  .checkbox .option-check::after { content: '✓'; inset: 0; display: flex; align-items: center;
+    justify-content: center; font-size: 12px; font-weight: 700; background: transparent; color: #fff; opacity: 0; }
+  .option-label { font-size: 15px; color: var(--slate); line-height: 1.4; }
+
+  /* ===== SCALE ===== */
+  .scale-wrap { margin-top: 8px; }
+  .scale-labels { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .scale-label { font-size: 12px; color: var(--gray); }
+  .scale-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+  .scale-btn {
+    width: 46px; height: 46px; border-radius: 8px; border: 2px solid #E0E8F0;
+    background: #fff; font-size: 16px; font-weight: 700; color: #B0BEC5;
+    cursor: pointer; transition: all 0.18s; display: flex; align-items: center; justify-content: center;
+  }
+  .scale-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .scale-btn.selected { background: var(--teal); border-color: var(--teal); color: #fff; transform: scale(1.08); }
+
+  /* ===== RANK ===== */
+  .rank-list { display: flex; flex-direction: column; gap: 6px; }
+  .rank-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--mist); border: 1.5px solid #E0E8F0;
+    padding: 10px 14px; border-radius: 8px; cursor: grab; transition: all 0.18s;
+  }
+  .rank-item:active { cursor: grabbing; opacity: 0.8; }
+  .rank-item.drag-over { border-color: var(--teal); background: var(--teal-light); }
+  .rank-pos { font-size: 13px; font-weight: 700; color: var(--white); background: var(--teal);
+    width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; }
+  .rank-drag { color: var(--gray); font-size: 16px; }
+  .rank-text { font-size: 14px; color: var(--slate); }
+  .rank-hint { font-size: 12px; color: var(--gray); margin-top: 8px; }
+
+  /* ===== TEXT INPUT ===== */
+  .text-input, .textarea-input {
+    width: 100%; padding: 12px 16px; border-radius: 8px; border: 1.5px solid #E0E8F0;
+    font-family: inherit; font-size: 15px; color: var(--slate); resize: vertical;
+    transition: border-color 0.18s; outline: none;
+  }
+  .text-input:focus, .textarea-input:focus { border-color: var(--teal); }
+
+  /* ===== INFOBOX ===== */
+  .infobox {
+    background: var(--sky); border-left: 4px solid var(--teal);
+    border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px;
+    font-size: 14px; color: var(--slate); line-height: 1.6;
+  }
+  .infobox strong { color: var(--navy); }
+
+  /* ===== NAVIGATION ===== */
+  .nav-wrap { display: flex; justify-content: space-between; align-items: center;
+    margin-top: 36px; padding-top: 24px; border-top: 2px solid var(--mist); }
+  .btn {
+    padding: 14px 28px; border-radius: 8px; font-size: 15px; font-weight: 700;
+    cursor: pointer; border: none; transition: all 0.2s; font-family: inherit;
+  }
+  .btn-prev { background: var(--mist); color: var(--slate); }
+  .btn-prev:hover { background: #CFD8DC; }
+  .btn-next { background: var(--teal); color: #fff; display: flex; align-items: center; gap: 8px; }
+  .btn-next:hover { background: #00796B; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,137,123,0.3); }
+  .btn-submit { background: linear-gradient(135deg, var(--navy), var(--ocean)); color: #fff; }
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(10,35,66,0.3); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+  /* ===== SECTION INDICATOR ===== */
+  .section-dots { display: flex; justify-content: center; gap: 8px; margin: 20px 0; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: #CFD8DC; transition: all 0.3s; }
+  .dot.active { background: var(--teal); transform: scale(1.3); }
+  .dot.done { background: var(--ocean); }
+
+  /* ===== SUCCESS ===== */
+  .success-screen { display: none; text-align: center; padding: 60px 24px; }
+  .success-screen.show { display: block; }
+  .success-icon { font-size: 80px; margin-bottom: 24px; }
+  .success-title { font-size: 32px; font-weight: 800; color: var(--navy); margin-bottom: 12px; }
+  .success-sub { font-size: 16px; color: var(--gray); margin-bottom: 32px; line-height: 1.6; }
+  .success-tokens {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: linear-gradient(135deg, var(--navy), var(--teal));
+    color: #fff; padding: 20px 32px; border-radius: 12px; margin-bottom: 32px;
+  }
+  .tokens-amount { font-size: 40px; font-weight: 800; }
+  .tokens-label { font-size: 14px; opacity: 0.8; line-height: 1.3; }
+  .success-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 480px; margin: 0 auto; }
+  .stat-card { background: var(--white); border: 1px solid #E0E8F0; border-radius: 10px; padding: 16px; }
+  .stat-val { font-size: 24px; font-weight: 800; color: var(--ocean); }
+  .stat-lbl { font-size: 12px; color: var(--gray); }
+
+  /* ===== SURVEY SCREEN ===== */
+  .survey-screen { display: none; }
+  .survey-screen.show { display: block; }
+
+  /* ===== WELCOME ===== */
+  .welcome-screen { display: block; }
+  .welcome-screen.hide { display: none; }
+  .welcome-card { background: var(--white); border-radius: 12px; padding: 40px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08); margin-bottom: 24px; }
+  .welcome-card h2 { font-size: 24px; color: var(--navy); margin-bottom: 16px; }
+  .welcome-card p { font-size: 15px; color: var(--slate); line-height: 1.6; margin-bottom: 12px; }
+  .welcome-items { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+  .welcome-items li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--slate); }
+  .welcome-items li::before { content: '🌊'; font-size: 16px; }
+  .btn-start { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--navy), var(--ocean));
+    color: #fff; border: none; border-radius: 10px; font-size: 17px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10,35,66,0.3); }
+
+  @media (max-width: 600px) {
+    .scale-buttons { gap: 4px; }
+    .scale-btn { width: 38px; height: 38px; font-size: 14px; }
+    .success-stats { grid-template-columns: 1fr 1fr; }
+    .nav-wrap { flex-direction: column; gap: 12px; }
+    .btn { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo">🌊</div>
+  <div class="hero-title">OceanOS</div>
+  <div class="hero-sub">Encuesta de Validación — App Ciudadana MVP</div>
+  <div class="hero-badges">
+    <span class="badge">⏱ 7-10 minutos</span>
+    <span class="badge">🔒 Datos anónimos</span>
+    <span class="badge">🎁 +50 tokens OKN al lanzamiento</span>
+    <span class="badge">🐋 Puerto Madryn · Patagonia · 2026</span>
+  </div>
+  <div class="hero-wave">
+    <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="#F0F4F8"/>
+    </svg>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar-wrap" id="progressBar" style="display:none">
+  <div class="progress-info">
+    <span class="progress-label" id="progressLabel">Bloque 1 de 5</span>
+    <span class="progress-pct" id="progressPct">0%</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- SECTION DOTS -->
+  <div class="section-dots" id="sectionDots" style="display:none">
+    <div class="dot" data-dot="0"></div>
+    <div class="dot" data-dot="1"></div>
+    <div class="dot" data-dot="2"></div>
+    <div class="dot" data-dot="3"></div>
+    <div class="dot" data-dot="4"></div>
+  </div>
+
+  <!-- WELCOME -->
+  <div class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-card">
+      <h2>¿Reportarías para salvar el océano a cambio de experiencias únicas?</h2>
+      <p>OceanOS es una plataforma que convierte avistamientos de tiburones y bosques de algas en datos científicos verificados — y los convierte en activos de restauración marina.</p>
+      <p>Necesitamos tu opinión para validar si el producto que estamos construyendo resuelve un problema real en tu comunidad.</p>
+      <ul class="welcome-items">
+        <li>18 preguntas en 5 bloques temáticos</li>
+        <li>Tus respuestas son completamente anónimas</li>
+        <li>Si dejás tu email, entrás al programa beta exclusivo</li>
+        <li>Los primeros 50 usuarios beta reciben 50 tokens OKN gratis</li>
+      </ul>
+      <button class="btn-start" onclick="startSurvey()">Empezar la encuesta →</button>
+    </div>
+  </div>
+
+  <!-- SURVEY -->
+  <div class="survey-screen" id="surveyScreen">
+    <div id="sectionsContainer"></div>
+    <div class="nav-wrap">
+      <button class="btn btn-prev" id="btnPrev" onclick="prevSection()">← Anterior</button>
+      <button class="btn btn-next" id="btnNext" onclick="nextSection()">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">🌊</div>
+    <div class="success-title">¡Gracias por ayudar a restaurar el océano!</div>
+    <div class="success-sub">Tus respuestas son parte de la validación científica de OceanOS.<br>Nos ayudás a construir algo que realmente importa.</div>
+    <div class="success-tokens">
+      <div>
+        <div class="tokens-amount">+50</div>
+      </div>
+      <div class="tokens-label">Tokens OKN<br>reservados para vos<br>al lanzamiento</div>
+    </div>
+    <div class="success-stats">
+      <div class="stat-card"><div class="stat-val" id="statQ">18</div><div class="stat-lbl">Preguntas respondidas</div></div>
+      <div class="stat-card"><div class="stat-val">50</div><div class="stat-lbl">Tokens OKN ganados</div></div>
+      <div class="stat-card"><div class="stat-val">🐋</div><div class="stat-lbl">Patagonia te necesita</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [
+  {
+    id: 's0',
+    label: 'BLOQUE 0',
+    title: 'Clasificación del respondente',
+    color: '#0A2342',
+    questions: [
+      {
+        id: 'q1', type: 'multi', required: true,
+        text: '¿Cuál de estas actividades realizás en la costa patagónica?',
+        hint: 'Podés seleccionar más de una.',
+        options: ['Buceo recreativo o deportivo','Pesca artesanal o deportiva','Ecoturismo / avistamiento de fauna','Investigación científica o estudio universitario','Ninguna de las anteriores']
+      },
+      {
+        id: 'q2', type: 'single', required: true,
+        text: '¿Con qué frecuencia realizás esta actividad durante la temporada (octubre–abril)?',
+        options: ['Todos los días o casi todos los días','2-3 veces por semana','1 vez por semana','1-2 veces por mes','Menos de una vez por mes']
+      },
+      {
+        id: 'q3', type: 'single', required: true,
+        text: '¿En qué zona operás principalmente?',
+        options: ['Puerto Madryn / Golfo Nuevo','Península Valdés','Puerto Deseado / Santa Cruz','Tierra del Fuego','Otra zona patagónica']
+      }
+    ]
+  },
+  {
+    id: 's1',
+    label: 'BLOQUE 1',
+    title: 'Comportamiento actual',
+    color: '#00897B',
+    questions: [
+      {
+        id: 'q4', type: 'single', required: true,
+        text: '¿Alguna vez fotografiaste avistamientos de fauna marina durante tu actividad?',
+        options: ['Sí, siempre o casi siempre','Sí, a veces','Raramente','No, nunca']
+      },
+      {
+        id: 'q5', type: 'multi', required: false,
+        text: '¿Qué hacés con esas fotos o datos?',
+        hint: 'Podés seleccionar más de una.',
+        options: ['Las subo a redes sociales (Instagram, Facebook, etc.)','Las comparto en grupos de WhatsApp','Las guardo para uso personal','Las reporto a alguna ONG o institución científica','No suelo documentar avistamientos']
+      },
+      {
+        id: 'q6', type: 'single', required: false,
+        text: '¿Conocés alguna app para reportar avistamientos de fauna marina en Argentina?',
+        options: ['Sí (especificá abajo)','No']
+      },
+      {
+        id: 'q6b', type: 'text', required: false,
+        text: 'Si respondiste Sí, ¿cuál app conocés?',
+        hint: 'Opcional.',
+        placeholder: 'Nombre de la app...'
+      }
+    ]
+  },
+  {
+    id: 's2',
+    label: 'BLOQUE 2',
+    title: 'Propuesta de valor',
+    color: '#1565C0',
+    questions: [
+      {
+        id: 'q_info', type: 'info',
+        text: '<strong>¿De qué se trata OceanOS?</strong><br><br>Es una app gratuita donde reportás avistamientos de tiburones y el estado de los bosques de algas desde tu celular. Subís una foto con ubicación GPS y la IA clasifica la especie en segundos. Por cada reporte verificado ganás <strong>tokens OKN canjeables por descuentos en tours de buceo y experiencias de ecoturismo en Patagonia.</strong>'
+      },
+      {
+        id: 'q7', type: 'scale', required: true,
+        text: '¿Cuán probable es que uses una app como OceanOS en tu actividad habitual?',
+        hint: '1 = nada probable · 10 = muy probable',
+        min: 1, max: 10
+      },
+      {
+        id: 'q8', type: 'single', required: true,
+        text: '¿Cuántos reportes creés que podrías enviar por semana?',
+        options: ['0 (no creo que la use)','1-2 reportes por semana','3-5 reportes por semana','Más de 5 reportes por semana']
+      },
+      {
+        id: 'q9', type: 'rank', required: false,
+        text: '¿Qué te motivaría más para reportar de forma habitual?',
+        hint: 'Arrastrá para ordenar del más al menos motivador.',
+        options: ['Tokens OKN canjeables por ecoturismo','Ver mi contribución en el mapa en tiempo real','Ser parte de una comunidad científica ciudadana','Ayudar a conservar la fauna y ecosistemas que uso','Ranking e insignias de gamificación']
+      },
+      {
+        id: 'q10', type: 'multi', required: false,
+        text: '¿Con qué datos te sentirías cómodo/a?',
+        hint: 'Podés seleccionar más de una.',
+        options: ['Foto del avistamiento','Ubicación GPS aproximada (±500 metros)','Ubicación GPS exacta','Fecha y hora','Observaciones de texto libre']
+      },
+      {
+        id: 'q11', type: 'multi', required: false,
+        text: '¿Cuáles de estas funciones valorás más?',
+        hint: 'Elegí hasta 2.',
+        max: 2,
+        options: ['Mapa en tiempo real con avistamientos','Clasificación automática por IA','Wallet de tokens con historial y canje','Ranking y comparación con otros','Notificaciones de avistamientos cercanos','Dashboard de salud del ecosistema']
+      }
+    ]
+  },
+  {
+    id: 's3',
+    label: 'BLOQUE 3 & 4',
+    title: 'Barreras y tokens',
+    color: '#37474F',
+    questions: [
+      {
+        id: 'q12', type: 'multi', required: false,
+        text: '¿Qué podría impedirte usar OceanOS regularmente?',
+        hint: 'Podés seleccionar más de una.',
+        options: ['No tengo conectividad cuando hago mi actividad','No quiero compartir mi ubicación GPS','Me parece complicado de usar','No creo que mis reportes sean útiles','Los tokens no son incentivo suficiente','Ya uso otra app similar','No veo barreras significativas']
+      },
+      {
+        id: 'q13', type: 'single', required: false,
+        text: '¿Con qué frecuencia tenés señal de celular durante tu actividad costera?',
+        options: ['Siempre o casi siempre','Aproximadamente la mitad del tiempo','Raramente','Nunca (actividad off-shore)']
+      },
+      {
+        id: 'q14', type: 'multi', required: false,
+        text: '¿Con qué te gustaría canjear tus tokens OKN?',
+        hint: 'Elegí las 3 más interesantes.',
+        max: 3,
+        options: ['Descuentos en tours de buceo y ecoturismo','Entradas a áreas protegidas y reservas naturales','Merchandising de OceanOS o marcas de buceo','Donación de tokens a restauración marina','Acceso a reportes científicos del ecosistema','Descuentos en equipamiento de pesca o buceo','Participación en campañas científicas']
+      },
+      {
+        id: 'q15', type: 'single', required: false,
+        text: '¿Te parece justo recibir 25 tokens OKN por una foto verificada de tiburón?',
+        options: ['Sí, me parece justo','Sí, aunque podría mejorar','No, debería ser más','No puedo evaluarlo sin probar la app']
+      },
+      {
+        id: 'q16', type: 'single', required: false,
+        text: 'Si 100 tokens = 10% de descuento en un tour de buceo de $50.000 ARS, ¿es incentivo suficiente?',
+        options: ['Sí, definitivamente','Sí, aunque podría mejorar','No, el incentivo no es suficiente','No puedo evaluarlo sin probar la app']
+      }
+    ]
+  },
+  {
+    id: 's4',
+    label: 'BLOQUE 5',
+    title: 'Acción y contacto',
+    color: '#0A2342',
+    questions: [
+      {
+        id: 'q17', type: 'single', required: true,
+        text: '¿Querés ser parte de los primeros 50 usuarios beta de OceanOS en Puerto Madryn?',
+        options: ['Sí, me interesa mucho','Sí, pero quiero informarme más primero','Tal vez','No por ahora']
+      },
+      {
+        id: 'q17b', type: 'email', required: false,
+        text: 'Si quisieras unirte al beta, dejanos tu email',
+        hint: 'Opcional — solo para avisarte cuando lancemos.',
+        placeholder: 'tu@email.com'
+      },
+      {
+        id: 'q18', type: 'textarea', required: false,
+        text: '¿Conocés organizaciones (pesqueras, ONGs, áreas protegidas) que podrían usar los datos de OceanOS?',
+        hint: 'Opcional.',
+        placeholder: 'Nombre y contacto de la organización...'
+      },
+      {
+        id: 'q19', type: 'textarea', required: false,
+        text: '¿Tenés comentarios, sugerencias o preguntas sobre el proyecto?',
+        hint: 'Opcional. Tu feedback es muy valioso.',
+        placeholder: 'Escribí lo que quieras...'
+      }
+    ]
+  }
+];
+
+let currentSection = 0;
+const answers = {};
+const rankOrders = {};
+
+function startSurvey() {
+  document.getElementById('welcomeScreen').classList.add('hide');
+  document.getElementById('surveyScreen').classList.add('show');
+  document.getElementById('progressBar').style.display = 'block';
+  document.getElementById('sectionDots').style.display = 'flex';
+  renderSection();
+  updateProgress();
+}
+
+function renderSection() {
+  const container = document.getElementById('sectionsContainer');
+  container.innerHTML = '';
+  const sec = SECTIONS[currentSection];
+
+  // Block header
+  const header = document.createElement('div');
+  header.className = 'block-header';
+  header.style.background = sec.color;
+  header.innerHTML = `<span class="block-num">${sec.label}</span><span class="block-title">${sec.title}</span>`;
+  container.appendChild(header);
+
+  sec.questions.forEach((q, qi) => {
+    if (q.type === 'info') {
+      const box = document.createElement('div');
+      box.className = 'infobox';
+      box.style.margin = '0'; box.style.borderRadius = '0';
+      box.innerHTML = q.text;
+      container.appendChild(box);
+      return;
+    }
+
+    const card = document.createElement('div');
+    card.className = 'question-card' + (answers[q.id] ? ' answered' : '');
+    card.id = 'card_' + q.id;
+
+    let qNum = 0;
+    let globalIdx = 0;
+    for (let s = 0; s < currentSection; s++) {
+      SECTIONS[s].questions.forEach(qq => { if (qq.type !== 'info') globalIdx++; });
+    }
+    sec.questions.slice(0, qi).forEach(qq => { if (qq.type !== 'info') globalIdx++; });
+    globalIdx++;
+
+    let html = `<div class="question-num">Pregunta ${globalIdx}</div>`;
+    html += `<div class="question-text">${q.text}${q.required ? '<span class="required-star">*</span>' : ''}</div>`;
+    if (q.hint) html += `<div class="question-hint">${q.hint}</div>`;
+
+    if (q.type === 'single') {
+      html += '<div class="options">';
+      q.options.forEach((opt, oi) => {
+        const sel = answers[q.id] === opt ? ' selected' : '';
+        html += `<div class="option${sel}" onclick="selectSingle('${q.id}', '${oi}', this)" data-val="${opt}">
+          <div class="option-check"></div><div class="option-label">${opt}</div>
+        </div>`;
+      });
+      html += '</div>';
+    } else if (q.type === 'multi') {
+      html += '<div class="options">';
+      const sel = answers[q.id] || [];
+      q.options.forEach((opt, oi) => {
+        const isSelected = sel.includes(opt) ? ' selected' : '';
+        html += `<div class="option checkbox${isSelected}" onclick="selectMulti('${q.id}', '${opt}', this, ${q.max||99})" data-val="${opt}">
+          <div class="option-check"></div><div class="option-label">${opt}</div>
+        </div>`;
+      });
+      html += '</div>';
+    } else if (q.type === 'scale') {
+      html += `<div class="scale-wrap"><div class="scale-labels"><span class="scale-label">1 — Muy poco probable</span><span class="scale-label">10 — Muy probable</span></div><div class="scale-buttons">`;
+      const cur = answers[q.id];
+      for (let i = q.min; i <= q.max; i++) {
+        html += `<button class="scale-btn${cur == i ? ' selected' : ''}" onclick="selectScale('${q.id}', ${i}, this)">${i}</button>`;
+      }
+      html += '</div></div>';
+    } else if (q.type === 'rank') {
+      const order = rankOrders[q.id] || q.options.map((o,i)=>i);
+      html += '<div class="rank-list" id="rank_' + q.id + '">';
+      order.forEach((oi, pos) => {
+        html += `<div class="rank-item" draggable="true" data-idx="${oi}" data-qid="${q.id}">
+          <div class="rank-pos">${pos+1}</div>
+          <div class="rank-drag">⠿</div>
+          <div class="rank-text">${q.options[oi]}</div>
+        </div>`;
+      });
+      html += '</div><div class="rank-hint">Arrastrá para reordenar</div>';
+    } else if (q.type === 'text') {
+      html += `<input class="text-input" type="text" id="inp_${q.id}" placeholder="${q.placeholder||''}" value="${answers[q.id]||''}" onchange="answers['${q.id}']=this.value">`;
+    } else if (q.type === 'email') {
+      html += `<input class="text-input" type="email" id="inp_${q.id}" placeholder="${q.placeholder||''}" value="${answers[q.id]||''}" onchange="answers['${q.id}']=this.value">`;
+    } else if (q.type === 'textarea') {
+      html += `<textarea class="textarea-input" rows="3" id="inp_${q.id}" placeholder="${q.placeholder||''}" onchange="answers['${q.id}']=this.value">${answers[q.id]||''}</textarea>`;
+    }
+
+    html += `<div class="error-msg" id="err_${q.id}">Este campo es obligatorio.</div>`;
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+
+  // init drag for rank questions
+  initRankDrag();
+
+  // Update buttons
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  btnPrev.style.visibility = currentSection === 0 ? 'hidden' : 'visible';
+  if (currentSection === SECTIONS.length - 1) {
+    btnNext.textContent = 'Enviar encuesta ✓';
+    btnNext.className = 'btn btn-submit';
+  } else {
+    btnNext.innerHTML = 'Siguiente →';
+    btnNext.className = 'btn btn-next';
+  }
+
+  // Dots
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.className = 'dot' + (i < currentSection ? ' done' : i === currentSection ? ' active' : '');
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectSingle(qid, idx, el) {
+  const q = findQ(qid);
+  answers[qid] = el.dataset.val;
+  el.closest('.options').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('card_' + qid).classList.add('answered');
+  hideError(qid);
+}
+
+function selectMulti(qid, val, el, max) {
+  let sel = answers[qid] || [];
+  if (el.classList.contains('selected')) {
+    sel = sel.filter(v => v !== val);
+    el.classList.remove('selected');
+  } else {
+    if (sel.length >= max) {
+      // deselect first
+      const firstSel = el.closest('.options').querySelector('.option.selected');
+      if (firstSel) {
+        sel = sel.filter(v => v !== firstSel.dataset.val);
+        firstSel.classList.remove('selected');
+      }
+    }
+    sel.push(val);
+    el.classList.add('selected');
+  }
+  answers[qid] = sel;
+  if (sel.length > 0) document.getElementById('card_' + qid).classList.add('answered');
+  hideError(qid);
+}
+
+function selectScale(qid, val, el) {
+  answers[qid] = val;
+  el.closest('.scale-buttons').querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('card_' + qid).classList.add('answered');
+  hideError(qid);
+}
+
+function initRankDrag() {
+  let dragged = null;
+  document.querySelectorAll('.rank-item').forEach(item => {
+    item.addEventListener('dragstart', e => { dragged = item; item.style.opacity = '0.5'; });
+    item.addEventListener('dragend', e => { item.style.opacity = '1'; dragged = null; });
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault(); item.classList.remove('drag-over');
+      if (!dragged || dragged === item) return;
+      const list = item.closest('.rank-list');
+      const items = [...list.querySelectorAll('.rank-item')];
+      const fromIdx = items.indexOf(dragged);
+      const toIdx = items.indexOf(item);
+      if (fromIdx < toIdx) list.insertBefore(dragged, item.nextSibling);
+      else list.insertBefore(dragged, item);
+      // Update rank positions
+      const newOrder = [...list.querySelectorAll('.rank-item')].map(it => parseInt(it.dataset.idx));
+      const qid = list.id.replace('rank_', '');
+      rankOrders[qid] = newOrder;
+      answers[qid] = newOrder;
+      list.querySelectorAll('.rank-pos').forEach((pos, i) => { pos.textContent = i + 1; });
+    });
+  });
+}
+
+function findQ(qid) {
+  for (const sec of SECTIONS) for (const q of sec.questions) if (q.id === qid) return q;
+  return null;
+}
+
+function showError(qid, msg) {
+  const el = document.getElementById('err_' + qid);
+  if (el) { el.textContent = msg || 'Este campo es obligatorio.'; el.classList.add('show'); }
+  const card = document.getElementById('card_' + qid);
+  if (card) card.classList.add('error');
+}
+function hideError(qid) {
+  const el = document.getElementById('err_' + qid);
+  if (el) el.classList.remove('show');
+  const card = document.getElementById('card_' + qid);
+  if (card) card.classList.remove('error');
+}
+
+function validateSection() {
+  let ok = true;
+  SECTIONS[currentSection].questions.forEach(q => {
+    if (q.type === 'info') return;
+    if (!q.required) return;
+    const val = answers[q.id];
+    if (!val || (Array.isArray(val) && val.length === 0)) {
+      showError(q.id, 'Este campo es obligatorio.');
+      ok = false;
+    }
+  });
+  return ok;
+}
+
+function nextSection() {
+  if (!validateSection()) {
+    const firstErr = document.querySelector('.error-msg.show');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  if (currentSection < SECTIONS.length - 1) {
+    currentSection++;
+    renderSection();
+    updateProgress();
+  } else {
+    submitSurvey();
+  }
+}
+
+function prevSection() {
+  if (currentSection > 0) {
+    currentSection--;
+    renderSection();
+    updateProgress();
+  }
+}
+
+function updateProgress() {
+  const pct = Math.round((currentSection / SECTIONS.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressLabel').textContent = `Bloque ${currentSection + 1} de ${SECTIONS.length}`;
+}
+
+function submitSurvey() {
+  if (!validateSection()) return;
+  // Count answered
+  let answered = 0;
+  for (const sec of SECTIONS) for (const q of sec.questions) {
+    if (q.type === 'info') continue;
+    if (answers[q.id]) answered++;
+  }
+  document.getElementById('statQ').textContent = answered;
+
+  document.getElementById('surveyScreen').style.display = 'none';
+  document.getElementById('progressBar').style.display = 'none';
+  document.getElementById('sectionDots').style.display = 'none';
+  document.getElementById('successScreen').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Log to console for inspection
+  console.log('OceanOS Survey Responses:', JSON.stringify(answers, null, 2));
+}
+</script>
+</body>
+</html>

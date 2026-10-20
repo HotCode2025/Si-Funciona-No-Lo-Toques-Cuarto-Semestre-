@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOGS" value="./logs" />
+
+    <appender name="Console"
+              class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Fecha | LogLevel | Hilo | Clase asignada al Logger | Clase desde la cual se hizo Logging | Message -->
+            <pattern>%d{ISO8601} %highlight(%-5level) [%thread] %logger{100} %yellow(%C{1}) : %msg%n%throwable</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="RollingFile"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/spring-boot-logger.log</file>
+        <encoder
+                class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!-- Fecha | LogLevel | Hilo | Clase desde la cual se hizo Logging | Message -->
+            <Pattern>%d %p [%t] %C{1} : %m%n</Pattern>
+        </encoder>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOGS}/archived/spring-boot-logger-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+        </rollingPolicy>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="Console" />
+    </root>
+
+    <logger name="utn.estudiantes" level="trace" additivity="false">
+        <appender-ref ref="RollingFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+</configuration>

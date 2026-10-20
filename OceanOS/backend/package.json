@@ -1,0 +1,31 @@
+{
+  "name": "oceanos-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:seed": "node scripts/seed.js",
+    "db:reset": "node scripts/migrate.js --reset && node scripts/seed.js"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.1.2",
+    "@fastify/cors": "^11.3.0",
+    "@fastify/helmet": "^13.1.1",
+    "@fastify/jwt": "^10.2.2",
+    "@fastify/rate-limit": "^11.2.0",
+    "@fastify/sensible": "^6.0.5",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "fastify": "^5.12.4",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "pino-pretty": "^13.1.3"
+  }
+}

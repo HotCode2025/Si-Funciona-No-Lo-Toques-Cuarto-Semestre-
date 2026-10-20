@@ -1,0 +1,6 @@
+# Local: el puerto 5432 ya lo usa el PostgreSQL 18 instalado en la máquina,
+# así que publicamos el contenedor en 5434. backend/.env apunta ahí.
+services:
+  db:
+    ports:
+      - "5434:5432"

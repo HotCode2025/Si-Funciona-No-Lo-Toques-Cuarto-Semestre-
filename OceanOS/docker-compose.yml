@@ -1,0 +1,23 @@
+# Levanta solo PostgreSQL. El backend y el frontend corren en tu máquina
+# con npm run dev, que es más cómodo para desarrollar.
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: oceanos-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: oceanos
+      POSTGRES_PASSWORD: oceanos
+      POSTGRES_DB: oceanos
+    ports:
+      - "5432:5432"
+    volumes:
+      - oceanos_datos:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U oceanos -d oceanos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  oceanos_datos:
