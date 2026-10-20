@@ -1,9 +1,6 @@
 package utn.tienda_libros;
 
 import org.springframework.boot.SpringApplication;
-<<<<<<< HEAD
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-=======
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -11,17 +8,20 @@ import org.springframework.context.ConfigurableApplicationContext;
 import utn.tienda_libros.vista.LibroFrom;
 
 import java.awt.EventQueue;
->>>>>>> d564aa40c30a9538e701c1134388af46763e9491
 
 @SpringBootApplication
 public class TiendaLibrosApplication {
 
 	public static void main(String[] args) {
-<<<<<<< HEAD
-		SpringApplication.run(TiendaLibrosApplication.class, args);
-	}
-
-=======
+		try {
+    	for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+        if ("Nimbus".equals(info.getName())) {
+            javax.swing.UIManager.setLookAndFeel(info.getClassName());
+            break;
+        	}
+    	}
+		} catch (Exception e) {
+		}
 		ConfigurableApplicationContext contextoSpring =
 				new SpringApplicationBuilder(TiendaLibrosApplication.class)
 						.headless(false)
@@ -35,5 +35,4 @@ public class TiendaLibrosApplication {
 
 		});
 	}
->>>>>>> d564aa40c30a9538e701c1134388af46763e9491
 }
