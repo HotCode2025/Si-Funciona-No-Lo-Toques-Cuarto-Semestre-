@@ -175,6 +175,34 @@ Al confirmar el personaje aparece un **mapa** (`<canvas id="mapa">`). El movimie
 
 ---
 
+## 🔄 Reiniciar y 🚪 Salir
+
+| Dónde | 🔄 Reiniciar | 🚪 Salir |
+|---|---|---|
+| Mapa | — | Vuelve al menú de personajes |
+| Arena de combate | Repite la misma pelea (mismos personajes, vidas al máximo) | Vuelve al menú de personajes |
+| Fin del combate | Repite la misma pelea | Vuelve al menú de personajes |
+| Modo Pelea 2D | Empieza de nuevo el partido (rondas en 0) | Vuelve al menú |
+
+---
+
+## 🥊 Modo Pelea 2D (segundo juego)
+
+Desde el menú, el botón **🥊 Modo Pelea 2D** abre una pelea en tiempo real, de costado, al mejor de 3 rondas (60 segundos cada una). Se juega **contra la CPU** o **de a dos** en el mismo teclado. Cada peleador usa su foto, su elemento y los efectos del juego (sonidos, temblor de pantalla, partículas, cámara lenta en el K.O.).
+
+| Acción | Jugador 1 | Jugador 2 |
+|---|---|---|
+| Mover | A / D | ← / → |
+| Saltar | W | ↑ |
+| Bloquear | S | ↓ |
+| Puño (rápido) | F | K |
+| Patada (más daño y alcance) | G | L |
+| Poder del elemento (proyectil) | H | ; |
+
+Está hecho en una clase aparte, `PeleaArcade`, que tiene el bucle de animación, la física (gravedad, saltos, empuje), la detección de golpes, la inteligencia de la CPU y todo el dibujo del canvas.
+
+---
+
 ## 📄 Explicación del código
 
 ### `avatar.html`

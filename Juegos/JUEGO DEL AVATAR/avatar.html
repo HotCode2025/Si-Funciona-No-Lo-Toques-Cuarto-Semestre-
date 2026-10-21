@@ -67,15 +67,44 @@
         <div class="fila-botones">
             <button id="boton-personaje" class="boton-primario">Confirmar Selección</button>
             <button id="boton-crear-personaje" class="boton-crear">Crear Personaje</button>
+            <button id="boton-modo-pelea" class="boton-pelea">🥊 Modo Pelea 2D</button>
             <button id="boton-reglas-personaje" class="boton-reglas">Reglas</button>
             <button id="boton-terminar-juego" class="boton-terminar">Terminar el juego</button>
         </div>
+    </section>
 
-        <!-- MINIJUEGO 2: usa el personaje que esté elegido arriba (lo maneja esquiva.js) -->
-        <div class="fila-minijuegos">
-            <span class="etiqueta-minijuego">Minijuegos</span>
-            <button id="boton-duelo" class="boton-minijuego">⚔️ Duelo en la Arena <small>Movete y peleá en tiempo real</small></button>
-            <button id="boton-esquiva" class="boton-minijuego">🎯 Esquiva Elemental <small>Sobreviví a los proyectiles</small></button>
+    <!-- MODO PELEA 2D: segundo juego (pelea en tiempo real, de costado) -->
+    <section id="pelea-2d" class="oculto">
+        <div class="arena-header">
+            <h2>Modo Pelea 2D</h2>
+            <div class="arena-acciones">
+                <button id="boton-reiniciar-pelea" class="boton-reglas">🔄 Reiniciar</button>
+                <button id="boton-salir-pelea" class="boton-reglas">🚪 Salir</button>
+            </div>
+        </div>
+
+        <div class="pelea-config">
+            <label>Jugador 1 <select id="pelea-p1" aria-label="Personaje del jugador 1"></select></label>
+            <label>Jugador 2 <select id="pelea-p2" aria-label="Personaje del jugador 2"></select></label>
+            <button id="boton-pelea-1p" class="boton-primario">1 jugador vs CPU</button>
+            <button id="boton-pelea-2p" class="boton-crear">2 jugadores</button>
+        </div>
+
+        <canvas id="canvas-pelea" width="900" height="420"></canvas>
+
+        <div class="pelea-controles">
+            <div>
+                <h3>Jugador 1</h3>
+                <p><kbd>A</kbd> <kbd>D</kbd> mover · <kbd>W</kbd> saltar · <kbd>S</kbd> bloquear</p>
+                <p><kbd>F</kbd> puño · <kbd>G</kbd> patada · <kbd>H</kbd> poder del elemento</p>
+                <p class="nota">Contra la CPU también podés usar los controles del jugador 2.</p>
+            </div>
+            <div>
+                <h3>Jugador 2</h3>
+                <p><kbd>←</kbd> <kbd>→</kbd> mover · <kbd>↑</kbd> saltar · <kbd>↓</kbd> bloquear</p>
+                <p><kbd>K</kbd> puño · <kbd>L</kbd> patada · <kbd>;</kbd> poder del elemento</p>
+                <p class="nota">Al mejor de 3 rondas · 60 segundos por ronda.</p>
+            </div>
         </div>
     </section>
 
@@ -90,10 +119,6 @@
          para moverlo (onmousedown cambia la velocidad, onmouseup la deja en 0). -->
     <section id="ver-mapa" class="oculto">
         <h2>Mapa de Exploración</h2>
-
-        <!-- Ficha que identifica al personaje: la dibuja Personaje.crearFicha() -->
-        <div id="ficha-mapa" aria-live="polite"></div>
-
         <p class="mapa-ayuda">
             Movelo con las <kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> o <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>,
             con los botones, o haciendo <strong>click en el mapa</strong>.
@@ -102,59 +127,15 @@
         <canvas id="mapa" width="600" height="400"></canvas>
 
         <div class="controles-mapa">
-            <button class="control-mapa c-arriba" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverArriba()" ontouchstart="juego.moverArriba(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">▲ Arriba</button>
-            <button class="control-mapa c-izquierda" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverIzquierda()" ontouchstart="juego.moverIzquierda(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">◀ Izquierda</button>
-            <button class="control-mapa c-abajo" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverAbajo()" ontouchstart="juego.moverAbajo(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">▼ Abajo</button>
-            <button class="control-mapa c-derecha" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverDerecha()" ontouchstart="juego.moverDerecha(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">Derecha ▶</button>
+            <button class="control-mapa c-arriba" onmouseup="detenerMovimiento()" onmouseleave="detenerMovimiento()" onmousedown="moverArriba()" ontouchstart="moverArriba(); event.preventDefault()" ontouchend="detenerMovimiento()">▲ Arriba</button>
+            <button class="control-mapa c-izquierda" onmouseup="detenerMovimiento()" onmouseleave="detenerMovimiento()" onmousedown="moverIzquierda()" ontouchstart="moverIzquierda(); event.preventDefault()" ontouchend="detenerMovimiento()">◀ Izquierda</button>
+            <button class="control-mapa c-abajo" onmouseup="detenerMovimiento()" onmouseleave="detenerMovimiento()" onmousedown="moverAbajo()" ontouchstart="moverAbajo(); event.preventDefault()" ontouchend="detenerMovimiento()">▼ Abajo</button>
+            <button class="control-mapa c-derecha" onmouseup="detenerMovimiento()" onmouseleave="detenerMovimiento()" onmousedown="moverDerecha()" ontouchstart="moverDerecha(); event.preventDefault()" ontouchend="detenerMovimiento()">Derecha ▶</button>
         </div>
 
-        <button id="boton-ir-combate" class="boton-primario">⚔️ Ir al combate</button>
-    </section>
-
-    <!-- MODO DUELO: moverse y pelear en tiempo real (la clase Duelo de duelo.js dibuja todo) -->
-    <section id="duelo" class="oculto">
-        <h2>Duelo en la Arena</h2>
-        <div id="ficha-duelo"></div>
-        <p class="mapa-ayuda" id="duelo-record"></p>
-        <canvas id="lienzo-duelo" width="600" height="400"></canvas>
-
-        <div class="controles-mapa">
-            <button class="control-mapa c-arriba" data-dir="arriba">▲ Arriba</button>
-            <button class="control-mapa c-izquierda" data-dir="izquierda">◀ Izquierda</button>
-            <button class="control-mapa c-abajo" data-dir="abajo">▼ Abajo</button>
-            <button class="control-mapa c-derecha" data-dir="derecha">Derecha ▶</button>
-        </div>
-
-        <div class="fila-esquiva">
-            <button class="boton-ataque-duelo" data-ataque="puno">👊 Puño <kbd>J</kbd></button>
-            <button class="boton-ataque-duelo" data-ataque="patada">🦵 Patada <kbd>K</kbd></button>
-            <button class="boton-ataque-duelo" data-ataque="barrida">🌀 Barrida <kbd>L</kbd></button>
-        </div>
-        <div class="fila-esquiva">
-            <button id="boton-duelo-impulso" class="boton-reglas">⚡ Impulso</button>
-            <button id="boton-duelo-jugar" class="boton-primario">▶ Empezar</button>
-            <button id="boton-duelo-salir" class="boton-terminar">Volver al menú</button>
-        </div>
-    </section>
-
-    <!-- MINIJUEGO 2: Esquiva Elemental (la clase Esquiva de esquiva.js dibuja todo) -->
-    <section id="esquiva" class="oculto">
-        <h2>Esquiva Elemental</h2>
-        <div id="ficha-esquiva"></div>
-        <p class="mapa-ayuda" id="esquiva-record"></p>
-        <canvas id="lienzo-esquiva" width="600" height="400"></canvas>
-
-        <div class="controles-mapa">
-            <button class="control-mapa c-arriba" data-dir="arriba">▲ Arriba</button>
-            <button class="control-mapa c-izquierda" data-dir="izquierda">◀ Izquierda</button>
-            <button class="control-mapa c-abajo" data-dir="abajo">▼ Abajo</button>
-            <button class="control-mapa c-derecha" data-dir="derecha">Derecha ▶</button>
-        </div>
-
-        <div class="fila-esquiva">
-            <button id="boton-esquiva-impulso" class="boton-reglas">⚡ Impulso</button>
-            <button id="boton-esquiva-jugar" class="boton-primario">▶ Empezar</button>
-            <button id="boton-esquiva-salir" class="boton-terminar">Volver al menú</button>
+        <div class="fila-botones">
+            <button id="boton-ir-combate" class="boton-primario">⚔️ Ir al combate</button>
+            <button id="boton-salir-mapa" class="boton-terminar">🚪 Salir</button>
         </div>
     </section>
 
@@ -162,7 +143,11 @@
     <section id="seleccionar-ataque" class="oculto">
         <div class="arena-header">
             <h2>Arena de Elementos</h2>
-            <button id="boton-reglas-arena" class="boton-reglas">Reglas</button>
+            <div class="arena-acciones">
+                <button id="boton-reglas-arena" class="boton-reglas">Reglas</button>
+                <button id="boton-reiniciar-arena" class="boton-reglas">🔄 Reiniciar</button>
+                <button id="boton-salir-arena" class="boton-reglas">🚪 Salir</button>
+            </div>
         </div>
 
         <!-- Las dos tarjetas las dibuja Personaje.crearTarjetaArena() -->
@@ -183,7 +168,10 @@
 
     <!-- Reiniciar -->
     <section id="reiniciar" class="oculto">
-        <button id="boton-reiniciar">Reiniciar Combate</button>
+        <div class="fila-botones">
+            <button id="boton-reiniciar">🔄 Reiniciar Combate</button>
+            <button id="boton-salir-final" class="boton-terminar">🚪 Salir</button>
+        </div>
     </section>
 
     <!-- Modal de reglas -->
@@ -263,7 +251,5 @@
     </div>
 
     <script src="./avatar.js"></script>
-    <script src="./esquiva.js"></script>
-    <script src="./duelo.js"></script>
 </body>
 </html>
