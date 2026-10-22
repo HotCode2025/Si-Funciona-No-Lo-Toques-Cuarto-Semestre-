@@ -175,6 +175,15 @@ Al confirmar el personaje aparece un **mapa** (`<canvas id="mapa">`). El movimie
 
 ---
 
+## 🖼️ Imágenes nuevas y mapa
+
+- **Personajes:** `img/aang.webp`, `katara.webp`, `sokka.webp`, `haru.webp`, `zuko.webp` y `toph.webp`: renders 3D **sin fondo** (transparentes). Zuko y Toph ahora tienen foto propia en las tarjetas, la arena y el Modo Pelea.
+- **Fichas del mapa:** `img/mapa/<id>.png`: la cara del personaje en un círculo con el color de su elemento. Es la imagen que se mueve por el mapa (`mapaFoto` en la clase `Personaje`). Si un personaje creado no tiene ficha, se recorta la parte de arriba de su foto o se usa su emoji.
+- **Mapa:** `img/mapa.jpg` (Las Cuatro Naciones) se pinta como fondo del canvas con `drawImage`. Cada personaje arranca en la nación de su elemento y el **enemigo espera en la suya** (ficha con aro que late). Cuando te acercás aparece "¡Enter para pelear!".
+- **Teclado (como en la clase):** `sePresionoUnaTecla(event)` con un `switch (event.key)` llama a `moverArriba()`, `moverAbajo()`, `moverIzquierda()` o `moverDerecha()`; `keyup` llama a `detenerMovimiento()`. Además funcionan WASD, Shift/Espacio (impulso) y Enter.
+
+---
+
 ## 🔄 Reiniciar y 🚪 Salir
 
 | Dónde | 🔄 Reiniciar | 🚪 Salir |

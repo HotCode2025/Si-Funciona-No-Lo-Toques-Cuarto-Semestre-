@@ -82,6 +82,53 @@ SCRUM es un marco ágil que organiza el trabajo en **sprints** (ciclos cortos), 
 
 ---
 
+## Sprint 4 — Mapa de exploración y movimiento (Clase 5)
+
+**Objetivo:** Sumar un mapa con canvas donde el personaje elegido se mueve con botones y teclado, y donde espera el enemigo.
+
+### Backlog del Sprint
+
+| # | Historia de Usuario | Responsable | Estado |
+|---|---------------------|-------------|--------|
+| 18 | Como jugador quiero un mapa (canvas) donde mover a mi personaje con los botones | Todo el equipo | ✅ Completado |
+| 19 | Como jugador quiero mantener presionado el botón (o la tecla) y que siga moviéndose (`velocidadX/Y`, `detenerMovimiento()`) | Todo el equipo | ✅ Completado |
+| 20 | Como jugador quiero mover al personaje con las flechas del teclado (`sePresionoUnaTecla`) y con WASD | Todo el equipo | ✅ Completado |
+| 21 | Como jugador quiero el mapa de las Cuatro Naciones de fondo y ver a mi enemigo en el mapa | Todo el equipo | ✅ Completado |
+| 22 | Como jugador quiero un movimiento fluido (inercia, estela, partículas, impulso, click para ir) | Todo el equipo | ✅ Completado |
+| 23 | Como diseñador quiero imágenes sin fondo y fichas redondas acordes al mapa | Todo el equipo | ✅ Completado |
+
+### Decisiones técnicas del sprint
+
+- **`MovimientoCinematico`**: clase aparte que maneja entradas, física suave y dibujo del canvas con `requestAnimationFrame`.
+- **Canvas 800 × 447**: la clase usa 800 × 600, pero eso deforma el mapa; se mantuvo la proporción de la imagen.
+- **`mapaFoto` perezoso**: la imagen se asigna en `prepararMapa()`, no en el constructor, para no pedir 1000 fotos al fabricar 1000 personajes.
+
+---
+
+## Sprint 5 — Efectos, Modo Pelea 2D y marcador
+
+**Objetivo:** Darle al juego sonido y efectos profesionales, sumar un segundo juego de pelea 2D y guardar el marcador.
+
+### Backlog del Sprint
+
+| # | Historia de Usuario | Responsable | Estado |
+|---|---------------------|-------------|--------|
+| 24 | Como jugador quiero sonidos reales de puño, patada, barrida, victoria y derrota | Todo el equipo | ✅ Completado |
+| 25 | Como jugador quiero temblor de pantalla, destellos y cartel de victoria o derrota | Todo el equipo | ✅ Completado |
+| 26 | Como jugador quiero subir el volumen de la música y de los efectos por separado | Todo el equipo | ✅ Completado |
+| 27 | Como jugador quiero crear personajes con elemento, retrato o imagen propia y ver la vista previa | Todo el equipo | ✅ Completado |
+| 28 | Como jugador quiero un Modo Pelea 2D (1 jugador vs CPU o 2 jugadores) con rondas, salto, bloqueo y poderes | Todo el equipo | ✅ Completado |
+| 29 | Como jugador quiero botones de Reiniciar y Salir en todas las pantallas | Todo el equipo | ✅ Completado |
+| 30 | Como jugador quiero que mis victorias, derrotas y racha queden guardadas (`localStorage`) | Todo el equipo | ✅ Completado |
+
+### Decisiones técnicas del sprint
+
+- **`PeleaArcade`**: clase aparte con bucle de animación, física, golpes, IA de la CPU y dibujo.
+- **Sonidos dentro de `avatar.js`** (base64): así no dependen de carpetas ni de archivos que falten.
+- **Cancelar efectos pendientes** al reiniciar o salir, para que no se rompan al leer personajes que ya no existen.
+
+---
+
 ## División del Trabajo por Secciones
 
 Todos los integrantes colaboraron en partes iguales a lo largo de ambos sprints mediante **VS Code Live Share**. Las secciones del proyecto y sus responsables conjuntos:
@@ -132,5 +179,5 @@ Una historia se considera terminada cuando:
 | Comunicación fluida por Discord | Planificar los sprints con más detalle al inicio |
 | Live Share permitió trabajar en tiempo real | Definir roles más específicos por tarea |
 | Diseño visual coherente y temático | ~~Agregar más personajes y ataques~~ → resuelto en el Sprint 3 con POO |
-| Mecánica de juego funcional y completa | Incorporar sistema de puntuación persistente |
+| Mecánica de juego funcional y completa | ~~Incorporar sistema de puntuación persistente~~ → resuelto en el Sprint 5 (`Marcador`) |
 | Pasar a POO nos sacó código repetido de encima | Separar el catálogo de personajes en su propio archivo |

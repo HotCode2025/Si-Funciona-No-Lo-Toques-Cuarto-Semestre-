@@ -66,7 +66,8 @@ const ELEMENTOS = {
 // Retratos que se pueden elegir al crear un personaje (están en /img)
 const RETRATOS = [
     { id: 'aang', nombre: 'Aang' }, { id: 'katara', nombre: 'Katara' },
-    { id: 'sokka', nombre: 'Sokka' }, { id: 'haru', nombre: 'Haru' }
+    { id: 'sokka', nombre: 'Sokka' }, { id: 'haru', nombre: 'Haru' },
+    { id: 'zuko', nombre: 'Zuko' }, { id: 'toph', nombre: 'Toph' }
 ];
 
 class Efectos {
@@ -334,6 +335,16 @@ const TECLAS_MAPA = {
     ArrowRight: 'derecha',  KeyD: 'derecha'
 };
 
+// Dónde queda la nación de cada elemento en el mapa (proporción del ancho y del alto).
+// El jugador arranca en su nación y el enemigo en la suya.
+const PUNTOS_MAPA = {
+    fuego:    { x: 0.20, y: 0.50 },   // Nación del Fuego
+    agua:     { x: 0.60, y: 0.14 },   // Tribus Agua (norte)
+    aire:     { x: 0.70, y: 0.33 },   // Nómadas del Aire
+    tierra:   { x: 0.70, y: 0.60 },   // Reino Tierra
+    guerrero: { x: 0.50, y: 0.84 }    // Tribus Agua (sur)
+};
+
 // Partículas que deja cada elemento al moverse
 const PARTICULAS_MAPA = {
     fuego:    { colores: ['#f97316', '#fbbf24', '#ef4444'], gravedad: -90, forma: 'circulo' },
@@ -349,6 +360,17 @@ class MovimientoCinematico {
         this.lienzo  = mapa.getContext('2d');
         this.efectos = efectos;
         this.alConfirmar = null;          // lo que pasa al apretar Enter (ir al combate)
+        this.enemigo   = null;            // la ficha del enemigo que espera en el mapa
+
+        // Imagen de fondo del mapa (img/mapa.jpg). Prueba varias rutas hasta encontrarla.
+        this.fondo = new Image();
+        const rutasFondo = ['./img/mapa.jpg', './assets/mapa.jpg', './mapa.jpg', './MAPA.jpg'];
+        let intentoFondo = 0;
+        this.fondo.addEventListener('error', () => {
+            intentoFondo++;
+            if (intentoFondo < rutasFondo.length) this.fondo.src = rutasFondo[intentoFondo];
+        });
+        this.fondo.src = rutasFondo[0];
 
         this.personaje = null;
         this.activo    = false;
@@ -425,9 +447,20 @@ class MovimientoCinematico {
 
     // ---------- CICLO ----------
 
-    iniciar(personaje) {
+    iniciar(personaje, enemigo = null) {
         this.detener();
         this.personaje  = personaje;
+        this.enemigo    = enemigo;
+
+        // Cada uno arranca en su nación; si son del mismo elemento, el enemigo queda al lado
+        const punto = p => PUNTOS_MAPA[p.elemento] ?? PUNTOS_MAPA.guerrero;
+        personaje.x = punto(personaje).x * this.mapa.width  - personaje.ancho / 2;
+        personaje.y = punto(personaje).y * this.mapa.height - personaje.alto  / 2;
+        if (enemigo) {
+            const mismo = enemigo.elemento === personaje.elemento;
+            enemigo.x = punto(enemigo).x * this.mapa.width  - enemigo.ancho / 2 + (mismo ? 150 : 0);
+            enemigo.y = punto(enemigo).y * this.mapa.height - enemigo.alto  / 2 + (mismo ? 70 : 0);
+        }
         this.estela     = [];
         this.particulas = [];
         this.ondas      = [];
@@ -553,6 +586,43 @@ class MovimientoCinematico {
 
     // ---------- DIBUJO ----------
 
+    // El enemigo espera en su nación: ficha con aro que late, su nombre y, si estás cerca, el aviso
+    pintarEnemigo(ctx) {
+        const e = this.enemigo;
+        const p = this.personaje;
+        if (!e) return;
+        const info = ELEMENTOS[e.elemento] ?? ELEMENTOS.guerrero;
+        const ecx = e.x + e.ancho / 2;
+        const pulso = (Math.sin(this.tiempo * 4) + 1) / 2;
+
+        ctx.beginPath();
+        ctx.ellipse(ecx, e.y + e.alto - 3, e.ancho / 2 + 10 + pulso * 8, 12 + pulso * 4, 0, 0, Math.PI * 2);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = info.color;
+        ctx.globalAlpha = 0.85 - pulso * 0.5;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        e.pintarEnMapa(ctx, e.x, e.y, !!p && (p.x + p.ancho / 2) < ecx);   // el enemigo te mira
+
+        const cerca = p && Math.hypot(ecx - (p.x + p.ancho / 2), (e.y + e.alto / 2) - (p.y + p.alto / 2)) < 110;
+        ctx.font = '600 14px Outfit, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.75)';
+        const rotulo = `⚔️ ${e.nombre}`;
+        ctx.strokeText(rotulo, ecx, Math.max(16, e.y - 10));
+        ctx.fillStyle = '#fff';
+        ctx.fillText(rotulo, ecx, Math.max(16, e.y - 10));
+        if (cerca) {
+            ctx.font = '700 15px Outfit, sans-serif';
+            ctx.strokeText('¡Enter para pelear!', ecx, e.y + e.alto + 22);
+            ctx.fillStyle = '#fcd34d';
+            ctx.fillText('¡Enter para pelear!', ecx, e.y + e.alto + 22);
+        }
+        ctx.textAlign = 'start';
+    }
+
     pintar() {
         const p = this.personaje;
         if (!p) return;
@@ -561,6 +631,16 @@ class MovimientoCinematico {
         const cx = p.x + p.ancho / 2;
 
         ctx.clearRect(0, 0, this.mapa.width, this.mapa.height);
+
+        // Fondo: el mapa de las Cuatro Naciones (como en la clase: drawImage de 0,0 a todo el canvas)
+        if (this.fondo.complete && this.fondo.naturalWidth > 0) {
+            ctx.drawImage(this.fondo, 0, 0, this.mapa.width, this.mapa.height);
+        } else {
+            ctx.fillStyle = '#1b3550';
+            ctx.fillRect(0, 0, this.mapa.width, this.mapa.height);
+        }
+
+        this.pintarEnemigo(ctx);
 
         // Círculos del click
         this.ondas.forEach(o => {
@@ -601,8 +681,7 @@ class MovimientoCinematico {
             ctx.save();
             ctx.globalAlpha = (i / this.estela.length) * (this.impulsoRestante > 0 ? 0.5 : 0.28);
             ctx.translate(f.x + p.ancho / 2, f.y + p.alto / 2 - flotar);
-            ctx.scale(f.espejo ? -1 : 1, 1);
-            p.pintarEnMapa(ctx, -p.ancho / 2, -p.alto / 2);
+            p.pintarEnMapa(ctx, -p.ancho / 2, -p.alto / 2, f.espejo);
             ctx.restore();
         });
 
@@ -611,9 +690,9 @@ class MovimientoCinematico {
         const estira = Math.min(velocidad / 560, 1);
         ctx.save();
         ctx.translate(cx, p.y + p.alto / 2 + respira - flotar);
-        ctx.rotate(Math.max(-1, Math.min(1, p.velocidadX / 260)) * 0.16);
-        ctx.scale((1 + estira * 0.18) * (this.mirandoIzquierda ? -1 : 1), 1 - estira * 0.12);
-        p.pintarEnMapa(ctx, -p.ancho / 2, -p.alto / 2);
+        ctx.rotate(Math.max(-1, Math.min(1, p.velocidadX / 260)) * 0.09);
+        ctx.scale(1 + estira * 0.12, 1 - estira * 0.08);
+        p.pintarEnMapa(ctx, -p.ancho / 2, -p.alto / 2, this.mirandoIzquierda);   // se da vuelta al ir a la izquierda
         ctx.restore();
 
         // Nombre sobre la cabeza
@@ -651,7 +730,7 @@ const GOLPES = {
 
 // Hacia dónde mira la foto original (las demás miran a la derecha). Si un personaje
 // se ve "al revés", cambiá 'izquierda' por 'derecha' acá.
-const MIRADA_FOTO = { aang: 'izquierda', katara: 'izquierda', sokka: 'izquierda' };
+const MIRADA_FOTO = {};
 
 class PeleaArcade {
     constructor(canvas, efectos) {
@@ -1051,7 +1130,7 @@ class PeleaArcade {
         const ctx = this.ctx;
         const p = f.personaje;
         const info = ELEMENTOS[p.elemento] ?? ELEMENTOS.guerrero;
-        const ANCHO = 150, ALTO = 175;
+        const ANCHO = 170, ALTO = 190;
         const altura = this.suelo - f.y;
 
         // Sombra y resplandor en el suelo
@@ -1331,13 +1410,15 @@ class Personaje {
         // Guardamos x e y porque necesitamos el valor para después actualizarlo
         this.x = 20;           // posición por defecto
         this.y = 30;
-        this.ancho = 80;
-        this.alto  = 80;
+        this.ancho = 60;       // caja del personaje en el mapa: ahora se dibuja de CUERPO ENTERO,
+        this.alto  = 88;       // con los pies apoyados en el borde de abajo de la caja
         this.velocidadX = 0;   // cuánto se mueve por cada "cuadro" (0 = quieto)
         this.velocidadY = 0;
-        this.mapaFoto = new Image();   // la imagen del canvas vive dentro del objeto
-        // (el .src se asigna en prepararMapa(): así no se piden 1000 fotos de golpe
-        //  cuando se fabrican muchos personajes, solo la del que va a jugar)
+        this.mapaFoto   = new Image();   // FICHA REDONDA que se mueve por el mapa (img/mapa/<id>.png)
+        this.cuerpoFoto = new Image();   // CUERPO ENTERO (tarjetas y Modo Pelea)
+        this.rutaFicha  = (foto === undefined || this.foto === `./img/${id}.webp`) ? `./img/mapa/${id}.png` : null;
+        // (los .src se asignan en prepararMapa(): así no se piden 1000 fotos de golpe
+        //  cuando se fabrican muchos personajes, solo las de los que van a jugar)
 
         // El personaje se guarda las referencias de SU tarjeta en la arena,
         // así después sabe actualizar su propia barra de vida.
@@ -1395,13 +1476,14 @@ class Personaje {
     // objetos distintos, aunque vengan del mismo molde (misma clase).
     // Carga la foto del personaje para dibujarla en el canvas
     prepararMapa() {
-        if (this.foto && !this.mapaFoto.src) this.mapaFoto.src = this.foto;
+        if (this.rutaFicha && !this.mapaFoto.src) this.mapaFoto.src = this.rutaFicha;
+        if (this.foto && !this.cuerpoFoto.src) this.cuerpoFoto.src = this.foto;
     }
 
     // Dibuja la foto (o el emoji) dentro de un cuadro, sin deformarla.
     // anclaAbajo = true apoya la imagen en la base del cuadro (para que "pise" el suelo).
     dibujarSprite(lienzo, x, y, ancho, alto, anclaAbajo = false) {
-        const foto = this.mapaFoto;
+        const foto = this.cuerpoFoto;
         if (foto.complete && foto.naturalWidth > 0) {
             const escala = Math.min(ancho / foto.naturalWidth, alto / foto.naturalHeight);
             const w = foto.naturalWidth * escala;
@@ -1418,8 +1500,63 @@ class Personaje {
     }
 
     // Dibuja al personaje en el mapa, en su x e y actuales
-    pintarEnMapa(lienzo, x = this.x, y = this.y) {
-        this.dibujarSprite(lienzo, x, y, this.ancho, this.alto);
+    // Cuerpo entero (img/<id>.webp) con los pies en el borde de abajo de la caja ancho x alto.
+    // `espejo` lo da vuelta para que mire hacia donde camina. Si la foto no cargó, usa la ficha redonda.
+    pintarEnMapa(lienzo, x = this.x, y = this.y, espejo = false) {
+        const c = this.cuerpoFoto;
+        if (c.complete && c.naturalWidth > 0) {
+            const h = this.alto;
+            const w = c.naturalWidth * (h / c.naturalHeight);
+            lienzo.save();
+            lienzo.imageSmoothingQuality = 'high';
+            lienzo.translate(x + this.ancho / 2, 0);
+            lienzo.scale(espejo ? -1 : 1, 1);
+            lienzo.drawImage(c, -w / 2, y, w, h);
+            lienzo.restore();
+        } else {
+            this.dibujarFicha(lienzo, x + (this.ancho - 64) / 2, y + this.alto - 64, 64);
+        }
+    }
+
+    // Ficha redonda para el mapa: la cara del personaje con un aro del color de su elemento.
+    // Si no hay ficha armada, recorta la parte de arriba de su foto; y si tampoco, usa el emoji.
+    dibujarFicha(lienzo, x, y, tam) {
+        const info = ELEMENTOS[this.elemento] ?? ELEMENTOS.guerrero;
+        const listo = img => img.complete && img.naturalWidth > 0;
+        const cx = x + tam / 2, cy = y + tam / 2, radio = tam / 2;
+
+        lienzo.save();
+        lienzo.beginPath();
+        lienzo.arc(cx, cy, radio, 0, Math.PI * 2);
+        lienzo.closePath();
+        lienzo.clip();
+        if (listo(this.mapaFoto)) {
+            lienzo.drawImage(this.mapaFoto, x, y, tam, tam);
+        } else {
+            lienzo.fillStyle = info.color;
+            lienzo.fillRect(x, y, tam, tam);
+            if (listo(this.cuerpoFoto)) {
+                const c = this.cuerpoFoto;
+                const lado = Math.min(c.naturalWidth, c.naturalHeight * 0.6);
+                lienzo.drawImage(c, (c.naturalWidth - lado) / 2, 0, lado, lado, x, y, tam, tam);
+            } else {
+                lienzo.font = `${Math.round(tam * 0.65)}px serif`;
+                lienzo.textAlign = 'center';
+                lienzo.textBaseline = 'middle';
+                lienzo.fillText(this.emoji, cx, cy + 2);
+                lienzo.textAlign = 'start';
+            }
+        }
+        lienzo.restore();
+
+        lienzo.beginPath();
+        lienzo.arc(cx, cy, radio - 1.5, 0, Math.PI * 2);
+        lienzo.lineWidth = 3.5;
+        lienzo.strokeStyle = info.color;
+        lienzo.shadowColor = 'rgba(0, 0, 0, 0.6)';
+        lienzo.shadowBlur = 8;
+        lienzo.stroke();
+        lienzo.shadowBlur = 0;
     }
 
     // Nombre del movimiento según SU elemento (ej: Aang + Puño = "Palma de Aire")
@@ -1578,8 +1715,8 @@ const PERSONAJES = [
         descripcion: 'Usa el dominio de la tierra para arrojar rocas a los enemigos.',
         tinte: 'rgba(34, 197, 94, 0.14)'
     }),
-    // Zuko y Toph: mismo molde Personaje, foto todavía no subida a /img
-    // (zuko.webp y toph.webp), así que por ahora se dibujan con su emoji.
+    // Zuko y Toph: mismo molde Personaje; sus fotos son img/zuko.webp e img/toph.webp
+    // (si faltara el archivo, la tarjeta muestra el emoji).
     new Personaje({
         id: 'zuko', elemento: 'fuego', nombre: 'Zuko', emoji: '🔥', titulo: 'Maestro Fuego',
         descripcion: 'Príncipe desterrado de la Nación del Fuego, domina las llamas con precisión.',
@@ -1951,12 +2088,19 @@ class Juego {
 
     iniciarMapa() {
         this.jugador.prepararMapa();
+        this.enemigo.prepararMapa();
+        // Tamaño del mapa (la clase usa 800 x 600; acá 800 x 447 para que no se deforme la imagen)
+        this.mapa.width  = 800;
+        this.mapa.height = 447;
+        // Teclado, como en la clase: keydown mueve y keyup detiene
+        window.addEventListener('keydown', sePresionoUnaTecla);
+        window.addEventListener('keyup', detenerMovimiento);
         this.seccionPersonaje.classList.add('oculto');
         this.seccionMensajes.classList.add('oculto');
         this.seccionMapa.classList.remove('oculto');
 
         // El bucle de animación (requestAnimationFrame) repinta el mapa ~60 veces por segundo
-        this.cinematica.iniciar(this.jugador);
+        this.cinematica.iniciar(this.jugador, this.enemigo);
     }
 
     // Un cuadro del mapa: calcula el movimiento y dibuja (el bucle lo hace solo)
@@ -1977,6 +2121,8 @@ class Juego {
     }
 
     detenerMapa() {
+        window.removeEventListener('keydown', sePresionoUnaTecla);
+        window.removeEventListener('keyup', detenerMovimiento);
         this.cinematica.detener();
     }
 
@@ -2460,6 +2606,30 @@ function moverIzquierda()    { juego.moverIzquierda(); }
 function moverDerecha()      { juego.moverDerecha(); }
 function detenerMovimiento() { juego.detenerMovimiento(); }
 function pintarPersonaje()   { juego.pintarPersonaje(); }
+function pintarCanvas()      { juego.pintarPersonaje(); }          // en la clase se llama así: ya no pinta solo al personaje, sino todo el canvas
+function iniciarMapa()       { juego.iniciarMapa(); }
+function obtenerObjetoPersonaje() { return juego.jugador; }        // devuelve el objeto completo del personaje elegido
+Object.defineProperty(window, 'personajeJugadorObjeto', { get: () => juego.jugador });
+
+// Cuando se presiona una tecla: según cuál sea, llama a la función de movimiento
+function sePresionoUnaTecla(event) {
+    switch (event.key) {
+        case 'ArrowUp':
+            moverArriba();
+            break;
+        case 'ArrowDown':
+            moverAbajo();
+            break;
+        case 'ArrowLeft':
+            moverIzquierda();
+            break;
+        case 'ArrowRight':
+            moverDerecha();
+            break;
+        default:
+            break;
+    }
+}
 
 /* ============================================================
    CONTROL DE VERSIÓN: avatar.html y avatar.js tienen que ser del mismo juego.

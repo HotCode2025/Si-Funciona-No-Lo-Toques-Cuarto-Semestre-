@@ -1524,3 +1524,12 @@ body.pantalla-derrota::after {
 #ver-mapa .fila-botones {
     justify-content: center;
 }
+
+
+/* ====== MAPA: ahora el canvas dibuja el mapa de las Cuatro Naciones ====== */
+#mapa {
+    max-width: 800px;
+    aspect-ratio: 800 / 447;
+    background-image: none;
+    background-color: #1b3550;
+}
