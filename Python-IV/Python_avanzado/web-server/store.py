@@ -9,3 +9,5 @@ def get_razas():
     razas = r.json()
     for raza in razas.values():
         print(f"Raza de los perritos: {raza}")
+        
+    return razas  # <-- ¡Esto es lo que faltaba para que la ruta web devuelva los datos!
