@@ -1,0 +1,8 @@
+numpy>=1.26
+pillow>=10
+onnxruntime>=1.18
+scikit-learn>=1.4
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+# Para correr los tests: pytest, httpx

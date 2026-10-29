@@ -1,0 +1,13 @@
+[
+  {"id": "ballena",             "nombre": "Ballena (especie sin confirmar)", "cientifico": null,                      "tipo": "fauna"},
+  {"id": "ballena_franca",      "nombre": "Ballena franca austral",          "cientifico": "Eubalaena australis",     "tipo": "fauna"},
+  {"id": "orca",                "nombre": "Orca",                            "cientifico": "Orcinus orca",            "tipo": "fauna"},
+  {"id": "delfin",              "nombre": "Delfín",                          "cientifico": null,                      "tipo": "fauna"},
+  {"id": "lobo_marino",         "nombre": "Lobo marino de un pelo",          "cientifico": "Otaria flavescens",       "tipo": "fauna"},
+  {"id": "pinguino_magallanes", "nombre": "Pingüino de Magallanes",          "cientifico": "Spheniscus magellanicus", "tipo": "fauna"},
+  {"id": "aves_marinas",        "nombre": "Aves marinas",                    "cientifico": null,                      "tipo": "fauna"},
+  {"id": "tiburon",             "nombre": "Tiburón",                         "cientifico": null,                      "tipo": "tiburon"},
+  {"id": "cachiyuyo",           "nombre": "Cachiyuyo (kelp gigante)",        "cientifico": "Macrocystis pyrifera",    "tipo": "kelp"},
+  {"id": "alga_invasora",       "nombre": "Alga invasora (wakame)",          "cientifico": "Undaria pinnatifida",     "tipo": "amenaza"},
+  {"id": "sin_fauna",           "nombre": "Paisaje, sin fauna ni algas visibles", "cientifico": null,                 "tipo": "ninguno"}
+]

@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import { DemoProvider, useDemo } from './contexts/DemoContext.jsx';
 
 import PublicoLayout from './layouts/PublicoLayout.jsx';
@@ -18,9 +19,23 @@ import Verificar from './pages/app/Verificar.jsx';
 import Billetera from './pages/app/Billetera.jsx';
 import Perfil    from './pages/app/Perfil.jsx';
 import Tokens    from './pages/app/Tokens.jsx';
+import ModeloIA from './pages/app/ModeloIA.jsx';
+import Menu from './pages/app/Menu.jsx';
 
 
 import { Boton, Cargando } from './components/ui/index.jsx';
+
+// Abierto con doble clic desde el disco no hay servidor que responda a
+// /app/tokens, asi que la build de archivo unico rutea por el hash. En la
+// version publicada sigue siendo BrowserRouter y las direcciones quedan
+// limpias.
+const EsArchivoUnico = import.meta.env.VITE_ARCHIVO_UNICO === '1';
+// Dentro del APK no tiene sentido arrancar en la web pública: se abre la app.
+// Capacitor sirve la app desde https://localhost (Android) o capacitor://localhost (iOS): se usa
+// también ese origen por si el puente nativo tarda en declararse.
+const EsNativo = Capacitor.isNativePlatform()
+  || (location.hostname === 'localhost' && ['https:', 'capacitor:'].includes(location.protocol));
+const Router = EsArchivoUnico ? HashRouter : BrowserRouter;
 
 // Carga diferida: recharts pesa y solo hace falta en el detalle de zona y
 // en el panel. La app ciudadana no lo baja nunca.
@@ -56,7 +71,7 @@ function Rutas() {
     <Routes key={version}>
       {/* Público */}
       <Route element={<PublicoLayout />}>
-        <Route path="/" element={<Portada />} />
+        <Route path="/" element={EsNativo ? <Navigate to="/app/menu" replace /> : <Portada />} />
         <Route path="/funciones" element={<Funciones />} />
         <Route path="/ecosistema" element={<Ecosistema />} />
         <Route path="/ecosistema/:slug" element={<ZonaDetalle />} />
@@ -72,11 +87,13 @@ function Rutas() {
       {/* Capa 1 — app ciudadana */}
       <Route path="/app" element={<AppLayout />}>
         <Route index element={<Inicio />} />
+        <Route path="menu" element={<Menu />} />
         <Route path="reportar" element={<Reportar />} />
         <Route path="verificar" element={<Verificar />} />
         <Route path="billetera" element={<Billetera />} />
         <Route path="perfil" element={<Perfil />} />
         <Route path="tokens" element={<Tokens />} />
+        <Route path="ia" element={<ModeloIA />} />
       </Route>
 
       {/* Capa 2 — panel de organización */}
@@ -93,12 +110,12 @@ function Rutas() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <Router>
       <DemoProvider>
         <Suspense fallback={<div className="grid min-h-dvh place-items-center"><Cargando /></div>}>
           <Rutas />
         </Suspense>
       </DemoProvider>
-    </BrowserRouter>
+    </Router>
   );
 }
