@@ -47,6 +47,9 @@
             <span>🔥</span><span>💧</span><span>🌪️</span><span>🌱</span>
         </div>
 
+        <!-- Marcador guardado en el navegador: lo dibuja la clase Marcador -->
+        <div id="marcador" class="marcador"></div>
+
         <!-- El buscador aparece solo cuando el catálogo supera los 8 personajes -->
         <div class="barra-catalogo">
             <input type="search" id="buscador-personajes" class="buscador oculto"
@@ -67,8 +70,44 @@
         <div class="fila-botones">
             <button id="boton-personaje" class="boton-primario">Confirmar Selección</button>
             <button id="boton-crear-personaje" class="boton-crear">Crear Personaje</button>
+            <button id="boton-modo-pelea" class="boton-pelea">🥊 Modo Pelea 2D</button>
             <button id="boton-reglas-personaje" class="boton-reglas">Reglas</button>
             <button id="boton-terminar-juego" class="boton-terminar">Terminar el juego</button>
+        </div>
+    </section>
+
+    <!-- MODO PELEA 2D: segundo juego (pelea en tiempo real, de costado) -->
+    <section id="pelea-2d" class="oculto">
+        <div class="arena-header">
+            <h2>Modo Pelea 2D</h2>
+            <div class="arena-acciones">
+                <button id="boton-reiniciar-pelea" class="boton-reglas">🔄 Reiniciar</button>
+                <button id="boton-salir-pelea" class="boton-reglas">🚪 Salir</button>
+            </div>
+        </div>
+
+        <div class="pelea-config">
+            <label>Jugador 1 <select id="pelea-p1" aria-label="Personaje del jugador 1"></select></label>
+            <label>Jugador 2 <select id="pelea-p2" aria-label="Personaje del jugador 2"></select></label>
+            <button id="boton-pelea-1p" class="boton-primario">1 jugador vs CPU</button>
+            <button id="boton-pelea-2p" class="boton-crear">2 jugadores</button>
+        </div>
+
+        <canvas id="canvas-pelea" width="900" height="420"></canvas>
+
+        <div class="pelea-controles">
+            <div>
+                <h3>Jugador 1</h3>
+                <p><kbd>A</kbd> <kbd>D</kbd> mover · <kbd>W</kbd> saltar · <kbd>S</kbd> bloquear</p>
+                <p><kbd>F</kbd> puño · <kbd>G</kbd> patada · <kbd>H</kbd> poder del elemento</p>
+                <p class="nota">Contra la CPU también podés usar los controles del jugador 2.</p>
+            </div>
+            <div>
+                <h3>Jugador 2</h3>
+                <p><kbd>←</kbd> <kbd>→</kbd> mover · <kbd>↑</kbd> saltar · <kbd>↓</kbd> bloquear</p>
+                <p><kbd>K</kbd> puño · <kbd>L</kbd> patada · <kbd>;</kbd> poder del elemento</p>
+                <p class="nota">Al mejor de 3 rondas · 60 segundos por ronda.</p>
+            </div>
         </div>
     </section>
 
@@ -83,24 +122,36 @@
          para moverlo (onmousedown cambia la velocidad, onmouseup la deja en 0). -->
     <section id="ver-mapa" class="oculto">
         <h2>Mapa de Exploración</h2>
-        <p class="mapa-ayuda">Mantené presionado un botón para mover a tu personaje.</p>
-        <canvas id="mapa" width="600" height="400"></canvas>
+        <p class="mapa-ayuda">
+            Movete con las <kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd> o <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd>,
+            con los botones, o haciendo <strong>click en el mapa</strong>.
+            <strong>Chocá con un enemigo para pelear con él.</strong>
+            <kbd>Shift</kbd> o <kbd>Espacio</kbd> = impulso · <kbd>Enter</kbd> = pelear con el más cercano.
+        </p>
+        <canvas id="mapa" width="800" height="447"></canvas>
 
         <div class="controles-mapa">
-            <button class="control-mapa c-arriba" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverArriba()" ontouchstart="juego.moverArriba(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">▲ Arriba</button>
-            <button class="control-mapa c-izquierda" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverIzquierda()" ontouchstart="juego.moverIzquierda(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">◀ Izquierda</button>
-            <button class="control-mapa c-abajo" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverAbajo()" ontouchstart="juego.moverAbajo(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">▼ Abajo</button>
-            <button class="control-mapa c-derecha" onmouseup="juego.detenerMovimiento()" onmouseleave="juego.detenerMovimiento()" onmousedown="juego.moverDerecha()" ontouchstart="juego.moverDerecha(); event.preventDefault()" ontouchend="juego.detenerMovimiento()">Derecha ▶</button>
+            <button class="control-mapa c-arriba" onmouseup="detenerMovimiento()" onmouseleave="detenerMovimiento()" onmousedown="moverArriba()" ontouchstart="moverArriba(); event.preventDefault()" ontouchend="detenerMovimiento()">▲ Arriba</button>
+            <button class="control-mapa c-izquierda" onmouseup="detenerMovimiento()" onmouseleave="detenerMovimiento()" onmousedown="moverIzquierda()" ontouchstart="moverIzquierda(); event.preventDefault()" ontouchend="detenerMovimiento()">◀ Izquierda</button>
+            <button class="control-mapa c-abajo" onmouseup="detenerMovimiento()" onmouseleave="detenerMovimiento()" onmousedown="moverAbajo()" ontouchstart="moverAbajo(); event.preventDefault()" ontouchend="detenerMovimiento()">▼ Abajo</button>
+            <button class="control-mapa c-derecha" onmouseup="detenerMovimiento()" onmouseleave="detenerMovimiento()" onmousedown="moverDerecha()" ontouchstart="moverDerecha(); event.preventDefault()" ontouchend="detenerMovimiento()">Derecha ▶</button>
         </div>
 
-        <button id="boton-ir-combate" class="boton-primario">⚔️ Ir al combate</button>
+        <div class="fila-botones">
+            <button id="boton-ir-combate" class="boton-primario">🎲 Enemigo al azar</button>
+            <button id="boton-salir-mapa" class="boton-terminar">🚪 Salir</button>
+        </div>
     </section>
 
     <!-- Selección de movimiento (oculto hasta elegir personaje) -->
     <section id="seleccionar-ataque" class="oculto">
         <div class="arena-header">
             <h2>Arena de Elementos</h2>
-            <button id="boton-reglas-arena" class="boton-reglas">Reglas</button>
+            <div class="arena-acciones">
+                <button id="boton-reglas-arena" class="boton-reglas">Reglas</button>
+                <button id="boton-reiniciar-arena" class="boton-reglas">🔄 Reiniciar</button>
+                <button id="boton-salir-arena" class="boton-reglas">🚪 Salir</button>
+            </div>
         </div>
 
         <!-- Las dos tarjetas las dibuja Personaje.crearTarjetaArena() -->
@@ -121,7 +172,10 @@
 
     <!-- Reiniciar -->
     <section id="reiniciar" class="oculto">
-        <button id="boton-reiniciar">Reiniciar Combate</button>
+        <div class="fila-botones">
+            <button id="boton-reiniciar">🔄 Reiniciar Combate</button>
+            <button id="boton-salir-final" class="boton-terminar">🚪 Salir</button>
+        </div>
     </section>
 
     <!-- Modal de reglas -->
