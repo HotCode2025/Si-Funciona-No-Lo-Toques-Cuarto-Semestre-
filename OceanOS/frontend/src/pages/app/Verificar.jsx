@@ -5,6 +5,7 @@ import { useFetch } from '../../hooks/useFetch.js';
 import { useReglas } from '../../hooks/useReglas.js';
 import { useDemo } from '../../contexts/DemoContext.jsx';
 import { api } from '../../services/api.js';
+import { etiquetaDesdeFoto, etiquetarFoto } from '../../services/ia.js';
 import { Panel, Boton, Cargando, CajaError, Etiqueta, Vacio } from '../../components/ui/index.jsx';
 import { numero, hace, TIPOS } from '../../utils/format.js';
 
@@ -13,7 +14,7 @@ import { numero, hace, TIPOS } from '../../utils/format.js';
  * de confianza. Tres votos ponderados por reputación los resuelven.
  */
 export default function Verificar() {
-  const { refrescar } = useDemo();
+  const { refrescar, user } = useDemo();
   const reglas = useReglas();
   const { data, error, loading, recargar } = useFetch('/avistamientos/cola/verificacion');
   const [votando, setVotando] = useState(null);
@@ -26,6 +27,9 @@ export default function Verificar() {
     try {
       const r = await api.post(`/avistamientos/${id}/voto`, { agrees });
       setResueltos((prev) => ({ ...prev, [id]: r }));
+      // Cada "coincido" sobre un reporte con foto es una confirmación de la especie: alimenta el aprendizaje.
+      const ref = agrees && etiquetaDesdeFoto(data?.cola?.find((x) => x.id === id)?.photo_url);
+      if (ref) etiquetarFoto(ref.fotoId, ref.clase, 'verificador', user?.id, id).catch(() => {});
       refrescar();
     } catch (e) {
       setFalla(e);
@@ -46,7 +50,8 @@ export default function Verificar() {
         {reglas ? `, y suma ${reglas.premios.voto_comunidad} OKN.` : '.'}{' '}
         <Link to="/app/tokens" className="text-sonda underline underline-offset-4 hover:text-kelp">
           Cómo funciona la votación
-        </Link>
+        </Link>{' · '}
+        <Link to="/app/ia" className="text-sonda underline underline-offset-4 hover:text-kelp">Cómo aprende la IA</Link>
       </p>
 
       {error && <div className="mt-4"><CajaError error={error} onReintentar={recargar} /></div>}
@@ -82,6 +87,11 @@ export default function Verificar() {
                     </div>
                   )}
                 </div>
+
+                {a.photo_url && (
+                  <img src={a.photo_url} alt={`Foto del reporte de ${a.reporter_name}`} loading="lazy"
+                       className="mt-4 aspect-video w-full rounded-carta border border-trazo object-cover" />
+                )}
 
                 <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-4">
                   <div><dt className="text-xs text-tinta/70">Zona</dt><dd>{a.zone_name}</dd></div>

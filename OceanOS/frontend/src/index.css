@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+/* Tipografías incluidas en el proyecto: la app se ve igual con o sin internet. */
+@font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url("./assets/fonts/fraunces-latin-opsz-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap;
+  src: url("./assets/fonts/fraunces-latin-ext-opsz-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 100 900; font-stretch: 62% 125%; font-display: swap;
+  src: url("./assets/fonts/archivo-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 100 900; font-stretch: 62% 125%; font-display: swap;
+  src: url("./assets/fonts/archivo-latin-ext-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+/* Margen seguro: en Android 15+ la app dibuja bajo la barra de estado. */
+.safe-top { padding-top: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px)); }
+.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px)); }
+
+
 /* =====================================================================
    Sistema de diseño — "Carta náutica"
    ---------------------------------------------------------------------
@@ -120,6 +139,9 @@
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
+      animation-delay: 0s !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
     }
   }
 }
@@ -290,3 +312,162 @@
 .recharts-tooltip-item-name, .recharts-tooltip-item-separator {
   color: var(--color-sonda) !important;
 }
+
+
+/* =====================================================================
+   Movimiento — capa profesional
+   Principios: una sola curva (expo-out), nada rebota, nada se mueve sin
+   motivo, y todo se apaga con prefers-reduced-motion.
+   ===================================================================== */
+
+/* Transición entre páginas */
+@keyframes pagina-entra { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.pagina-entra { animation: pagina-entra .55s cubic-bezier(.16, 1, .3, 1) both; }
+
+/* Hilo de lectura */
+.progreso-scroll { position: fixed; inset: 0 0 auto 0; height: 2px; z-index: 60; pointer-events: none; }
+.progreso-scroll > div { height: 100%; transform-origin: left; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--color-kelp), var(--color-kelp-alto)); box-shadow: 0 0 10px rgb(229 164 69 / .6); }
+
+/* Titular: cada palabra sube desde una máscara */
+.palabra { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .08em; margin-bottom: -.08em; }
+.palabra > span { display: inline-block; transform: translateY(110%); animation: palabra-sube .9s cubic-bezier(.16, 1, .3, 1) forwards; animation-delay: calc(var(--i) * 55ms + 150ms); }
+@keyframes palabra-sube { to { transform: translateY(0); } }
+
+/* Fondo del hero: las curvas batimétricas derivan muy lento */
+@keyframes deriva { to { background-position: 0 0, 800px 400px, 0 0, 0 0; } }
+.hero-ocean { animation: deriva 90s linear infinite; background-position: 0 0, 0 0, 0 0, 0 0; }
+
+/* Nav pública */
+.nav-publica { transition: background-color .4s, border-color .4s, box-shadow .4s, padding .4s; }
+.nav-publica[data-scroll="0"] { background-color: transparent; border-color: transparent; backdrop-filter: none; }
+.nav-publica[data-scroll="1"] { box-shadow: 0 10px 30px -18px rgb(0 0 0 / .8); }
+.enlace-nav { position: relative; padding-block: .25rem; }
+.enlace-nav::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 1px; background: var(--color-kelp-alto);
+  transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.16, 1, .3, 1); }
+.enlace-nav:hover::after, .enlace-nav.activo::after { transform: scaleX(1); }
+
+/* Botón ámbar: barrido de luz al pasar */
+.btn-brillo { position: relative; overflow: hidden; isolation: isolate; }
+.btn-brillo::after { content: ''; position: absolute; inset: 0; z-index: -1; transform: translateX(-120%);
+  background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / .38) 50%, transparent 70%); transition: transform .8s cubic-bezier(.16, 1, .3, 1); }
+.btn-brillo:hover::after { transform: translateX(120%); }
+
+/* Logo */
+.logo-animado .logo-tallo { stroke-dasharray: 1; stroke-dashoffset: 1; animation: dibujar 1.5s .15s cubic-bezier(.65, 0, .35, 1) forwards; }
+.logo-animado .logo-fronda > :not(.logo-tallo) { opacity: 0; animation: aparece .6s ease forwards; animation-delay: .85s; }
+.logo-animado .logo-fronda { transform-origin: 24px 39px; animation: mecer 7s ease-in-out 2s infinite; }
+.logo-animado .logo-anillo { transform-origin: 24px 24px; animation: girar 80s linear infinite; }
+.logo-sonar { transform-origin: 24px 24px; animation: sonar-logo 3.6s ease-out 1.6s infinite; opacity: 0; }
+@keyframes dibujar { to { stroke-dashoffset: 0; } }
+@keyframes aparece { to { opacity: 1; } }
+@keyframes mecer { 0%, 100% { transform: rotate(-1.8deg); } 50% { transform: rotate(1.8deg); } }
+@keyframes girar { to { transform: rotate(360deg); } }
+@keyframes sonar-logo { 0% { transform: scale(.75); opacity: .65; } 100% { transform: scale(1.4); opacity: 0; } }
+
+/* Reel de videos */
+.reel { --rx: 0deg; --ry: 0deg; perspective: 1100px; }
+.reel-marco { position: relative; aspect-ratio: 9 / 16; overflow: hidden; border-radius: 1.4rem; background: var(--color-hondo);
+  border: 1px solid rgb(127 181 176 / .35); transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .4s cubic-bezier(.16, 1, .3, 1);
+  box-shadow: 0 40px 90px -30px rgb(0 0 0 / .8), 0 0 0 6px rgb(16 57 74 / .35), 0 0 60px -10px rgb(79 165 136 / .25); }
+.reel-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.07);
+  transition: opacity 1s ease, transform 7s cubic-bezier(.2, .6, .2, 1); }
+.reel-video.activo { opacity: 1; transform: scale(1); }
+.reel-velo { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top, rgb(4 32 43 / .88), transparent 48%), linear-gradient(to bottom, rgb(4 32 43 / .55), transparent 22%); }
+.reel-barra { position: relative; height: 2px; flex: 1; overflow: hidden; border-radius: 2px; background: rgb(237 243 241 / .28); }
+.reel-barra > i { position: absolute; inset: 0; background: var(--color-carta); transform-origin: left; transform: scaleX(0); }
+.reel-pie { animation: pagina-entra .8s cubic-bezier(.16, 1, .3, 1) both; }
+
+/* Olas divisorias */
+.olas { position: relative; height: 56px; overflow: hidden; pointer-events: none; }
+.olas svg { position: absolute; left: 0; top: 0; width: 200%; height: 100%; fill: none; stroke-linecap: round; }
+.olas path { stroke: var(--color-sonda); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+.olas-a { opacity: .38; animation: ola 26s linear infinite; }
+.olas-b { opacity: .16; top: 10px !important; animation: ola 40s linear infinite reverse; }
+@keyframes ola { to { transform: translateX(-50%); } }
+
+/* Teléfono de la sección de descarga */
+@keyframes flotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.flotar { animation: flotar 8s ease-in-out infinite; }
+.telefono { position: relative; width: 17rem; aspect-ratio: 9 / 18.5; border-radius: 2.6rem; padding: .55rem; background: linear-gradient(160deg, #1d4f62, #082a37);
+  border: 1px solid rgb(127 181 176 / .4); box-shadow: 0 50px 100px -30px rgb(0 0 0 / .85), 0 0 80px -20px rgb(79 165 136 / .3); }
+.telefono-pantalla { position: relative; height: 100%; overflow: hidden; border-radius: 2.1rem; background: var(--color-abismo); isolation: isolate; }
+.telefono-isla { position: absolute; z-index: 20; top: .6rem; left: 50%; width: 4.2rem; height: 1.15rem; transform: translateX(-50%); border-radius: 99px; background: #000; }
+.vidrio { background: rgb(10 46 60 / .62); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgb(127 181 176 / .28); }
+@keyframes ficha { 0% { opacity: 0; transform: translateY(14px) scale(.96); } 10%, 78% { opacity: 1; transform: none; } 92%, 100% { opacity: 0; transform: translateY(-6px); } }
+.ficha-1 { animation: ficha 9s cubic-bezier(.16, 1, .3, 1) infinite; }
+.ficha-2 { animation: ficha 9s cubic-bezier(.16, 1, .3, 1) 1.4s infinite; }
+
+/* Splash de la app */
+.splash { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: var(--color-abismo); overflow: hidden;
+  transition: opacity .65s ease, transform .65s cubic-bezier(.16, 1, .3, 1); }
+.splash-sale { opacity: 0; transform: scale(1.04); pointer-events: none; }
+.splash-texto { opacity: 0; animation: pagina-entra .9s cubic-bezier(.16, 1, .3, 1) .45s forwards; }
+.splash-barra { width: 9rem; height: 2px; border-radius: 2px; overflow: hidden; background: rgb(127 181 176 / .2); }
+.splash-barra > i { display: block; height: 100%; background: var(--color-kelp-alto); transform-origin: left; transform: scaleX(0); animation: carga 2.1s cubic-bezier(.65, 0, .35, 1) forwards; }
+@keyframes carga { to { transform: scaleX(1); } }
+
+/* Barra inferior de la app: indicador que se desliza + respuesta al toque */
+.barra-inferior { padding-bottom: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px)); background: rgb(4 32 43 / .88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.barra-indicador { position: absolute; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--color-kelp-alto), transparent);
+  transition: transform .5s cubic-bezier(.16, 1, .3, 1), opacity .3s; }
+.barra-item svg { transition: transform .35s cubic-bezier(.16, 1, .3, 1); }
+.barra-item:active svg { transform: scale(.82); }
+.barra-item.activo svg { transform: translateY(-2px) scale(1.08); }
+
+/* Banner de saludo de la app */
+.banner-app { position: relative; overflow: hidden; border-radius: 1.1rem; border: 1px solid rgb(127 181 176 / .28); isolation: isolate; }
+.banner-app > .banner-video { position: absolute; inset: 0; z-index: -2; }
+.banner-app::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(100deg, rgb(4 32 43 / .92), rgb(4 32 43 / .45) 70%, rgb(4 32 43 / .25)); }
+
+.header-seguro { padding-top: calc(.625rem + max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px))); }
+
+/* Análisis de foto: línea de escaneo y entrada del resultado */
+.escaneo { position: absolute; inset: 0; pointer-events: none; overflow: hidden; background: linear-gradient(rgb(4 32 43 / .25), rgb(4 32 43 / .25)); }
+.escaneo::after { content: ''; position: absolute; left: 0; right: 0; height: 36%; top: -36%;
+  background: linear-gradient(to bottom, transparent, rgb(229 164 69 / .35) 85%, rgb(255 214 140 / .9) 99%, transparent);
+  animation: escanear 1.8s cubic-bezier(.45, 0, .55, 1) infinite; }
+@keyframes escanear { to { top: 100%; } }
+.resultado-ia { animation: pagina-entra .6s cubic-bezier(.16, 1, .3, 1) both; }
+.barra-progreso { transition: width 1s cubic-bezier(.16, 1, .3, 1); }
+
+/* Menú de la app */
+.menu-tile { transition: transform .4s cubic-bezier(.16, 1, .3, 1), border-color .3s, background-color .3s; }
+.menu-tile:hover { transform: translateY(-3px); border-color: rgb(229 164 69 / .55); background: rgb(14 52 68 / .72); }
+.menu-tile:active { transform: scale(.965); }
+.menu-destacado { background: linear-gradient(120deg, rgb(200 135 47 / .32), rgb(10 46 60 / .62) 70%); border-color: rgb(229 164 69 / .45); }
+
+/* Bienvenida, logros y confeti */
+@keyframes paso-entra { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+.paso-entra { animation: paso-entra .6s cubic-bezier(.16, 1, .3, 1) both; }
+.bienvenida-icono::before, .bienvenida-icono::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--color-kelp-alto); opacity: 0; animation: sonar-logo 3.2s ease-out infinite; }
+.bienvenida-icono::after { animation-delay: 1.6s; }
+.logro-fondo { animation: aparece-fondo .4s ease both; }
+@keyframes aparece-fondo { from { opacity: 0; } to { opacity: 1; } }
+.logro-medalla { animation: medalla .9s cubic-bezier(.16, 1, .3, 1) both; box-shadow: 0 0 0 10px rgb(229 164 69 / .12), 0 0 70px rgb(229 164 69 / .45); }
+@keyframes medalla { 0% { transform: scale(.2) rotate(-25deg); opacity: 0; } 60% { transform: scale(1.12) rotate(4deg); opacity: 1; } 100% { transform: none; } }
+.logro-texto { opacity: 0; animation: pagina-entra .7s cubic-bezier(.16, 1, .3, 1) forwards; }
+.logro-brillo { box-shadow: 0 0 0 4px rgb(229 164 69 / .1), 0 0 22px rgb(229 164 69 / .28); }
+.confeti { position: absolute; left: 50%; top: 56px; width: 0; height: 0; pointer-events: none; }
+.confeti i { position: absolute; border-radius: 2px; opacity: 0; animation: confeti 2.7s cubic-bezier(.12, .7, .3, 1) forwards; }
+@keyframes confeti { 0% { transform: translate(0, 0) rotate(0); opacity: 1; } 30% { transform: translate(calc(var(--x) * .7), var(--y)) rotate(calc(var(--r) * .5)); opacity: 1; } 72% { opacity: 1; } 100% { transform: translate(var(--x), 300px) rotate(var(--r)); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .confeti { display: none; } }
+
+/* Bosque perdido */
+.tallo { transform-origin: 50% 100%; transition: opacity 1s ease, transform 1.1s cubic-bezier(.16, 1, .3, 1), filter 1s ease; }
+.tallo.vivo { animation: mece-tallo 6s ease-in-out infinite; animation-delay: var(--d); }
+.tallo.perdido { opacity: .13; transform: scaleY(.5); filter: grayscale(1); }
+@keyframes mece-tallo { 0%, 100% { transform: rotate(-2.2deg); } 50% { transform: rotate(2.2deg); } }
+/* Cinta de reportes */
+.cinta { overflow: hidden; -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent); }
+.cinta-pista { display: flex; width: max-content; gap: 2.75rem; animation: cinta 70s linear infinite; }
+.cinta:hover .cinta-pista { animation-play-state: paused; }
+@keyframes cinta { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .cinta { overflow-x: auto; } .cinta-pista { animation: none; } }
+/* Grupos del mapa */
+.cluster-mapa span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgb(4 32 43 / .9); border: 2px solid var(--c); color: #EDF3F1;
+  font: 600 13px var(--font-body, system-ui); box-shadow: 0 0 0 5px color-mix(in srgb, var(--c) 25%, transparent); transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+.cluster-mapa:hover span { transform: scale(1.12); }
+.chip-tipo { transition: background-color .3s, border-color .3s, color .3s, transform .3s; }
+.chip-tipo:active { transform: scale(.94); }

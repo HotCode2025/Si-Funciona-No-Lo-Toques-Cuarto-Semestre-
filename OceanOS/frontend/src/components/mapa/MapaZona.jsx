@@ -1,5 +1,6 @@
-import { Fragment, useEffect, useState } from 'react';
-import { MapContainer, TileLayer, CircleMarker, ScaleControl, useMap, useMapEvents } from 'react-leaflet';
+import { Fragment, useEffect, useMemo, useState } from 'react';
+import L from 'leaflet';
+import { MapContainer, TileLayer, CircleMarker, Marker, ScaleControl, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { TIPOS, esReciente, hace } from '../../utils/format.js';
 
@@ -83,6 +84,49 @@ function AlTocar({ alTocar }) {
   return null;
 }
 
+/**
+ * Con muchos reportes, los que quedan a menos de ~46 px se juntan en un círculo con el total
+ * (color del tipo dominante). Se vuelven a calcular al acercar o alejar; tocar el círculo acerca.
+ */
+function Cluster({ grupo }) {
+  const mapa = useMap();
+  const lat = grupo.reduce((t, a) => t + Number(a.lat), 0) / grupo.length;
+  const lng = grupo.reduce((t, a) => t + Number(a.lng), 0) / grupo.length;
+  const conteo = {}; grupo.forEach((a) => { conteo[a.kind] = (conteo[a.kind] ?? 0) + 1; });
+  const dominante = Object.entries(conteo).sort((x, y) => y[1] - x[1])[0][0];
+  const color = colorReal(TIPOS[dominante]?.color ?? 'var(--color-sonda)');
+  const icono = useMemo(() => L.divIcon({ className: 'cluster-mapa', html: `<span style="--c:${color}">${grupo.length}</span>`, iconSize: [36, 36] }), [grupo.length, color]);
+  const acercar = () => {
+    const b = L.latLngBounds(grupo.map((a) => [Number(a.lat), Number(a.lng)]));
+    if (b.getNorthEast().distanceTo(b.getSouthWest()) < 30) mapa.setView([lat, lng], Math.min(mapa.getZoom() + 2, 18));
+    else mapa.fitBounds(b, { padding: [48, 48], maxZoom: 16 });
+  };
+  return <Marker position={[lat, lng]} icon={icono} title={`${grupo.length} reportes juntos. Tocá para acercar`} eventHandlers={{ click: acercar }} />;
+}
+
+function Capa({ lista, agrupar, dibujar }) {
+  const mapa = useMap();
+  const [, redibujar] = useState(0);
+  useMapEvents({ zoomend: () => redibujar((n) => n + 1) });
+  if (!agrupar) return lista.map(dibujar);
+  const celdas = new Map();
+  lista.forEach((a) => {
+    const p = mapa.project([Number(a.lat), Number(a.lng)]);
+    const k = `${Math.floor(p.x / 46)}:${Math.floor(p.y / 46)}`;
+    if (!celdas.has(k)) celdas.set(k, []);
+    celdas.get(k).push({ a, p });
+  });
+  // Las celdas vecinas pueden dejar dos círculos encimados: se juntan los que quedan muy cerca.
+  const centro = (m) => ({ x: m.reduce((t, e) => t + e.p.x, 0) / m.length, y: m.reduce((t, e) => t + e.p.y, 0) / m.length });
+  const grupos = [];
+  [...celdas.values()].sort((x, y) => y.length - x.length).forEach((m) => {
+    const c = centro(m);
+    const cerca = grupos.find((g) => Math.hypot(g.c.x - c.x, g.c.y - c.y) < (g.m.length > 1 || m.length > 1 ? 40 : 26));
+    if (cerca) { cerca.m = cerca.m.concat(m); cerca.c = centro(cerca.m); } else grupos.push({ m, c });
+  });
+  return grupos.map(({ m }) => (m.length === 1 ? dibujar(m[0].a) : <Cluster key={`c-${m[0].a.id}-${m.length}`} grupo={m.map((e) => e.a)} />));
+}
+
 export default function MapaZona({
   zona,
   avistamientos = [],
@@ -91,6 +135,7 @@ export default function MapaZona({
   seleccionado,
   interactivo = true,
   onClickMapa,
+  agrupar = false,
 }) {
   const [encima, setEncima] = useState(null);
   // Punto tocado. En un teléfono no hay hover, así que sin esto la ficha
@@ -113,34 +158,7 @@ export default function MapaZona({
   const activo = encima ?? seleccionado ?? fijado;
   const datosActivo = avistamientos.find((a) => a.id === activo);
 
-  // scrollWheelZoom apagado: el mapa está en el medio de pantallas largas y
-  // la rueda tiene que seguir bajando la página. Para acercar están + y −.
-  // trackResize apagado: Leaflet tiene su propio detector de tamaño, que
-  // ante un parpadeo en 0 px re-centraba el mapa por su cuenta y lo dejaba
-  // corrido. Del tamaño se ocupa solo Encuadre.
-  // width 100% en el contenedor: con aspect-ratio y ancho automático, Chrome
-  // traslada el min-height de 240 a un ancho de 528 px (240 × 2,2), y en un
-  // teléfono el mapa desbordaba la página hacia el costado. Con el ancho
-  // definido, el alto sale del ancho y el mínimo solo lo estira hacia abajo.
-  // (min-width: 0 no alcanza, probado.)
-  return (
-    <div className={`mapa-oceanos relative overflow-hidden rounded-carta border border-columna bg-abismo ${onClickMapa ? 'mapa-marcar' : ''}`}
-         style={{ width: '100%', aspectRatio: 2.2, maxHeight: alto, minHeight: 240 }}>
-      <MapContainer
-        bounds={limites(zona)}
-        boundsOptions={{ padding: [12, 12] }}
-        scrollWheelZoom={false}
-        trackResize={false}
-        zoomSnap={0.25}
-        zoomDelta={0.5}
-        className="absolute inset-0 h-full w-full"
-        aria-label={`Mapa de ${zona.name} con ${avistamientos.length} reportes`}>
-        <TileLayer url={FONDO.url} attribution={FONDO.atribucion} maxZoom={19} />
-        <ScaleControl position="bottomleft" imperial={false} />
-        <Encuadre zona={zona} />
-        <AlTocar alTocar={tocarMapa} />
-
-        {avistamientos.map((a) => {
+  const dibujar = (a) => {
           const centro = [Number(a.lat), Number(a.lng)];
           const color = colorReal(TIPOS[a.kind]?.color ?? 'var(--color-sonda)');
           const esActivo = a.id === activo;
@@ -184,12 +202,44 @@ export default function MapaZona({
               )}
             </Fragment>
           );
-        })}
+  };
+
+  // scrollWheelZoom apagado: el mapa está en el medio de pantallas largas y
+  // la rueda tiene que seguir bajando la página. Para acercar están + y −.
+  // trackResize apagado: Leaflet tiene su propio detector de tamaño, que
+  // ante un parpadeo en 0 px re-centraba el mapa por su cuenta y lo dejaba
+  // corrido. Del tamaño se ocupa solo Encuadre.
+  // width 100% en el contenedor: con aspect-ratio y ancho automático, Chrome
+  // traslada el min-height de 240 a un ancho de 528 px (240 × 2,2), y en un
+  // teléfono el mapa desbordaba la página hacia el costado. Con el ancho
+  // definido, el alto sale del ancho y el mínimo solo lo estira hacia abajo.
+  // (min-width: 0 no alcanza, probado.)
+  return (
+    <div className={`mapa-oceanos relative overflow-hidden rounded-carta border border-columna bg-abismo ${onClickMapa ? 'mapa-marcar' : ''}`}
+         style={{ width: '100%', aspectRatio: 2.2, maxHeight: alto, minHeight: 240 }}>
+      <MapContainer
+        bounds={limites(zona)}
+        boundsOptions={{ padding: [12, 12] }}
+        scrollWheelZoom={false}
+        trackResize={false}
+        zoomSnap={0.25}
+        zoomDelta={0.5}
+        className="absolute inset-0 h-full w-full"
+        aria-label={`Mapa de ${zona.name} con ${avistamientos.length} reportes`}>
+        <TileLayer url={FONDO.url} attribution={FONDO.atribucion} maxZoom={19} />
+        <ScaleControl position="bottomleft" imperial={false} />
+        <Encuadre zona={zona} />
+        <AlTocar alTocar={tocarMapa} />
+
+        <Capa lista={avistamientos} agrupar={agrupar && avistamientos.length > 12} dibujar={dibujar} />
       </MapContainer>
 
       {/* Ficha del reporte bajo el cursor o tocado */}
       {datosActivo && (
         <div className="pointer-events-none absolute bottom-9 left-3 z-[1000] max-w-xs rounded-carta border border-columna bg-abismo/95 px-3 py-2 text-carta backdrop-blur">
+          {datosActivo.photo_url && (
+            <img src={datosActivo.photo_url} alt="" loading="lazy" className="mb-2 h-24 w-56 max-w-full rounded-md object-cover" />
+          )}
           <p className="text-sm font-500">
             {datosActivo.common_name ?? TIPOS[datosActivo.kind]?.etiqueta}
           </p>

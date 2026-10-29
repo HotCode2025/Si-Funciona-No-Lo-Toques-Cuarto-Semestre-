@@ -4,6 +4,8 @@ import { useFetch } from '../../hooks/useFetch.js';
 import { useDemo } from '../../contexts/DemoContext.jsx';
 import MapaZona, { LeyendaMapa } from '../../components/mapa/MapaZona.jsx';
 import { Panel, Boton, Cargando, CajaError, Etiqueta, Selector } from '../../components/ui/index.jsx';
+import { VideoFondo, CLIPS } from '../../components/media/Reel.jsx';
+import Contador from '../../components/ui/Contador.jsx';
 import { numero, hace, TIPOS, ESTADOS } from '../../utils/format.js';
 
 export default function Inicio() {
@@ -13,26 +15,35 @@ export default function Inicio() {
 
   const { data: zonas } = useFetch('/ecosistema/zonas');
   const { data: zonaData } = useFetch(`/ecosistema/zonas/${zonaSlug}`, [zonaSlug]);
-  const consulta = `/avistamientos?zone=${zonaSlug}&limite=250${tipo ? `&kind=${tipo}` : ''}`;
-  const { data, error, loading, recargar } = useFetch(consulta, [zonaSlug, tipo]);
+  const consulta = `/avistamientos?zone=${zonaSlug}&limite=250`;
+  const { data, error, loading, recargar } = useFetch(consulta, [zonaSlug]);
 
-  const avistamientos = data?.avistamientos ?? [];
+  // Se trae todo y se filtra acá: así los chips pueden mostrar cuántos reportes hay de cada tipo.
+  const todos = data?.avistamientos ?? [];
+  const cuenta = todos.reduce((c, a) => ({ ...c, [a.kind]: (c[a.kind] ?? 0) + 1 }), {});
+  const avistamientos = tipo ? todos.filter((a) => a.kind === tipo) : todos;
   const hora = new Date().getHours();
   const saludo = hora < 13 ? 'Buen día' : hora < 20 ? 'Buenas tardes' : 'Buenas noches';
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-6 lg:px-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-2xl font-600">
-            {saludo}, {user?.full_name?.split(' ')[0]}
-          </h1>
-          <p className="mt-1 text-sm text-tinta/80">
-            {user?.balance_okn != null && `${numero(user.balance_okn)} OKN`}
-            {user?.streak_days > 0 && ` · racha de ${user.streak_days} días`}
-          </p>
+      <div className="banner-app animar-flotar px-5 py-6 sm:py-8">
+        <div className="banner-video"><VideoFondo clip={CLIPS[1]} /></div>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs tracking-widest text-kelp-alto uppercase">{saludo}</p>
+            <h1 className="mt-1 font-display text-2xl font-600 sm:text-3xl">{user?.full_name?.split(' ')[0]}</h1>
+            <p className="mt-2 flex flex-wrap items-center gap-x-3 text-sm text-carta/85">
+              {user?.balance_okn != null && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-kelp/50 bg-abismo/50 px-2.5 py-0.5 backdrop-blur">
+                  <Contador valor={user.balance_okn} formato={(x) => numero(x)} className="cifra font-600 text-kelp-alto" /> OKN
+                </span>
+              )}
+              {user?.streak_days > 0 && <span>racha de {user.streak_days} {user.streak_days === 1 ? 'día' : 'días'}</span>}
+            </p>
+          </div>
+          <Link to="/app/reportar"><Boton variante="kelp">Reportar algo</Boton></Link>
         </div>
-        <Link to="/app/reportar"><Boton variante="kelp">Reportar algo</Boton></Link>
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3">
@@ -41,16 +52,20 @@ export default function Inicio() {
             <option key={z.slug} value={z.slug}>{z.name}</option>
           ))}
         </Selector>
-        <Selector value={tipo} onChange={(e) => setTipo(e.target.value)} className="max-w-44">
-          <option value="">Todos los tipos</option>
-          {Object.entries(TIPOS).map(([k, v]) => (
-            <option key={k} value={k}>{v.etiqueta}</option>
-          ))}
-        </Selector>
+      </div>
+
+      <div role="group" aria-label="Filtrar por tipo" className="mt-3 flex flex-wrap gap-2">
+        {[['', 'Todos', todos.length], ...Object.entries(TIPOS).map(([k, v]) => [k, v.etiqueta, cuenta[k] ?? 0])].map(([k, etiqueta, n]) => (
+          <button key={k || 'todos'} type="button" aria-pressed={tipo === k} onClick={() => setTipo(k)}
+            className={`chip-tipo inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm ${tipo === k ? 'border-kelp bg-kelp/15 text-carta' : 'border-columna text-sonda hover:border-sonda'}`}>
+            {k && <span className="h-2 w-2 rounded-full" style={{ backgroundColor: TIPOS[k].color }} />}
+            {etiqueta} <span className="cifra text-xs opacity-70">{n}</span>
+          </button>
+        ))}
       </div>
 
       <div className="mt-4">
-        <MapaZona zona={zonaData?.zona} avistamientos={avistamientos} alto={400} />
+        <MapaZona zona={zonaData?.zona} avistamientos={avistamientos} alto={400} agrupar />
         <LeyendaMapa className="mt-3" />
       </div>
 
@@ -59,8 +74,8 @@ export default function Inicio() {
 
       <h2 className="mt-10 font-display text-lg font-600">Últimos reportes</h2>
       <div className="mt-3 divide-y divide-trazo border-y border-trazo">
-        {avistamientos.slice(0, 15).map((a) => (
-          <div key={a.id} className="flex items-center gap-3 py-3">
+        {avistamientos.slice(0, 15).map((a, i) => (
+          <div key={a.id} className="animar-flotar flex items-center gap-3 py-3" style={{ animationDelay: `${Math.min(i, 10) * 45}ms` }}>
             <span className="h-2.5 w-2.5 shrink-0 rounded-full"
                   style={{ backgroundColor: TIPOS[a.kind]?.color }} />
             <div className="min-w-0 flex-1">

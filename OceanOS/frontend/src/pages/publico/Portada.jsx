@@ -1,8 +1,16 @@
-import { Link } from 'react-router-dom';
-import { Activity, ArrowRight } from 'lucide-react';
+import { Fragment, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { ArrowRight, Download } from 'lucide-react';
 import { useFetch } from '../../hooks/useFetch.js';
 import MapaZona, { LeyendaMapa } from '../../components/mapa/MapaZona.jsx';
-import { Boton, Barra } from '../../components/ui/index.jsx';
+import { Boton, Barra, SonarPing } from '../../components/ui/index.jsx';
+import Contador from '../../components/ui/Contador.jsx';
+import Olas from '../../components/ui/Olas.jsx';
+import { Reel } from '../../components/media/Reel.jsx';
+import SeccionApp from './SeccionApp.jsx';
+import Presentacion from '../../components/media/Presentacion.jsx';
+import BosquePerdido from './BosquePerdido.jsx';
+import ReportesEnVivo from './ReportesEnVivo.jsx';
 import Revelar from '../../components/ui/Revelar.jsx';
 import { numero, dolares, colorSalud } from '../../utils/format.js';
 
@@ -41,7 +49,21 @@ const CAPAS = [
   },
 ];
 
+/** Titular que sube palabra por palabra, cada una desde su propia máscara. */
+function Titular({ texto }) {
+  return texto.split(' ').map((w, i) => (
+    <Fragment key={i}>
+      <span className="palabra" style={{ '--i': i }}><span>{w}</span></span>{' '}
+    </Fragment>
+  ));
+}
+
 export default function Portada() {
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (hash) setTimeout(() => document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' }), 150);
+  }, [hash]);
+
   const { data: ind } = useFetch('/ecosistema/indicadores');
   const { data: zonasData } = useFetch('/ecosistema/zonas');
   const { data: avist } = useFetch('/avistamientos?zone=golfo-nuevo&limite=120');
@@ -52,46 +74,69 @@ export default function Portada() {
 
   return (
     <>
-        {/* ---------------- HERO: el mapa es el titular ---------------- */}
-      <section className="hero-ocean border-b border-columna bg-abismo px-5 pb-12 pt-7 text-carta lg:px-10">
-        <div className="relative z-10 mx-auto max-w-5xl">
-          <p className="animar-flotar flex items-center gap-2 text-sm text-sonda"><Activity size={14} className="text-alga" /> Golfo Nuevo, Chubut · datos de demostración</p>
-          <h1 className="animar-flotar retraso-1 mt-3 max-w-2xl font-display text-4xl leading-[1.08] font-600 sm:text-5xl">
-            El 90% del bosque de cachiyuyo del Atlántico Sur desapareció desde 1990.
-          </h1>
-          <p className="animar-flotar retraso-2 mt-4 max-w-xl text-lg text-sonda">
-            Este mapa muestra lo que queda, reportado por la gente que se mete al agua.
-          </p>
-
-          <div className="animar-flotar retraso-3 mt-6 flex flex-wrap gap-3">
-            <Link to="/funciones"><Boton variante="kelp">Probar la demo <ArrowRight size={15} /></Boton></Link>
-            <Link to="/ecosistema"><Boton variante="lineaClara">Explorar el ecosistema</Boton></Link>
+      {/* ---------------- HERO: texto + reel de videos, y debajo el mapa ---------------- */}
+      <section className="hero-ocean border-b border-columna bg-abismo px-5 pt-10 text-carta lg:px-10">
+        <div className="relative z-10 mx-auto max-w-6xl">
+          <div className="grid items-center gap-12 lg:grid-cols-[1.2fr_.8fr] lg:gap-16">
+            <div>
+              <p className="animar-flotar inline-flex items-center gap-2 rounded-full border border-columna/70 bg-hondo/40 px-3 py-1 text-xs text-sonda backdrop-blur">
+                <SonarPing size={14} color="var(--color-alga)" /> Golfo Nuevo, Chubut · datos de demostración
+              </p>
+              <h1 className="mt-5 max-w-2xl font-display text-4xl leading-[1.06] font-600 sm:text-5xl lg:text-[3.35rem]">
+                <Titular texto="El 90% del bosque de cachiyuyo del Atlántico Sur desapareció desde 1990." />
+              </h1>
+              <p className="animar-flotar retraso-4 mt-5 max-w-xl text-lg text-sonda">
+                Este mapa muestra lo que queda, reportado por la gente que se mete al agua.
+              </p>
+              <div className="animar-flotar retraso-4 mt-7 flex flex-wrap items-center gap-3">
+                <Link to="/funciones"><Boton variante="kelp">Probar la demo <ArrowRight size={15} /></Boton></Link>
+                <Link to="/ecosistema"><Boton variante="lineaClara">Explorar el ecosistema</Boton></Link>
+                <a href="#descargar"><Boton variante="texto"><Download size={15} /> Descargar la app</Boton></a>
+              </div>
+            </div>
+            <div className="animar-flotar retraso-2 mx-auto w-full max-w-[17.5rem] sm:max-w-[19rem]"><Reel /></div>
           </div>
 
-          <div className="animar-flotar retraso-4 mapa-marco mt-8">
+          <div className="animar-flotar retraso-4 mapa-marco mt-14">
             <MapaZona zona={golfo} avistamientos={avist?.avistamientos ?? []} alto={400} />
           </div>
           <LeyendaMapa className="animar-flotar retraso-4 mt-3 text-sonda/80" />
 
           {/* Las cuatro sondas del sistema */}
-          <dl className="animar-flotar retraso-4 metric-grid mt-10 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-columna pt-8 lg:grid-cols-4">
+          <dl className="metric-grid mt-10 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-columna pt-8 lg:grid-cols-4">
             {[
-              { v: numero(indicadores?.reportes_verificados), r: 'reportes verificados' },
-              { v: numero(indicadores?.hectareas_en_restauracion, 1), u: 'ha', r: 'en restauración' },
-              { v: numero(indicadores?.tco2_certificado), u: 'tCO₂e', r: 'carbono certificado' },
-              { v: dolares(mercado?.indicadores?.volumen_usd), r: 'transaccionados' },
+              { n: indicadores?.reportes_verificados, f: (x) => numero(x), r: 'reportes verificados' },
+              { n: indicadores?.hectareas_en_restauracion, f: (x) => numero(x, 1), u: 'ha', r: 'en restauración' },
+              { n: indicadores?.tco2_certificado, f: (x) => numero(x), u: 'tCO₂e', r: 'carbono certificado' },
+              { n: mercado?.indicadores?.volumen_usd, f: (x) => dolares(x), r: 'transaccionados' },
             ].map((s, i) => (
-              <div key={i}>
+              <Revelar key={i} retraso={i * 120}>
                 <dd className="flex items-baseline gap-1.5">
-                  <span className="cifra font-display text-3xl font-600 text-kelp">{s.v}</span>
+                  <Contador valor={s.n} formato={s.f} className="cifra font-display text-3xl font-600 text-kelp" />
                   {s.u && <span className="text-sm text-sonda">{s.u}</span>}
                 </dd>
                 <dt className="mt-1 text-sm text-sonda">{s.r}</dt>
-              </div>
+              </Revelar>
             ))}
           </dl>
+          <Olas className="mt-8" />
         </div>
       </section>
+
+      <ReportesEnVivo lista={avist?.avistamientos ?? []} />
+
+      {/* ---------------- VIDEOS ---------------- */}
+      <section id="video" className="scroll-mt-20 border-b border-columna bg-abismo px-5 py-16 text-carta lg:px-10">
+        <div className="mx-auto max-w-5xl">
+          <Revelar>
+            <p className="text-xs tracking-widest text-kelp-alto uppercase">Mirá cómo funciona</p>
+            <h2 className="mt-3 max-w-2xl font-display text-3xl leading-tight font-600 sm:text-4xl">Un minuto para entender qué falta medir</h2>
+          </Revelar>
+          <Revelar retraso={120} className="mt-8"><Presentacion /></Revelar>
+        </div>
+      </section>
+
+      <BosquePerdido />
 
       {/* ---------------- EL PROBLEMA ---------------- */}
       <section className="px-5 py-16 lg:px-10 overflow-hidden">
@@ -144,7 +189,7 @@ export default function Portada() {
                 </div>
 
                 <div className={`relative pb-12 pl-6 ${i < CAPAS.length - 1 ? 'border-l border-trazo' : ''}`}>
-                  <span className="absolute -left-[5px] top-1.5 block h-2.5 w-2.5 rounded-full bg-kelp" />
+                  <span className="absolute -left-1.25 top-1.5 block h-2.5 w-2.5 rounded-full bg-kelp" />
                   <h3 className="font-display text-lg font-600">{capa.titulo}</h3>
                   <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-tinta">{capa.cuerpo}</p>
                   <div className="mt-4 flex flex-wrap items-center gap-4">
@@ -160,6 +205,8 @@ export default function Portada() {
           </ol>
         </div>
       </section>
+
+      <SeccionApp />
 
       {/* ---------------- SALUD POR ZONA ---------------- */}
       <section className="px-5 py-16 lg:px-10 overflow-hidden">

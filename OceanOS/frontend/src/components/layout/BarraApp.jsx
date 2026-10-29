@@ -6,6 +6,7 @@ import { useDemo } from '../../contexts/DemoContext.jsx';
 import { numero, TIPO_ORG } from '../../utils/format.js';
 
 const ENLACES_APP = [
+  { to: '/app/menu',       icono: LayoutGrid,  label: 'Menú',    exacto: true },
   { to: '/app',            icono: Map,         label: 'Mapa',    exacto: true },
   { to: '/app/reportar',   icono: PlusCircle,  label: 'Reportar' },
   { to: '/app/verificar',  icono: CheckSquare, label: 'Verificar' },
@@ -33,6 +34,7 @@ export default function BarraApp({ enlaces = ENLACES_APP, titulo = 'App ciudadan
     if (pathname.startsWith('/panel/proyectos/')) navegar('/panel/proyectos');
   };
 
+  const activo = enlaces.findIndex((e) => (e.exacto ? pathname === e.to : pathname.startsWith(e.to)));
   const clase = ({ isActive }) =>
     `flex items-center gap-3 rounded-carta px-3 py-2 text-sm transition-colors ${
       isActive ? 'bg-columna/50 text-carta' : 'text-sonda hover:bg-columna/25 hover:text-carta'}`;
@@ -52,7 +54,7 @@ export default function BarraApp({ enlaces = ENLACES_APP, titulo = 'App ciudadan
     <>
       {/* ---------- Escritorio ---------- */}
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col overflow-y-auto border-r border-columna bg-abismo p-4 lg:flex">
-        <Link to="/" className="mb-1 px-1"><Marca tamaño={26} /></Link>
+        <Link to="/" className="mb-1 px-1"><Marca tamaño={30} animado /></Link>
         <p className="mb-5 px-1 text-xs text-sonda/70">{titulo}</p>
 
         {panel ? (
@@ -91,9 +93,9 @@ export default function BarraApp({ enlaces = ENLACES_APP, titulo = 'App ciudadan
       </aside>
 
       {/* ---------- Teléfono: arriba ---------- */}
-      <header className="sticky top-0 z-30 border-b border-columna bg-abismo/95 px-4 py-2.5 backdrop-blur lg:hidden">
+      <header className="sticky top-0 z-30 border-b border-columna header-seguro bg-abismo/95 px-4 pb-2.5 backdrop-blur lg:hidden">
         <div className="flex items-center justify-between gap-3">
-          <Link to="/" aria-label="OceanOS, inicio"><Marca tamaño={22} /></Link>
+          <Link to="/" aria-label="OceanOS, inicio"><Marca tamaño={26} animado /></Link>
           <div className="flex items-center gap-4 text-xs text-sonda">
             <Link to={otraCapa.to} className="hover:text-carta">{panel ? 'App' : 'Panel'}</Link>
             <Link to="/funciones" className="hover:text-carta">Funciones</Link>
@@ -103,12 +105,14 @@ export default function BarraApp({ enlaces = ENLACES_APP, titulo = 'App ciudadan
       </header>
 
       {/* ---------- Teléfono: abajo ---------- */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-columna bg-abismo lg:hidden">
+      <nav className="barra-inferior fixed inset-x-0 bottom-0 z-30 flex border-t border-columna lg:hidden">
+        <span className="barra-indicador" aria-hidden="true"
+              style={{ width: `${100 / enlaces.length}%`, transform: `translateX(${Math.max(activo, 0) * 100}%)`, opacity: activo < 0 ? 0 : 1 }} />
         {enlaces.map(({ to, icono: Icono, label, exacto }) => (
           <NavLink key={to} to={to} end={exacto}
             className={({ isActive }) =>
-              `flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] ${
-                isActive ? 'text-kelp' : 'text-sonda'}`}>
+              `barra-item flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] transition-colors duration-300 ${
+                isActive ? 'activo text-kelp-alto' : 'text-sonda'}`}>
             <Icono size={19} /> {label}
           </NavLink>
         ))}
