@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Patagonia Autopartes">
+  <rect width="200" height="200" rx="36" fill="#0C8599"/>
+  <polygon points="177.4,109.8 175.2,120.6 158.3,133.2 153.0,141.1 147.8,161.6 138.6,167.8 117.7,164.7 108.4,166.6 90.2,177.4 79.4,175.2 66.8,158.3 58.9,153.0 38.4,147.8 32.2,138.6 35.3,117.7 33.4,108.4 22.6,90.2 24.8,79.4 41.7,66.8 47.0,58.9 52.2,38.4 61.4,32.2 82.3,35.3 91.6,33.4 109.8,22.6 120.6,24.8 133.2,41.7 141.1,47.0 161.6,52.2 167.8,61.4 164.7,82.3 166.6,91.6" fill="none" stroke="#ffffff" stroke-opacity=".28" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="100" cy="100" r="54" fill="#ffffff" fill-opacity=".14"/>
+  <text x="100" y="100" dy=".36em" text-anchor="middle" font-family="'Barlow Condensed','Arial Narrow',Arial,sans-serif"
+        font-weight="800" font-style="italic" font-size="70" fill="#ffffff" letter-spacing="1">PA</text>
+</svg>

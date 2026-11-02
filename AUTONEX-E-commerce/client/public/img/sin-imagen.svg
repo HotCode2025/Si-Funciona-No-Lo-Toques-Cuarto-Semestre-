@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Sin imagen">
+  <rect width="800" height="600" fill="#ECEEF1"/>
+  <g transform="translate(400 280)" fill="none" stroke="#C3C8CF" stroke-width="18" stroke-linejoin="round">
+    <circle r="52"/>
+    <path d="M-16 -118h32l8 30 26 11 27-16 23 23-16 27 11 26 30 8v32l-30 8-11 26 16 27-23 23-27-16-26 11-8 30h-32l-8-30-26-11-27 16-23-23 16-27-11-26-30-8v-32l30-8 11-26-16-27 23-23 27 16 26-11z"/>
+  </g>
+  <text x="400" y="470" text-anchor="middle" font-family="Barlow, Arial, sans-serif" font-size="30" font-weight="600" fill="#9AA1AB">Imagen no disponible</text>
+</svg>

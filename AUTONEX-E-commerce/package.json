@@ -1,0 +1,23 @@
+{
+  "name": "autonex",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AUTONEX — marketplace de repuestos para autos y camionetas (proyecto universitario)",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n server,client -c yellow,cyan \"npm run dev -w autonex-server\" \"npm run dev -w autonex-client\"",
+    "db:seed": "npm run db:seed -w autonex-server",
+    "build": "npm run build -w autonex-client",
+    "start": "npm run start -w autonex-server",
+    "test": "npm test -w autonex-server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

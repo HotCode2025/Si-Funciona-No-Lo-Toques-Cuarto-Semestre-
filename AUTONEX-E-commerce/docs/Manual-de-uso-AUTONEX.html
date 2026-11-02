@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual de uso AUTONEX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:ital,wght@0,600;0,700;1,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  /* Manual imprimible (A4): portada en banda de marca, índice y secciones con capturas del sitio y pasos numerados */
+  :root {
+    --naranja: #ff6a13;
+    --naranja-osc: #c94f08;
+    --naranja-suave: #fff1e8;
+    --carbon: #0e0f11;
+    --texto: #1b1d21;
+    --gris: #5f6672;
+    --linea: #e1e4e9;
+    --fondo: #f6f7f9;
+    --verde: #1d8f4e;
+    --verde-suave: #e7f6ed;
+    --ambar: #9a6412;
+    --ambar-suave: #fff6e0;
+    --azul: #1f6fd1;
+    --azul-suave: #e8f1fd;
+    --fuente: 'Barlow', system-ui, 'Segoe UI', Roboto, Arial, sans-serif;
+    --titulos: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  }
+  @page { size: A4; margin: 13mm 13mm 14mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; background: #fff; color: var(--texto); font-family: var(--fuente); font-size: 10.4pt; line-height: 1.45; }
+  .hoja { max-width: 800px; margin: 0 auto; padding: 0 16px 24px; }
+  @media print { .hoja { padding: 0; max-width: none; } }
+
+  .banda { background: var(--carbon); color: #f1f2f4; padding: 26px 24px 22px; border-bottom: 5px solid var(--naranja); border-radius: 4px 4px 0 0; }
+  .marca { font-family: var(--titulos); font-style: italic; font-weight: 800; font-size: 15pt; letter-spacing: .04em; color: var(--naranja); margin: 0; }
+  h1 { font-family: var(--titulos); font-weight: 800; font-style: italic; text-transform: uppercase; font-size: 30pt; line-height: 1.02; margin: 6px 0 8px; }
+  .banda p { margin: 0; color: #c9ccd2; font-size: 10.5pt; max-width: 60ch; }
+  .banda a { color: #ffb27f; }
+
+  h2 { font-family: var(--titulos); font-weight: 700; font-size: 17pt; margin: 18px 0 6px; padding-bottom: 2px; border-bottom: 2px solid var(--naranja); break-after: avoid; }
+  h2 .num { color: var(--naranja); margin-right: 6px; }
+  h3 { font-family: var(--titulos); font-weight: 700; font-size: 13pt; margin: 12px 0 4px; break-after: avoid; }
+  p { margin: 5px 0; }
+  ul, ol { margin: 5px 0; padding-left: 20px; }
+  li { margin: 3px 0; }
+  .mono { font-family: var(--mono); font-size: 8.9pt; }
+  .gris { color: var(--gris); }
+  .boton { display: inline-block; font-family: var(--titulos); font-weight: 700; font-size: 9pt; text-transform: uppercase; letter-spacing: .03em; background: var(--naranja); color: #fff; padding: 0 7px; border-radius: 2px; white-space: nowrap; }
+  .boton--oscuro { background: var(--carbon); }
+  .boton--claro { background: #fff; color: var(--texto); border: 1px solid #c9ced6; }
+
+  .indice { columns: 2; column-gap: 26px; margin: 8px 0 0; padding-left: 20px; }
+  .indice li { break-inside: avoid; }
+
+  figure { margin: 8px 0 10px; break-inside: avoid; }
+  figure img { display: block; width: 84%; margin: 0 auto; border: 1px solid var(--linea); border-radius: 4px; }
+  figure.media img { width: 62%; }
+  .par figure img { width: 100%; }
+  figcaption { font-size: 8.8pt; color: var(--gris); margin-top: 3px; text-align: center; }
+  .par { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .par figure { margin: 6px 0; }
+
+  .nota { margin: 8px 0; border-left: 4px solid var(--naranja); background: var(--naranja-suave); padding: 7px 12px; border-radius: 3px; break-inside: avoid; }
+  .nota--info { border-left-color: var(--azul); background: var(--azul-suave); }
+  .nota--ok { border-left-color: var(--verde); background: var(--verde-suave); }
+  .nota strong:first-child { display: block; margin-bottom: 1px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 6px 0 4px; }
+  th { text-align: left; background: var(--carbon); color: #fff; font-weight: 600; padding: 4px 7px; font-size: 8.9pt; }
+  td { padding: 4px 7px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--fondo); }
+  tr { break-inside: avoid; }
+  .sello { display: inline-block; font-size: 8.4pt; font-weight: 700; padding: 0 8px; border-radius: 10px; white-space: nowrap; }
+  .sello--verde { background: var(--verde-suave); color: var(--verde); }
+  .sello--ambar { background: var(--ambar-suave); color: var(--ambar); }
+  .sello--gris { background: #eceef1; color: #3c414a; }
+
+  .pestanas { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .pestanas span { border: 1px solid var(--linea); border-bottom: 3px solid var(--naranja); padding: 2px 10px; font-weight: 700; font-size: 9.4pt; border-radius: 3px 3px 0 0; background: #fff; }
+  .flujo { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 6px 0; font-size: 9.2pt; }
+  .flujo span { background: var(--fondo); border: 1px solid var(--linea); border-radius: 12px; padding: 1px 9px; font-weight: 600; }
+  .flujo i { font-style: normal; color: var(--naranja); font-weight: 700; }
+
+  .salto { break-before: page; }
+  .faq dt { font-weight: 700; margin-top: 7px; break-after: avoid; }
+  .faq dd { margin: 1px 0 0 0; }
+  .pie { margin-top: 8px; padding-top: 5px; border-top: 1px solid var(--linea); color: var(--gris); font-size: 8.5pt; }
+
+  @media (max-width: 640px) {
+    .par { grid-template-columns: 1fr; }
+    .indice { columns: 1; }
+    figure.media img { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="hoja">
+
+  <header class="banda">
+    <p class="marca">AUTONEX</p>
+    <h1>Manual de uso</h1>
+    <p>Cómo navegar el sitio, buscar y comprar repuestos (con cuenta o sin cuenta), seguir una compra, crear una cuenta de
+       comprador o de vendedor y cargar productos. Sitio: <a href="https://gnuino.com.ar/AUTONEX/">gnuino.com.ar/AUTONEX</a></p>
+  </header>
+
+  <h2>Contenido</h2>
+  <ol class="indice">
+    <li>Cómo está armado el sitio</li>
+    <li>Elegir tu vehículo</li>
+    <li>Buscar repuestos</li>
+    <li>La ficha de un repuesto</li>
+    <li>El carrito</li>
+    <li>Comprar paso a paso</li>
+    <li>Comprar sin cuenta</li>
+    <li>Después de comprar: comprobante y seguimiento</li>
+    <li>Buscar tus compras</li>
+    <li>Crear una cuenta e ingresar</li>
+    <li>Panel del vendedor</li>
+    <li>Cómo carga productos un vendedor</li>
+    <li>Panel de administración</li>
+    <li>Otras páginas del sitio</li>
+    <li>Preguntas frecuentes</li>
+    <li>Para probar la demo</li>
+  </ol>
+  <div class="nota nota--info"><strong>Es una demo.</strong> Los vehículos son datos reales del registro automotor (DNRPA); los repuestos,
+     las casas de repuestos, los precios y el stock son de demostración. Los pagos se hacen con tarjetas de prueba de Mercado Pago
+     y no cobran dinero real.</div>
+
+  <!-- 1 -->
+  <h2><span class="num">1</span>Cómo está armado el sitio</h2>
+  <figure>
+    <img src="manual-img/inicio.png" alt="Página de inicio de AUTONEX">
+    <figcaption>Página de inicio: encabezado, categorías, barra de vehículo y el selector "¿Qué auto o moto tenés?".</figcaption>
+  </figure>
+  <p>Arriba, en todas las páginas, está el <strong>encabezado</strong>:</p>
+  <table>
+    <thead><tr><th>Elemento</th><th>Para qué sirve</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Logo AUTONEX</strong></td><td>Vuelve al inicio.</td></tr>
+      <tr><td><strong>Buscador</strong></td><td>Busca por nombre de repuesto, marca o código de pieza (ver sección 3).</td></tr>
+      <tr><td><strong>Mi vehículo</strong></td><td>Elige o cambia tu auto o moto para ver solo los repuestos compatibles.</td></tr>
+      <tr><td><strong>Mis compras</strong></td><td>Sin sesión: lleva a "Seguí tu compra". Con sesión, está dentro del menú de tu cuenta.</td></tr>
+      <tr><td><strong>Ingresá</strong> / tu nombre</td><td>Iniciar sesión o crear cuenta. Con sesión iniciada abre el menú de la cuenta.</td></tr>
+      <tr><td><strong>Carrito</strong></td><td>Muestra cuántos productos tenés y abre el carrito.</td></tr>
+    </tbody>
+  </table>
+  <p>Debajo están las <strong>categorías</strong> (Motor, Frenos, Suspensión, Dirección, Transmisión, Electricidad, Refrigeración,
+     Carrocería, Interior, Motos) y el acceso a <strong>Vendedores</strong>. La barra <strong>"¿Qué auto tenés?"</strong> muestra el
+     vehículo elegido o invita a elegirlo. Al pie de la página hay enlaces a las categorías, a los vendedores, a las marcas de
+     repuestos para motos, a "Seguí tu compra" y a los créditos de las imágenes.</p>
+  <p class="gris">En el celular el sitio se adapta: el buscador pasa debajo del logo, los botones del encabezado quedan como íconos
+     y los filtros del catálogo se abren con el botón <span class="boton boton--claro">Filtros</span>.</p>
+
+  <!-- 2 -->
+  <h2><span class="num">2</span>Elegir tu vehículo</h2>
+  <p>Elegir el vehículo es opcional, pero conviene: el catálogo pasa a mostrar <strong>solo los repuestos que le sirven</strong>
+     (más los universales, como el líquido de frenos) y cada ficha te dice si el repuesto es compatible.</p>
+  <ol>
+    <li>Tocá <span class="boton boton--oscuro">Elegir mi vehículo</span> (en la barra, en el encabezado o en la tarjeta del inicio).</li>
+    <li><strong>Marca:</strong> elegí la marca. Arriba podés filtrar por tipo: Autos y SUV, Comerciales, Pesados o Motos, o escribir el nombre.</li>
+    <li><strong>Modelo:</strong> elegí el modelo. En las motos se ven fotos y categorías (calle, enduro, scooter, etc.).</li>
+    <li><strong>Año</strong> y <strong>Versión:</strong> elegí el año y la versión (motor, carrocería y años de fabricación).</li>
+  </ol>
+  <div class="par">
+    <figure><img src="manual-img/selector-marca.jpg" alt="Selector de vehículo, paso marca"><figcaption>Paso 1: la marca.</figcaption></figure>
+    <figure><img src="manual-img/selector-version.jpg" alt="Selector de vehículo, paso versión"><figcaption>Paso 4: la versión (Volkswagen Gol Trend 2012).</figcaption></figure>
+  </div>
+  <p>Listo: la barra naranja confirma <em>"Repuestos para tu Volkswagen Gol Trend 2012 · 1.6"</em>. Con <strong>Cambiar</strong> elegís
+     otro vehículo y con <strong>Quitar</strong> volvés a ver todo el catálogo. El vehículo queda guardado en el navegador para la
+     próxima visita.</p>
+
+  <!-- 3 -->
+  <h2><span class="num">3</span>Buscar repuestos</h2>
+  <p>Hay tres formas de llegar a un repuesto:</p>
+  <ul>
+    <li><strong>Buscador:</strong> escribí lo que necesitás. Entiende nombres (<em>filtro de aceite</em>), marcas, números de pieza,
+        códigos OEM y códigos de barras (EAN). Si escribís un vehículo en el texto, lo reconoce: <em>pastillas hilux</em> o
+        <em>cadena KTM 300 EXC</em>.</li>
+    <li><strong>Categorías:</strong> tocá una categoría del encabezado (por ejemplo, Frenos) y después una subcategoría (Pastillas, Discos…).</li>
+    <li><strong>Motos:</strong> la categoría Motos muestra sus subcategorías y las marcas que fabrican repuestos para motos.</li>
+  </ul>
+  <figure>
+    <img src="manual-img/catalogo.png" alt="Catálogo de frenos con filtros">
+    <figcaption>Catálogo de Frenos: filtros a la izquierda, resultados a la derecha y "Ordenar por" arriba.</figcaption>
+  </figure>
+  <p><strong>Filtros</strong> (columna izquierda): Compatibilidad (si elegiste vehículo), Categoría, Rubro (autos o motos), Marca del
+     repuesto, Tipo de pieza, Condición (nuevo o usado), Provincia del vendedor, N° de parte / OEM / EAN, Stock y Precio.
+     Cada filtro activo aparece como una etiqueta arriba de los resultados: tocá la <strong>✕</strong> para quitarlo o
+     <strong>Limpiar filtros</strong> para quitar todos. <strong>Ordenar por</strong>: Más relevantes, Menor precio o Mayor precio.</p>
+  <p>Cada tarjeta muestra la marca, el nombre, el número de pieza, el precio <strong>"Desde"</strong> (la oferta más barata) y
+     cuántas ofertas tiene.</p>
+
+  <!-- 4 -->
+  <h2><span class="num">4</span>La ficha de un repuesto</h2>
+  <figure>
+    <img src="manual-img/producto-vehiculo.jpg" alt="Ficha de un repuesto con vehículo elegido">
+    <figcaption>Ficha del repuesto con un vehículo elegido: precio desde, compra rápida y aviso de compatibilidad.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Datos del repuesto:</strong> marca, nombre, número de pieza (N°), SKU y categoría. Más abajo: descripción y ficha técnica.</li>
+    <li><strong>Compra rápida:</strong> la mejor oferta, con el vendedor, su ciudad, la condición y el stock. Elegí la cantidad con
+        <strong>−</strong> y <strong>+</strong> y tocá <span class="boton">Agregar al carrito</span>.</li>
+    <li><strong>Aviso de compatibilidad</strong> con tu vehículo:
+      <span class="sello sello--verde">verificada</span> (confirmada con el catálogo del fabricante),
+      <span class="sello sello--ambar">sin verificar</span> (figura como compatible, pero conviene chequear el número de pieza) o
+      sin datos. Si no elegiste vehículo, te ofrece elegirlo.</li>
+  </ul>
+  <figure>
+    <img src="manual-img/ofertas.jpg" alt="Tabla de ofertas de un repuesto">
+    <figcaption>"Compará las ofertas": todas las casas que venden el repuesto, con condición, stock y precio. La más barata dice "Mejor precio".</figcaption>
+  </figure>
+  <p>En <strong>Compará las ofertas</strong> podés elegir a qué casa comprarle: cada fila tiene su cantidad y su botón
+     <span class="boton">Agregar</span>. Si la casa cargó fotos o una descripción propias, su fila tiene el enlace
+     <em>"Ver las fotos y la descripción"</em> (muy útil en los repuestos usados). Al final de la ficha está la lista de <strong>vehículos compatibles</strong>, agrupada por
+     modelo, con el estado de cada dato.</p>
+
+  <!-- 5 -->
+  <h2><span class="num">5</span>El carrito</h2>
+  <figure>
+    <img src="manual-img/carrito.jpg" alt="Carrito con un producto">
+    <figcaption>El carrito agrupa los productos por vendedor; a la derecha, el resumen.</figcaption>
+  </figure>
+  <ul>
+    <li>Los productos se agrupan <strong>por vendedor</strong>: podés comprarle a varias casas en una sola compra y un solo pago.</li>
+    <li>Cambiá la cantidad con <strong>−</strong> / <strong>+</strong> (nunca supera el stock disponible), o tocá <strong>Quitar</strong>.
+        <strong>Vaciar carrito</strong> saca todo.</li>
+    <li>El envío se calcula en el checkout, según la forma de entrega de cada vendedor.</li>
+    <li>Tocá <span class="boton">Continuar compra</span>. No hace falta tener cuenta.</li>
+  </ul>
+
+  <!-- 6 -->
+  <h2><span class="num">6</span>Comprar paso a paso</h2>
+  <div class="flujo"><span>1 · Tus datos</span><i>→</i><span>2 · Entrega</span><i>→</i><span>3 · Envío (si corresponde)</span><i>→</i><span>4 · Resumen</span><i>→</i><span>Pagar en Mercado Pago</span><i>→</i><span>Resultado</span></div>
+  <figure>
+    <img src="manual-img/checkout.jpg" alt="Primer paso del checkout">
+    <figcaption>Paso 1 del checkout, comprando sin cuenta. A la derecha, el resumen de la compra.</figcaption>
+  </figure>
+  <ol>
+    <li><strong>Tus datos — "¿Quién recibe la compra?":</strong> nombre, apellido, email, teléfono y DNI (7 u 8 números, sin
+        puntos). Si iniciaste sesión, se completan con los datos de tu cuenta.</li>
+    <li><strong>Entrega — "¿Cómo querés recibir cada pedido?":</strong> para <strong>cada vendedor</strong> elegí
+        <strong>Retiro en el local</strong> (gratis; se muestra la dirección y el horario) o <strong>Envío a domicilio</strong>.</li>
+    <li><strong>Envío</strong> (solo si elegiste envío): la <strong>dirección de envío</strong> y el <strong>transportista</strong>
+        (Andreani, OCA, Correo Argentino o moto), cada uno con su precio y demora estimada.</li>
+    <li><strong>Resumen — "Revisá tu compra":</strong> controlá productos, entregas y total, marcá la casilla <em>"Leí y acepto los Términos y condiciones y la Política de privacidad"</em> y tocá
+        <span class="boton" style="background:#009ee3">Pagar $… con Mercado Pago</span>.</li>
+    <li><strong>Mercado Pago:</strong> elegí el medio de pago (tarjeta de crédito o débito, o tu cuenta de Mercado Pago) y pagá.</li>
+    <li><strong>Resultado:</strong> Mercado Pago te devuelve a AUTONEX, que muestra el resultado:</li>
+  </ol>
+  <table>
+    <thead><tr><th>Pantalla</th><th>Qué significa</th><th>Qué podés hacer</th></tr></thead>
+    <tbody>
+      <tr><td><span class="sello sello--verde">¡Pago aprobado!</span></td><td>La compra está pagada; cada vendedor recibió su pedido.</td><td>Abrir el <strong>Comprobante</strong>, seguir la compra o seguir comprando.</td></tr>
+      <tr><td><span class="sello sello--ambar">Pago pendiente</span></td><td>Mercado Pago todavía lo está procesando.</td><td>Esperar: cuando se acredita, la compra se confirma sola.</td></tr>
+      <tr><td><span class="sello sello--gris">El pago fue rechazado</span></td><td>No se cobró nada; la compra quedó guardada.</td><td><strong>Intentar pagar de nuevo</strong> con otra tarjeta.</td></tr>
+    </tbody>
+  </table>
+  <div class="nota"><strong>Cuándo se descuenta el stock</strong>Recién cuando Mercado Pago aprueba el pago. Además, AUTONEX recalcula
+     precios, stock y envíos al crear la compra: si algo cambió mientras comprabas, te avisa y actualiza el carrito.</div>
+
+  <!-- 7 -->
+  <h2><span class="num">7</span>Comprar sin cuenta</h2>
+  <p>Se puede comprar <strong>sin registrarse</strong>. El checkout lo indica con el aviso <em>"Estás comprando sin cuenta"</em>.</p>
+  <ul>
+    <li>Completás los mismos datos (nombre, email, teléfono, DNI) y pagás igual que con cuenta.</li>
+    <li>Al terminar, guardá el <strong>número de compra</strong>: está en la pantalla de pago aprobado, en el comprobante y en el mail con el comprobante que te llega al email que cargaste.</li>
+    <li>Con <strong>ese número y el email</strong> que usaste, podés ver tu compra desde cualquier computadora o celular (sección 9).</li>
+    <li><strong>Por privacidad, la compra no queda guardada en el navegador:</strong> solo se ve en la pestaña donde compraste hasta que
+        la cerrás. En una computadora compartida podés tocar <strong>Cerrar ahora</strong> en "Seguí tu compra".</li>
+  </ul>
+  <div class="nota nota--info"><strong>¿Ya tenés cuenta?</strong>Iniciá sesión antes de pagar y la compra queda en "Mis compras" de tu
+     cuenta, sin tener que buscarla con número y email.</div>
+
+  <!-- 8 -->
+  <h2><span class="num">8</span>Después de comprar: comprobante y seguimiento</h2>
+  <figure>
+    <img src="manual-img/comprobante.jpg" alt="Comprobante de compra">
+    <figcaption>El comprobante: número de compra, dónde seguirla, pago de Mercado Pago y cada pedido con su entrega.</figcaption>
+  </figure>
+  <p>Cuando Mercado Pago aprueba el pago, el comprobante <strong>te llega por mail</strong> (asunto <em>"Tu compra #N en AUTONEX"</em>), con o sin cuenta. En el sitio, el <strong>comprobante</strong> se abre con el botón <span class="boton">Comprobante</span> cuando el pago se aprueba, o desde cada
+     compra pagada en "Mis compras" / "Seguí tu compra". Tiene:</p>
+  <ul>
+    <li>el <strong>número de compra</strong> y el enlace para seguirla;</li>
+    <li>el comprador, el pago de Mercado Pago (número de operación, estado y medio de pago) y la fecha;</li>
+    <li>cada pedido con sus productos y su entrega. En los envíos, el <strong>número de seguimiento</strong> del transportista cuando el
+        vendedor lo despacha.</li>
+  </ul>
+  <p>Botones: <span class="boton boton--oscuro">Descargar PDF</span> (abre la impresión: elegí "Guardar como PDF"),
+     <span class="boton" style="background:#1f9d55">WhatsApp</span>, <span class="boton boton--claro">Copiar</span> y, en el celular,
+     <span class="boton">Compartir</span>. El texto que se comparte no incluye dirección, teléfono ni email.</p>
+
+  <h3>Los estados de un pedido</h3>
+  <p>Una compra tiene <strong>un pedido por cada vendedor</strong>, y cada vendedor lo va actualizando:</p>
+  <div class="flujo"><span>Pagado</span><i>→</i><span>En preparación</span><i>→</i><span>Enviado</span><i>/</i><span>Listo para retirar</span><i>→</i><span>Entregado</span></div>
+  <p>Cuando el vendedor lo marca como <strong>Enviado</strong>, carga el número de seguimiento del transportista (Andreani, OCA o
+     Correo Argentino), que aparece en la compra y en el comprobante.</p>
+
+  <!-- 9 -->
+  <h2><span class="num">9</span>Buscar tus compras</h2>
+  <table>
+    <thead><tr><th>Si compraste…</th><th>Dónde la ves</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Con cuenta</strong></td><td>Iniciá sesión → menú de tu cuenta → <strong>Mis compras</strong>. Ahí están todas tus compras.</td></tr>
+      <tr><td><strong>Sin cuenta</strong></td><td><strong>Mis compras</strong> (arriba) → "Seguí tu compra" → escribí el <strong>número de compra</strong> y el <strong>email</strong> que usaste → <span class="boton">Buscar compra</span>.</td></tr>
+    </tbody>
+  </table>
+  <figure>
+    <img src="manual-img/seguir-resultado.jpg" alt="Seguí tu compra con una compra encontrada">
+    <figcaption>"Seguí tu compra": la compra #8 con el estado de cada pedido, la línea de tiempo y la entrega.</figcaption>
+  </figure>
+  <p>En cada compra ves el estado general, cada pedido con su línea de tiempo, los productos, la entrega y el pago. Si la compra
+     quedó <strong>sin pagar</strong>, aparecen <span class="boton" style="background:#009ee3">Pagar con Mercado Pago</span> y
+     <span class="boton boton--claro">Ya pagué: verificar</span> (consulta a Mercado Pago si el pago se acreditó).</p>
+
+  <h3>Arrepentirte de una compra (Botón de arrepentimiento)</h3>
+  <p>Tenés <strong>10 días corridos</strong> desde que recibís el producto (o desde la compra, lo último) para revocarla, sin dar
+     motivos y sin costo (art. 34 de la Ley 24.240).</p>
+  <ol>
+    <li>Tocá <span class="boton boton--claro">Botón de arrepentimiento</span>: está al pie de todas las páginas y en cada compra pagada.</li>
+    <li>Escribí el <strong>número de compra</strong> y el <strong>email</strong> que usaste. El motivo es opcional.</li>
+    <li>Tocá <span class="boton">Quiero arrepentirme de mi compra</span>: recibís en el momento el <strong>código de identificación</strong>
+        (por ejemplo <span class="mono">ARR-12-7K3QZP</span>). Guardalo.</li>
+    <li>Tus pedidos quedan <strong>frenados</strong>: el vendedor no los prepara ni los despacha.</li>
+    <li>Si ya recibiste el producto, el vendedor coordina con vos la devolución, que es a su cargo.</li>
+    <li>Cuando el vendedor cancela el pedido, te reintegramos el <strong>total</strong> (productos y envío) con Mercado Pago, al
+        mismo medio de pago. Te llega un mail y en tu compra figura "Reintegro … aprobado por Mercado Pago".</li>
+  </ol>
+
+  <!-- 10 -->
+  <h2><span class="num">10</span>Crear una cuenta e ingresar</h2>
+  <p>Tocá <strong>Ingresá</strong> → <strong>Creala gratis</strong>, o entrá a <span class="mono">/AUTONEX/registro</span>. Primero
+     elegí el tipo de cuenta:</p>
+  <div class="par">
+    <figure><img src="manual-img/registro.png" alt="Registro de comprador"><figcaption>"Quiero comprar": cuenta de comprador.</figcaption></figure>
+    <figure><img src="manual-img/registro-vendedor.jpg" alt="Registro de vendedor"><figcaption>"Tengo una casa de repuestos": suma los datos del local.</figcaption></figure>
+  </div>
+  <h3>Cuenta de comprador ("Quiero comprar")</h3>
+  <ol>
+    <li>Completá <strong>nombre, apellido, email y contraseña</strong>. Teléfono y DNI son opcionales.</li>
+    <li>La contraseña tiene que tener <strong>mínimo 8 caracteres, con letras y números</strong>.</li>
+    <li>Marcá <em>"Leí y acepto los Términos y condiciones y la Política de privacidad"</em>.</li>
+    <li>Tocá <span class="boton">Crear cuenta</span>. Te llega el mail <em>"Confirmá tu email en AUTONEX"</em>: tocá <strong>Confirmar mi email</strong>. Recién ahí la cuenta se activa y entrás con la sesión iniciada.</li>
+  </ol>
+  <h3>Cuenta de vendedor ("Tengo una casa de repuestos")</h3>
+  <ol>
+    <li>Completá tus datos (igual que el comprador).</li>
+    <li>En <strong>Datos del local</strong>: nombre comercial, dirección, ciudad, provincia y teléfono del local. WhatsApp (con código
+        de país, por ejemplo 5493511234567) y descripción son opcionales.</li>
+    <li>En <strong>Días y horario de atención</strong> marcá qué días abre el local y a qué hora abre y cierra. Para horario cortado
+        tocá <strong>+ Horario cortado</strong> y cargá el segundo turno; con <strong>Copiar el lunes de martes a viernes</strong>
+        repetís el mismo horario. Abajo ves cómo lo van a leer los compradores.</li>
+    <li>Marcá la casilla para aceptar los <strong>Términos y condiciones</strong>, los <strong>Términos para vendedores</strong>
+        (publicaciones, plazos de los pedidos, facturación y comisión) y la <strong>Política de privacidad</strong>.</li>
+    <li>Tocá <span class="boton">Crear cuenta y abrir mi local</span> y confirmá el email con el link que te llega. Al confirmarlo se activa la cuenta, tu local aparece en AUTONEX y entrás a tu <strong>panel de vendedor</strong>.</li>
+  </ol>
+  <figure class="media"><img src="manual-img/registro-horario.jpg" alt="Editor del horario de atención por día" style="width:50%"><figcaption>Días y horario de atención: cada día abierto o cerrado, con horario corrido o cortado, y la vista previa en verde.</figcaption></figure>
+  <div class="nota"><strong>Sin confirmar el email, la cuenta no está activa</strong>No se puede ingresar y, si es de vendedor, el local no aparece en el sitio. Si el mail no llegó (revisá el correo no deseado), al intentar ingresar aparece el botón <em>Reenviar el mail de confirmación</em>. El link vence en 7 días.</div>
+  <h3>Ingresar y salir</h3>
+  <ul>
+    <li><strong>Ingresá</strong> → email y contraseña → <span class="boton">Ingresar</span>.</li>
+    <li><strong>¿Olvidaste tu contraseña?</strong> (debajo de la contraseña): escribí tu email y te llega un link para elegir una nueva. Vence en 1 hora.</li>
+    <li>Con la sesión iniciada, tu nombre aparece arriba. Su menú tiene <strong>Mi cuenta</strong>, <strong>Mis compras</strong>, el
+        <strong>Panel</strong> de tu local (si sos vendedor), <strong>Administrar catálogo</strong> (si sos administrador) y <strong>Cerrar sesión</strong>.</li>
+  </ul>
+  <h3>Mi cuenta: tus datos y eliminar la cuenta</h3>
+  <ul>
+    <li>En <strong>Foto de perfil</strong> (opcional) tocás <span class="boton boton--claro">Subir foto</span> y elegís una imagen JPG, PNG
+        o WebP: se recorta cuadrada y aparece arriba, en el botón de tu cuenta. Con <strong>Cambiar foto</strong> o <strong>Quitar</strong>
+        la reemplazás o la borrás. Sin foto se muestran tus iniciales.</li>
+    <li>En <strong>Mi cuenta</strong> cambiás tu nombre, apellido, teléfono y DNI y tocás <span class="boton">Guardar cambios</span>.</li>
+    <li><strong>Eliminar mi cuenta</strong> (comprador o vendedor): tocá <span class="boton boton--claro">Quiero eliminar mi cuenta</span>, escribí tu
+        contraseña y la palabra <strong>ELIMINAR</strong> y confirmá. Se borran tus datos personales, ya no podés ingresar y te llega un mail de aviso.
+        No se puede deshacer.</li>
+    <li>Si sos vendedor, tu local se da de baja: tus publicaciones se pausan y el local deja de aparecer.</li>
+    <li>Si tenés pedidos en curso (tuyos o de tu local), primero tienen que estar entregados. Las compras sin pagar se cancelan; las
+        compras ya hechas se conservan con sus datos, como exige la ley.</li>
+  </ul>
+
+  <!-- 11 -->
+  <h2><span class="num">11</span>Panel del vendedor</h2>
+  <p>Se abre desde el menú de la cuenta → <strong>Panel de [tu local]</strong>. Arriba muestra el nombre y la ciudad del local y el botón
+     <strong>Ver mi página</strong> (tu página pública en AUTONEX). Tiene cuatro pestañas:</p>
+  <div class="pestanas"><span>Resumen</span><span>Pedidos</span><span>Publicaciones</span><span>Mi local</span></div>
+  <h3>Resumen</h3>
+  <p>Tarjetas con los pedidos pagados para preparar, los que están en preparación, los enviados o listos para retirar, las ventas del
+     mes, las publicaciones activas y pausadas, y las que tienen stock bajo o sin stock. Cada tarjeta lleva a su lista.</p>
+  <h3>Pedidos</h3>
+  <ul>
+    <li>Filtros: Activos, Pagados, En preparación, Enviados, Listos para retirar, Entregados y Todos.</li>
+    <li>Cada pedido muestra el número de compra, la línea de tiempo, los <strong>datos del comprador</strong> (nombre, DNI, teléfono y
+        email), la entrega, los productos y el total.</li>
+    <li>Los pedidos se avanzan con los botones <span class="boton">Marcar en preparación</span>,
+        <span class="boton">Marcar como enviado</span> o <span class="boton">Marcar listo para retirar</span>, y
+        <span class="boton">Marcar como entregado</span>. No se pueden saltear pasos.</li>
+    <li><strong>Número de seguimiento:</strong> en los envíos por Andreani, OCA o Correo Argentino, cargalo en el campo
+        <em>"N° de seguimiento"</em> antes de tocar <strong>Marcar como enviado</strong>. Si te olvidaste o te equivocaste, lo corregís
+        después con <strong>Guardar</strong>.</li>
+    <li>Los pedidos aparecen recién cuando Mercado Pago aprueba el pago del comprador.</li>
+    <li><strong>Arrepentimientos:</strong> si el comprador usa el Botón de arrepentimiento, el pedido aparece primero, con un aviso rojo
+        con el código y el motivo, y queda <strong>frenado</strong>: ya no se puede marcar en preparación ni enviado. Tocá
+        <span class="boton">Cancelar el pedido y reintegrar</span> (con la casilla para volver a poner las unidades en stock). Si el
+        comprador ya tiene el producto, coordiná la devolución (a tu cargo) y, cuando lo recibas, marcá <em>"Ya recibí el producto
+        devuelto"</em> antes de cancelar. AUTONEX le reintegra el total del pedido con Mercado Pago; si el reintegro falla, aparece
+        <strong>Reintentar el reintegro</strong>. En el Resumen hay una tarjeta "Arrepentimientos para resolver" y en Pedidos el filtro
+        <strong>Arrepentimientos</strong>.</li>
+  </ul>
+  <h3>Mi local</h3>
+  <p>Arriba está el <strong>Logo del local</strong>: <span class="boton boton--claro">Subir logo</span> (JPG, PNG o WebP de hasta 8 MB;
+     si no es cuadrado se completa con blanco). Se ve en tu página, en el listado de vendedores, en las ofertas de tus productos y en
+     tu panel. Con <strong>Quitar</strong> volvés al logo anterior o a las iniciales del local.</p>
+  <p>Editá nombre comercial, descripción, dirección, ciudad, provincia, teléfono y WhatsApp, y en <strong>Días y horario de
+     atención</strong> cargá cada día (abierto o cerrado, horario corrido o cortado). Tocá <span class="boton">Guardar cambios</span>.
+     Estos datos se ven en tu página —con la semana completa y si el local está <strong>abierto ahora</strong>— y en los retiros en el
+     local.</p>
+
+  <!-- 12 -->
+  <h2><span class="num">12</span>Cómo carga productos un vendedor</h2>
+  <p>En <strong>Publicaciones</strong> ves <strong>solo los productos de tu local</strong>: el panel no muestra el catálogo de otras casas.
+     Filtros: Todas, Activas, Pausadas y Sin stock, y un buscador.</p>
+  <h3>Publicar un repuesto</h3>
+  <p>Tocá <span class="boton">+ Nueva</span> y completá la ventana "Nueva publicación":</p>
+  <table>
+    <thead><tr><th>Parte</th><th>Qué cargar</th></tr></thead>
+    <tbody>
+      <tr><td><strong>El repuesto</strong></td>
+        <td>Nombre, marca del repuesto, número de pieza del fabricante (como figura en la caja), categoría (la más específica), tipo de
+            pieza y EAN (opcional).</td></tr>
+      <tr><td><strong>Compatibilidad</strong></td>
+        <td>Marcalo como <strong>universal</strong> o elegí los <strong>vehículos compatibles</strong> (marca → modelo → año → versiones).</td></tr>
+      <tr><td><strong>Fotos</strong></td>
+        <td>Tocá <strong>Agregar fotos</strong>: hasta <strong>6</strong>, en JPG, PNG o WebP de hasta 8 MB cada una (desde el celular podés
+            sacarlas con la cámara). La primera es la principal. Se achican y optimizan solas al subirlas.</td></tr>
+      <tr><td><strong>Descripción</strong></td>
+        <td>Opcional: estado de la pieza, qué incluye, garantía. En los usados conviene decir de qué vehículo salió, el kilometraje y las
+            marcas de uso.</td></tr>
+      <tr><td><strong>Tu oferta</strong></td>
+        <td><strong>Precio</strong>, <strong>stock</strong> y <strong>condición</strong> (nuevo o usado) → <span class="boton">+ Publicar</span>.</td></tr>
+    </tbody>
+  </table>
+  <div class="nota"><strong>Misma pieza, misma ficha</strong>Si otra casa ya vende la misma pieza (misma marca y número de pieza), tu
+     publicación se suma a esa ficha y el comprador compara los precios de todas las casas en "Compará las ofertas". Tus fotos, tu
+     descripción, tu precio y tu stock siguen siendo solo tuyos: el comprador los ve con el botón <em>"Ver las fotos y la descripción"</em>
+     de tu oferta.</div>
+  <div class="nota"><strong>Sin verificar</strong>Los productos nuevos y sus compatibilidades se publican como <em>sin verificar</em>
+     hasta que el equipo de AUTONEX los revisa con el catálogo del fabricante. El comprador lo ve en la ficha.</div>
+  <p>Un mismo repuesto se puede publicar dos veces: una como <strong>nuevo</strong> y otra como <strong>usado</strong>.</p>
+  <h3>Mantener el catálogo al día</h3>
+  <ul>
+    <li>En la tabla, cambiá el <strong>precio</strong> o el <strong>stock</strong> y tocá <span class="boton boton--oscuro">Guardar</span>.</li>
+    <li><span class="boton boton--claro">Fotos</span> abre "Fotos y descripción": subí más fotos (hasta 6), borrá las que no quieras y
+        editá la descripción con <strong>Guardar descripción</strong>. Las publicaciones sin fotos muestran el aviso
+        <em>"Sin fotos propias · agregalas"</em>.</li>
+    <li><span class="boton boton--claro">Pausar</span> saca la publicación del catálogo sin borrarla; <span class="boton boton--claro">Reactivar</span> la vuelve a mostrar.</li>
+    <li>Con stock 0 la publicación sigue existiendo, pero no se puede comprar.</li>
+    <li>Debajo de cada producto ves cuántas casas más lo venden y el mejor precio de la competencia en la misma condición.</li>
+  </ul>
+  <h3>Cargar muchos productos de una vez</h3>
+  <p>Desde el panel, el vendedor publica <strong>de a un producto</strong>. Para subir un catálogo completo (cientos de productos),
+     el <strong>administrador</strong> lo importa desde un archivo CSV, Excel, JSON o XML (sección 13).</p>
+
+  <!-- 13 -->
+  <h2><span class="num">13</span>Panel de administración</h2>
+  <p>Solo para la cuenta de administrador: menú de la cuenta → <strong>Administrar catálogo</strong>.</p>
+  <div class="pestanas"><span>Resumen</span><span>Datos</span><span>Compatibilidades</span><span>Importar</span><span>Importaciones</span><span>Duplicados</span></div>
+  <table>
+    <thead><tr><th>Pestaña</th><th>Qué se hace</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Resumen</strong></td><td>Cantidades del catálogo y qué está verificado.</td></tr>
+      <tr><td><strong>Datos</strong></td><td>Buscar, crear y editar marcas, modelos, versiones, repuestos y fuentes de datos.</td></tr>
+      <tr><td><strong>Compatibilidades</strong></td><td>Revisar y verificar qué repuesto le sirve a qué vehículo.</td></tr>
+      <tr><td><strong>Importar</strong></td><td>Cargar datos en cantidad desde un archivo (ver abajo).</td></tr>
+      <tr><td><strong>Importaciones</strong></td><td>Historial de cada importación, con su resultado.</td></tr>
+      <tr><td><strong>Duplicados</strong></td><td>Registros que parecen repetidos, para revisarlos.</td></tr>
+    </tbody>
+  </table>
+  <h3>Importar un catálogo</h3>
+  <ol>
+    <li>Elegí <strong>qué vas a importar</strong> (por ejemplo, repuestos) y la <strong>fuente de los datos</strong>.</li>
+    <li>Si no tenés el archivo armado, tocá <strong>Descargar plantilla CSV</strong>: trae las columnas que espera AUTONEX.</li>
+    <li>Subí el archivo (<strong>CSV, Excel, JSON o XML</strong>) y elegí qué hacer si una fila se parece a un registro existente.</li>
+    <li>Tocá <span class="boton boton--claro">Validar sin guardar</span>: muestra qué filas se crearían y cuáles tienen errores, sin guardar nada.</li>
+    <li>Si está todo bien, tocá <span class="boton">Importar</span>.</li>
+  </ol>
+
+  <!-- 14 -->
+  <h2><span class="num">14</span>Otras páginas del sitio</h2>
+  <figure class="media">
+    <img src="manual-img/vendedores.png" alt="Página de vendedores">
+    <figcaption>Vendedores: las casas de repuestos de todo el país, con su logo (o sus iniciales), el horario y si están abiertas ahora.</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Vendedores</strong> (arriba a la derecha): todas las casas, con "Abierto ahora" o "Cerrado ahora". Cada una tiene su
+        página con dirección, el horario de cada día, contacto y sus productos.</li>
+    <li><strong>Marcas de repuestos para motos</strong> (al pie): las marcas y qué fabrica cada una.</li>
+    <li><strong>Créditos</strong> (al pie): autor y licencia de cada foto y logo.</li>
+    <li><strong>Información legal</strong> (al pie): <strong>Términos y condiciones</strong> (para todos los usuarios),
+        <strong>Términos para vendedores</strong>, <strong>Política de privacidad</strong>, el <strong>Botón de arrepentimiento</strong> y el
+        enlace a <strong>Defensa de las y los Consumidores</strong> para hacer un reclamo.</li>
+  </ul>
+
+  <!-- 15 -->
+  <h2><span class="num">15</span>Preguntas frecuentes</h2>
+  <dl class="faq">
+    <dt>¿Cómo elimino mi cuenta?</dt>
+    <dd>Desde Mi cuenta → Eliminar mi cuenta, con tu contraseña y la palabra ELIMINAR. Si tenés pedidos en curso, primero tienen que estar entregados.</dd>
+    <dt>Me registré y no puedo ingresar.</dt>
+    <dd>La cuenta se activa al tocar el link del mail "Confirmá tu email en AUTONEX". Si no te llegó, intentá ingresar y tocá "Reenviar el mail de confirmación".</dd>
+    <dt>¿Necesito una cuenta para comprar?</dt>
+    <dd>No. Podés comprar sin cuenta y seguir la compra con el número y el email.</dd>
+    <dt>Compré sin cuenta y no veo la compra en otra computadora.</dt>
+    <dd>Es a propósito: por privacidad no queda guardada en el navegador. Buscala en Mis compras con el número de compra y el email.</dd>
+    <dt>¿Puedo comprarle a varias casas a la vez?</dt>
+    <dd>Sí. El carrito agrupa por vendedor, pagás una sola vez y cada casa recibe su pedido. Para cada una elegís retiro o envío.</dd>
+    <dt>¿Qué significa "sin verificar"?</dt>
+    <dd>Que el repuesto figura como compatible con tu vehículo, pero ese dato todavía no se confirmó con el catálogo del fabricante.
+        Chequeá el número de pieza o consultá al vendedor.</dd>
+    <dt>Me rechazaron el pago, ¿perdí la compra?</dt>
+    <dd>No. La compra queda guardada: tocá "Intentar pagar de nuevo" o pagala después desde Mis compras.</dd>
+    <dt>Me arrepentí de una compra, ¿qué hago?</dt>
+    <dd>Dentro de los 10 días corridos desde que lo recibiste, usá el Botón de arrepentimiento (al pie): el pedido se frena y, al
+        cancelarlo el vendedor, te reintegramos el total con Mercado Pago.</dd>
+    <dt>¿Qué garantía tienen los repuestos?</dt>
+    <dd>La garantía legal: 6 meses para productos nuevos y 3 meses para usados, desde la entrega. Se reclama al vendedor del pedido.</dd>
+    <dt>¿Dónde está el número de seguimiento del envío?</dt>
+    <dd>En la compra y en el comprobante, cuando el vendedor marca el pedido como enviado.</dd>
+    <dt>Soy vendedor, ¿cuándo veo un pedido nuevo?</dt>
+    <dd>Cuando Mercado Pago aprueba el pago. Aparece en Pedidos como "Pagado".</dd>
+  </dl>
+
+  <!-- 16 -->
+  <h2><span class="num">16</span>Para probar la demo</h2>
+  <p>Los pagos de la demo se hacen con tarjetas de prueba de Mercado Pago. Por ejemplo:</p>
+  <table>
+    <thead><tr><th>Tarjeta</th><th>Vencimiento</th><th>CVV</th><th>Titular</th><th>DNI</th></tr></thead>
+    <tbody><tr><td class="mono">5031 7557 3453 0604</td><td class="mono">11/30</td><td class="mono">123</td><td class="mono">APRO</td><td class="mono">12345678</td></tr></tbody>
+  </table>
+  <p>En Mercado Pago elegí <strong>Tarjeta</strong> y pagá sin iniciar sesión; con el titular <span class="mono">APRO</span> el pago se
+     aprueba. Las cuentas de prueba están en el documento aparte <em>Usuarios de prueba</em>.</p>
+
+  <p class="pie">AUTONEX · Manual de uso · 21/10/2026 · Capturas del sitio publicado. Vendedores, precios y repuestos de demostración.</p>
+</div>
+</body>
+</html>

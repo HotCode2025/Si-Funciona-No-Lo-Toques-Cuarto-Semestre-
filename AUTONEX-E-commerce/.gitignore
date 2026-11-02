@@ -1,0 +1,23 @@
+# Dependencias y compilados (se generan con npm install y npm run build)
+node_modules/
+dist/
+
+# Claves y configuración de cada máquina: se suben solo los .env.example
+.env
+.env.*
+!.env.example
+*.env~
+
+# Documento con los usuarios y contraseñas de prueba: se entrega aparte, no se publica
+docs/Usuarios-de-prueba-AUTONEX.*
+
+# Copia ordenada de las imágenes para el equipo (se genera con npm run imagenes:carpeta)
+imagenes/
+
+# Cachés, logs y archivos de herramientas o del sistema
+.cache/
+.claude/
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini

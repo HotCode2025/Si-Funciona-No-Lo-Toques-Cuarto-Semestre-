@@ -1,0 +1,19 @@
+# Opcional: PostgreSQL para correr AUTONEX en una máquina sin Postgres instalado.
+#   docker compose up -d
+# y en server/.env:
+#   DATABASE_URL=postgresql://autonex:autonex@localhost:5432/autonex
+services:
+  db:
+    image: postgres:17
+    container_name: autonex-db
+    environment:
+      POSTGRES_DB: autonex
+      POSTGRES_USER: autonex
+      POSTGRES_PASSWORD: autonex
+    ports:
+      - "5432:5432"
+    volumes:
+      - autonex-pgdata:/var/lib/postgresql/data
+
+volumes:
+  autonex-pgdata:

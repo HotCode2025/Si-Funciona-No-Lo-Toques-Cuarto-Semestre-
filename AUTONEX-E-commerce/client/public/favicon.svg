@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AUTONEX">
+  <rect width="64" height="64" rx="14" fill="#0E0F11"/>
+  <!-- "A" de AUTONEX: dos patas con la punta recortada -->
+  <path d="M9 52 L27 14 Q28.6 11 32 11 Q35.4 11 37 14 L55 52 H44.5 L32 25 L19.5 52 Z" fill="#FFFFFF"/>
+  <!-- estela naranja que cruza la A -->
+  <path d="M17 52 L28.5 37 Q31.5 33.2 36.5 33 L61 31.6 L57.6 37.4 L39.5 38.6 Q36.6 38.8 34.8 41.2 L27.4 52 Z" fill="#FF6A13"/>
+</svg>

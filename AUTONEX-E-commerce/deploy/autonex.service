@@ -1,0 +1,49 @@
+[Unit]
+Description=AUTONEX (marketplace de autopartes: API Fastify + tienda compilada)
+After=network-online.target postgresql@17-main.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lautarom
+Group=lautarom
+WorkingDirectory=/home/lautarom/autonex/server
+# Puerto (3200), subruta (/AUTONEX), base de datos, Mercado Pago y secretos se leen de /home/lautarom/autonex/server/.env
+ExecStart=/usr/bin/node src/index.js
+Environment=NODE_ENV=production
+Restart=always
+RestartSec=5
+# Al recibir SIGTERM el servidor termina las requests en curso y cierra la base
+KillSignal=SIGTERM
+TimeoutStopSec=20
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=autonex
+# Si pasa este límite systemd lo corta y lo vuelve a levantar
+MemoryMax=512M
+
+# Endurecimiento: el proceso no puede escalar privilegios ni escribir en el disco (AUTONEX no guarda archivos
+# mientras corre: las importaciones se procesan en memoria y las imágenes se cargan con los scripts, fuera del servicio)
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+CapabilityBoundingSet=
+# Solo red IPv4/IPv6 (puerto 3200 y la API de Mercado Pago) y socket local (PostgreSQL por /var/run/postgresql)
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+UMask=0077
+# MemoryDenyWriteExecute no se usa: el compilador JIT de Node (V8) lo necesita
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,172 @@
+{
+  "_descripcion": "Reglas de normalización del ETL del DNRPA. No agregan datos: solo agrupan y limpian lo que viene en el registro (alias de marcas, tipos excluidos, cómo separar el modelo de la versión). Un modelo solo se crea si aparece en los datos.",
+
+  "marcas_alias": {
+    "MERCEDES BENZ": "MERCEDES-BENZ",
+    "M. BENZ": "MERCEDES-BENZ",
+    "M.BENZ": "MERCEDES-BENZ",
+    "M BENZ": "MERCEDES-BENZ",
+    "MERCEDEZ BENZ": "MERCEDES-BENZ",
+    "MERCEDS-BENZ": "MERCEDES-BENZ",
+    "MERDECEDS BENZ": "MERCEDES-BENZ",
+    "DAIMLER BENZ": "MERCEDES-BENZ",
+    "MESRCEDEZ": "MERCEDES-BENZ",
+    "REANULT": "RENAULT",
+    "RENUALT": "RENAULT",
+    "PEUGOET": "PEUGEOT",
+    "PEUGEOT CITROEN ARGENTINA SA": "PEUGEOT",
+    "RENAULT IKA DAUPHINE": { "marca": "RENAULT", "prefijo_modelo": "DAUPHINE" },
+    "INTERNACIONAL": "INTERNATIONAL",
+    "NAVISTAR INTERNACIONAL": "INTERNATIONAL",
+    "ZHENG ZHOU DONG FENG": "DONGFENG",
+    "B M W": "BMW",
+    "RAMBLER-IKA": "RAMBLER IKA",
+    "CHRYSLER - DODGE": "CHRYSLER",
+    "FIAT IVECO": "IVECO",
+    "DEUTZ-AGRALE": "AGRALE",
+    "DEUTZ - AGRALE": "AGRALE",
+    "INTERNATIONAL HARVESTER": "INTERNATIONAL",
+    "INTERNAT. HARVESTER": "INTERNATIONAL",
+    "INTERNAT.HARVESTER": "INTERNATIONAL",
+    "MERCEDES - BENZ": "MERCEDES-BENZ",
+    "SAAB SCANIA": "SCANIA",
+    "DFAC DONGFENG": "DONGFENG",
+    "DONG FENG": "DONGFENG",
+    "DEUTZ AGRALE": "AGRALE",
+    "LYNK&CO": "LYNK & CO",
+    "LYNK & CO.": "LYNK & CO",
+    "RASTROJERO DIESEL": "RASTROJERO",
+    "JEEP IKA": { "marca": "IKA", "prefijo_modelo": "JEEP" },
+    "JEEP ESTANCIERA": { "marca": "IKA", "prefijo_modelo": "ESTANCIERA" },
+    "ESTANCIERA IKA": { "marca": "IKA", "prefijo_modelo": "ESTANCIERA" },
+    "FORD FALCON": { "marca": "FORD", "prefijo_modelo": "FALCON" },
+    "GMC CHEVETTE": { "marca": "GMC", "prefijo_modelo": "CHEVETTE" },
+    "GREAT WALL MOTOR": "GREAT WALL"
+  },
+
+  "marcas_conservar": [],
+  "_marcas_conservar": "Marcas que se vendieron en Argentina pero tienen pocos registros en el período (el ETL descarta las que no son nacionales, no tienen 0 km recientes y tienen menos de 20 vehículos): agregalas acá para conservarlas.",
+
+  "marcas_excluidas": ["SIN MARCA", "SIN ESPECIFICACION", "POLARIS", "CAN-AM", "ZANELLA", "MARCA INVALIDA", "FURGONETA", "KM O", "KM 0", "REARMADO", "ARMADO FUERA DE FABRICA"],
+
+  "marcas_nombre": {
+    "VOLKSWAGEN": "Volkswagen", "CITROEN": "Citroën", "MERCEDES-BENZ": "Mercedes-Benz", "BYD": "BYD", "BMW": "BMW",
+    "BAIC": "BAIC", "RAM": "RAM", "MG": "MG", "DFSK": "DFSK", "MINI": "MINI", "JAC": "JAC", "JMC": "JMC", "KYC": "KYC",
+    "DS": "DS", "SEAT": "SEAT", "IKA": "IKA", "GAC": "GAC", "JMEV": "JMEV", "GMC": "GMC", "SWM": "SWM", "GWM": "GWM",
+    "FAW": "FAW", "KAMA": "KAMA", "LYNK & CO": "Lynk & Co", "SSANGYONG": "SsangYong", "LAND ROVER": "Land Rover",
+    "ALFA ROMEO": "Alfa Romeo", "GREAT WALL": "Great Wall", "SMART": "smart", "DFAC": "DFAC", "MAXUS": "Maxus",
+    "IVECO": "Iveco", "HINO": "Hino", "TATA": "Tata", "ARCFOX": "Arcfox"
+  },
+
+  "tipos": [
+    { "patron": "SEMIRREMOLQUE|ACOPLADO|TRAILER|REMOLQUE|CARRETON|DOLLY|ARENERO|CUATRICICLO", "tipo": null },
+    { "patron": "CASA RODANTE", "excepto": "MOTOR|AUTOPROPULS", "tipo": null },
+    { "patron": "CASA RODANTE", "tipo": "van", "carroceria": "Casa rodante" },
+    { "patron": "MINIBUS|MICRO ?OMNIBUS|MIDIBUS|MINI BUS", "tipo": "minibus", "carroceria": "Minibús" },
+    { "patron": "OMNIBUS|ÓMNIBUS", "tipo": "bus", "carroceria": "Ómnibus" },
+    { "patron": "TRACTOR|UNIDAD TRACTORA", "tipo": "tractor", "carroceria": "Tractor de carretera" },
+    { "patron": "CHAS|CAMION|TRANSPORTE DE CARGA|VOLCADOR|HORMIGONERA|TANQUE|BARREDORA|RECOLECTOR|GRUA|BOMBERO|CARROZADO", "tipo": "camion", "carroceria": "Camión / chasis" },
+    { "patron": "PICK|CAMIONETA", "tipo": "pickup", "carroceria": "Pickup" },
+    { "patron": "FURGON VIDRIADO|PASAJEROS|COMBI|AMBULANCIA|MINIVAN", "tipo": "van", "carroceria": "Van de pasajeros" },
+    { "patron": "FURGON|FURGONETA", "tipo": "furgon", "carroceria": "Furgón" },
+    { "patron": "UTILITARIO", "tipo": "utilitario", "carroceria": "Utilitario" },
+    { "patron": "TODO TERRENO|JEEP", "tipo": "suv", "carroceria": "Todo terreno" },
+    { "patron": "DESCAPOTABLE|CABRIO|CONVERTIBLE|ROADSTER|SPIDER|SPYDER|TARGA", "tipo": "cabrio", "carroceria": "Descapotable" },
+    { "patron": "COUPE|SEDAN 2|BERLINA 2", "tipo": "coupe", "carroceria": "Coupé" },
+    { "patron": "SEDAN 4|BERLINA 4", "tipo": "sedan", "carroceria": "Sedán 4 puertas" },
+    { "patron": "SEDAN 3|BERLINA 3", "tipo": "hatchback", "carroceria": "Hatchback 3 puertas" },
+    { "patron": "SEDAN 5|BERLINA 5|HATCH", "tipo": "hatchback", "carroceria": "Hatchback 5 puertas" },
+    { "patron": "RURAL|FAMILIAR|STATION|WAGON", "tipo": "auto", "carroceria": "Rural (familiar o SUV)" },
+    { "patron": "SEDAN|AUTOMOVIL|BERLINA|LIMUSINA", "tipo": "auto", "carroceria": "Sedán" },
+    { "patron": "SIN ESPECIF", "tipo": "sin_especificar", "carroceria": null }
+  ],
+
+  "modelos_multipalabra": {
+    "VOLKSWAGEN": ["GOL TREND", "NEW BEETLE", "MOVE UP!", "TAKE UP!", "HIGH UP!", "CROSS UP!", "MOVE UP", "TAKE UP", "HIGH UP", "CROSS UP", "CROSSFOX", "SPACEFOX", "POLO CLASSIC", "PASSAT VARIANT", "SAVEIRO CROSS", "THE BEETLE"],
+    "CHEVROLET": ["CORSA CLASSIC", "ONIX PLUS", "ONIX JOY", "PRISMA JOY", "S-10", "GRAND VITARA", "SILVERADO", "CHEVY VAN"],
+    "FIAT": ["GRAND SIENA", "PALIO WEEKEND", "PALIO ADVENTURE", "NUEVO UNO", "UNO WAY", "STRADA ADVENTURE", "IDEA ADVENTURE", "DUCATO MAXICARGO"],
+    "RENAULT": ["SANDERO STEPWAY", "CLIO MIO", "CLIO II", "MEGANE II", "MEGANE III", "KANGOO II", "LOGAN II", "GRAND SCENIC", "MASTER II"],
+    "PEUGEOT": ["207 COMPACT", "PARTNER PATAGONICA", "206 SW", "207 SW", "308 SW", "408 SW"],
+    "CITROEN": ["C4 LOUNGE", "C4 CACTUS", "C4 PICASSO", "C4 GRAND PICASSO", "C3 AIRCROSS", "C3 PICASSO", "XSARA PICASSO", "C-ELYSEE", "C4 AIRCROSS", "C5 AIRCROSS"],
+    "FORD": ["FIESTA MAX", "FIESTA KINETIC", "KA+", "FOCUS III", "RANGER RAPTOR", "TRANSIT CUSTOM", "TRANSIT CONNECT", "BRONCO SPORT"],
+    "TOYOTA": ["HILUX SW4", "COROLLA CROSS", "YARIS CROSS", "LAND CRUISER", "LAND CRUISER PRADO", "RAV 4", "4 RUNNER", "GR YARIS", "GR 86", "GR COROLLA", "GR SUPRA"],
+    "NISSAN": ["NOTE", "X-TRAIL", "NP300 FRONTIER", "NV 350", "DOBLE CABINA"],
+    "CHRYSLER": ["PT CRUISER", "GRAND CARAVAN", "TOWN & COUNTRY"],
+    "JEEP": ["GRAND CHEROKEE", "COMPASS"],
+    "LAND ROVER": ["RANGE ROVER EVOQUE", "RANGE ROVER VELAR", "RANGE ROVER SPORT", "RANGE ROVER", "DISCOVERY SPORT"],
+    "DODGE": ["GRAND CARAVAN", "JOURNEY"],
+    "MERCEDES-BENZ": ["SPRINTER", "VITO", "ATEGO", "ACCELO", "AXOR", "ACTROS"],
+    "HYUNDAI": ["GRAND SANTA FE", "SANTA FE", "H-1", "H 1"],
+    "KIA": ["GRAND CARNIVAL"],
+    "SUZUKI": ["GRAND VITARA"],
+    "MITSUBISHI": ["L 200", "OUTLANDER", "PAJERO SPORT"],
+    "IKA": ["ESTANCIERA", "TORINO"],
+    "GREAT WALL": ["WINGLE 5", "WINGLE 7"],
+    "HAVAL": ["JOLION", "H6"],
+    "BYD": ["SONG PLUS", "SONG PRO", "SEAL", "DOLPHIN MINI", "DOLPHIN", "YUAN PRO", "YUAN PLUS"],
+    "CHERY": ["TIGGO 2 PRO", "TIGGO 4 PRO", "TIGGO 7 PRO", "TIGGO 8 PRO"]
+  },
+
+  "modelos_patron": {
+    "MERCEDES-BENZ": [
+      { "patron": "^(A|B|C|E|S|G|V|R)\\s?-?\\d{3}\\b", "modelo": "CLASE $1" },
+      { "patron": "^(CLA|CLS|CLK|GLA|GLB|GLC|GLE|GLK|GLS|SLK|SLC|SL|ML|GL)\\s?-?\\d{2,3}\\b", "modelo": "$1" },
+      { "patron": "^(L|LS|LO|LK|LP|LA|OF|OH|O)\\s?-?(\\d{3,4})\\b", "modelo": "$1 $2" }
+    ],
+    "BMW": [
+      { "patron": "^([1-8])\\d{2}(I|D|E|CI|IS|TI|XI|XD|IA|DA)?\\b", "modelo": "SERIE $1" },
+      { "patron": "^(X[1-7]|Z[348]|M[1-8]|I[3-8]|IX[1-3]?)\\b", "modelo": "$1" }
+    ],
+    "KIA": [
+      { "patron": "^K\\s?(\\d{4}[A-Z]?)\\b", "modelo": "K$1" }
+    ],
+    "AUDI": [
+      { "patron": "^(A[1-8]|Q[2-8]|S[1-8]|RS ?[3-7]|SQ[5-8]|TT|R8|E-TRON)\\b", "modelo": "$1" }
+    ]
+  },
+
+  "modelos_renombrar": {
+    "VOLKSWAGEN": { "MOVE UP!": "UP!", "TAKE UP!": "UP!", "HIGH UP!": "UP!", "CROSS UP!": "UP!", "MOVE UP": "UP!", "TAKE UP": "UP!", "HIGH UP": "UP!", "CROSS UP": "UP!", "UP": "UP!" },
+    "JEEP": { "GR.CHEROKEE": "GRAND CHEROKEE" }
+  },
+
+  "abreviaturas_marca": {
+    "VOLKSWAGEN": ["VW", "VOLKS"],
+    "MERCEDES-BENZ": ["MB", "MERCEDES", "M.BENZ", "M-BENZ", "BENZ"],
+    "CHEVROLET": ["CHEV"],
+    "CITROEN": ["CITROËN"]
+  },
+  "sufijos_modelo_unibles": ["EXE", "GLX", "GL", "GLS", "XR", "SX", "XS", "CD", "HD"],
+
+  "prefijos_omitir": ["NUEVO", "NUEVA", "NEW", "NOUVEAU"],
+  "tokens_puertas": ["P", "PTAS", "PUERTAS", "PTS", "PTA", "PTAS.", "P."],
+  "prefijos_dos_palabras": ["GRAND", "CLASE", "SERIE", "CLASSE", "SERIES", "RANGE", "LAND", "MODEL", "ID."],
+
+  "palabras_version": [
+    "TRENDLINE", "COMFORTLINE", "HIGHLINE", "STARTLINE", "SPORTLINE", "GTS", "GTI", "GT", "GL", "GLS", "GLX", "GLI", "LS",
+    "LT", "LTZ", "PREMIER", "RS", "SX", "XS", "XL", "XLS", "XLT", "XEI", "XLI", "SEG", "SR", "SRV", "SRX", "DX", "GR", "SE",
+    "SEL", "S", "TITANIUM", "FREESTYLE", "STORM", "WILDTRAK", "LIMITED", "FREEDOM", "VOLCANO", "RANCH", "ULTRA",
+    "ENDURANCE", "WORKING", "ATTRACTIVE", "ESSENCE", "SPORTING", "ADVENTURE", "TREKKING", "ACTIVE", "ALLURE", "FELINE",
+    "GRIFFE", "PREMIUM", "BUSINESS", "CONFORT", "COMFORT", "PACK", "DYNAMIQUE", "PRIVILEGE", "EXPRESSION", "AUTHENTIQUE",
+    "LIFE", "ZEN", "INTENS", "ICONIC", "OUTSIDER", "EXCLUSIVE", "TENDANCE", "ORIGINE", "FEEL", "SHINE", "SEDUCTION",
+    "LIVE", "PULSE", "VIRAL", "FLY", "EDGE", "AMBIENTE", "TREND", "SPORT", "LUXURY", "BASE", "FULL", "CD", "CS", "CC",
+    "DC", "SC", "CAB", "CABINA", "DOBLE", "SIMPLE", "CHASIS", "FURGON", "PASAJEROS", "VAN", "L1", "L2", "L3", "L4", "H1",
+    "H2", "H3", "4X2", "4X4", "6X2", "6X4", "8X4", "AWD", "4WD", "AT", "MT", "CVT", "AUT", "MANUAL", "AUTOMATICO",
+    "AUTOMATICA", "TIPTRONIC", "DSG", "TDI", "TSI", "MSI", "HDI", "DCI", "CDI", "TDCI", "TURBO", "NAFTA", "DIESEL",
+    "GNC", "HYBRID", "HIBRIDO", "PLUS", "PRO", "MAX", "CROSS", "STEPWAY", "WAY"
+  ],
+
+  "tecnologias_motor": [
+    "TDI", "BITDI", "TSI", "MSI", "FSI", "TFSI", "HDI", "BLUEHDI", "DCI", "CDI", "TDCI", "CRDI", "JTD", "MULTIJET", "THP",
+    "VTI", "PURETECH", "GDI", "TGDI", "T-GDI", "BITURBO", "TURBO", "D-4D", "D4D", "VVT-I", "VVTI", "FIREFLY", "FIRE",
+    "E.TORQ", "ETORQ", "SCE", "TCE", "ECOBOOST", "DURATEC", "SIGMA", "ROCAM", "DRAGON", "MPFI", "TJET", "T-JET", "EVO"
+  ],
+  "tokens_diesel": ["TDI", "BITDI", "TD", "TDCI", "HDI", "BLUEHDI", "DCI", "CDI", "CRDI", "JTD", "MULTIJET", "MJ", "D-4D", "D4D", "DIESEL", "TURBODIESEL", "TDS", "DTI", "SDI", "CTDI", "JTDM", "ECOBLUE", "BLUEMOTION TDI"],
+  "tokens_turbo": ["TURBO", "BITURBO", "TSI", "TFSI", "TDI", "BITDI", "THP", "TCE", "ECOBOOST", "TDCI", "T-GDI", "TGDI", "T-JET", "TJET"],
+  "tokens_hibrido": ["HYBRID", "HIBRIDO", "HÍBRIDO", "HEV", "MHEV", "PHEV", "DM-I", "DMI"],
+  "tokens_electrico": ["EV", "BEV", "ELECTRIC", "ELECTRICO", "ELÉCTRICO", "E-TRON", "ETRON"],
+  "tokens_gnc": ["GNC"],
+
+  "tipos_pesados": ["camion", "tractor", "bus", "minibus"],
+  "tipos_comerciales": ["pickup", "furgon", "van", "utilitario"]
+}

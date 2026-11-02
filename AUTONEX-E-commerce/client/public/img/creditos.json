@@ -1,0 +1,714 @@
+[
+  {
+    "archivo": "img/categorias/filtros.jpg",
+    "titulo": "Масляные фильтры и ключи.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:%D0%9C%D0%B0%D1%81%D0%BB%D1%8F%D0%BD%D1%8B%D0%B5_%D1%84%D0%B8%D0%BB%D1%8C%D1%82%D1%80%D1%8B_%D0%B8_%D0%BA%D0%BB%D1%8E%D1%87%D0%B8.JPG",
+    "autor": "Andshel",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/categorias/encendido.jpg",
+    "titulo": "Spark plug.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Spark_plug.jpg",
+    "autor": "Desconocido",
+    "licencia": "Public domain",
+    "licencia_url": ""
+  },
+  {
+    "archivo": "img/categorias/distribucion.jpg",
+    "titulo": "Ford Cosworth BDR 002.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Ford_Cosworth_BDR_002.jpg",
+    "autor": "Tennen-Gas",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/categorias/frenos.jpg",
+    "titulo": "Dülmen, Wiesmann Sports Cars, Wiesmann GT MF5 -- 2018 -- 9561.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Wiesmann_Sports_Cars,_Wiesmann_GT_MF5_--_2018_--_9561.jpg",
+    "autor": "Dietmar Rabich",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/categorias/suspension.jpg",
+    "titulo": "Dülmen, Wiesmann Sports Cars, Wiesmann Spyder Concept -- 2018 -- 9574.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Wiesmann_Sports_Cars,_Wiesmann_Spyder_Concept_--_2018_--_9574.jpg",
+    "autor": "Dietmar Rabich",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/categorias/embrague.jpg",
+    "titulo": "Изношенный диск сцепления на автомобиль ШКОДА-ФАБИЯ 1. Фото А. Щекинова.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:%D0%98%D0%B7%D0%BD%D0%BE%D1%88%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9_%D0%B4%D0%B8%D1%81%D0%BA_%D1%81%D1%86%D0%B5%D0%BF%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F_%D0%BD%D0%B0_%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%BE%D0%B1%D0%B8%D0%BB%D1%8C_%D0%A8%D0%9A%D0%9E%D0%94%D0%90-%D0%A4%D0%90%D0%91%D0%98%D0%AF_1._%D0%A4%D0%BE%D1%82%D0%BE_%D0%90._%D0%A9%D0%B5%D0%BA%D0%B8%D0%BD%D0%BE%D0%B2%D0%B0.jpg",
+    "autor": "Schekinov Alexey Victorovich",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/categorias/refrigeracion.jpg",
+    "titulo": "1969 AMC AMX \"Nash Trash\" SS drag race car at 2021 All AMC Day Cecil Dragway 08of12.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:1969_AMC_AMX_%22Nash_Trash%22_SS_drag_race_car_at_2021_All_AMC_Day_Cecil_Dragway_08of12.jpg",
+    "autor": "CZmarlin — Christopher Ziemnowicz, a photo credit would be appreciated if this image is used anywhere other than Wikipedia.",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/categorias/iluminacion.jpg",
+    "titulo": "Porsche, Paris Motor Show 2018, Paris (1Y7A1859).jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Porsche,_Paris_Motor_Show_2018,_Paris_(1Y7A1859).jpg",
+    "autor": "Matti Blume",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/categorias/baterias.jpg",
+    "titulo": "Car battery.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Car_battery.jpg",
+    "autor": "Azorbli",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/categorias/lubricantes.jpg",
+    "titulo": "SIGAUS aceite.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:SIGAUS_aceite.jpg",
+    "autor": "SIGAUS",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/marcas/volkswagen.jpg",
+    "titulo": "2015 Volkswagen Gol Trend 1.6 Pack III, I-Motion (front).jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:2015_Volkswagen_Gol_Trend_1.6_Pack_III,_I-Motion_(front).jpg",
+    "autor": "Maxi-Napo-99",
+    "licencia": "CC BY 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/4.0"
+  },
+  {
+    "archivo": "img/marcas/chevrolet.jpg",
+    "titulo": "Chevrolet Onix (second generation, front view).jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Chevrolet_Onix_(second_generation,_front_view).jpg",
+    "autor": "Chevrolet México",
+    "licencia": "CC BY 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/3.0"
+  },
+  {
+    "archivo": "img/marcas/fiat.jpg",
+    "titulo": "Fiat Cronos 1.8 16V E.Torq Precision.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Fiat_Cronos_1.8_16V_E.Torq_Precision.jpg",
+    "autor": "Heduardo55",
+    "licencia": "CC0",
+    "licencia_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+  },
+  {
+    "archivo": "img/marcas/ford.jpg",
+    "titulo": "2019 Ford Ranger 2.5 XLT 4X2.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:2019_Ford_Ranger_2.5_XLT_4X2.jpg",
+    "autor": "Just a Man",
+    "licencia": "CC BY 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/4.0"
+  },
+  {
+    "archivo": "img/marcas/peugeot.jpg",
+    "titulo": "Peugeot 208 (Freiburg i. Br., 2025).jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Peugeot_208_(Freiburg_i._Br.,_2025).jpg",
+    "autor": "JoachimKohler-HB",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/marcas/renault.jpg",
+    "titulo": "Renault Sandero R.S. 2020 - BugWarp 02 (cropped).jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Renault_Sandero_R.S._2020_-_BugWarp_02_(cropped).jpg",
+    "autor": "BugWarp",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/marcas/toyota.jpg",
+    "titulo": "2016 Toyota HiLux (GUN136R) SR5 4-door utility (2018-09-03) 01.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:2016_Toyota_HiLux_(GUN136R)_SR5_4-door_utility_(2018-09-03)_01.jpg",
+    "autor": "EurovisionNim",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/marcas/citroen.jpg",
+    "titulo": "2020 Citroën C3 (3rd generation) DSC 7374.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:2020_Citro%C3%ABn_C3_(3rd_generation)_DSC_7374.jpg",
+    "autor": "Alexander Migl",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/filtro-aceite.jpg",
+    "titulo": "Filtro olio avvitabile.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Filtro_olio_avvitabile.JPG",
+    "autor": "Elwood",
+    "licencia": "Public domain",
+    "licencia_url": ""
+  },
+  {
+    "archivo": "img/productos/filtro-aceite-2.jpg",
+    "titulo": "Olejový filtr s těsněním.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Olejov%C3%BD_filtr_s_t%C4%9Bsn%C4%9Bn%C3%ADm.jpg",
+    "autor": "Voton.cz autodíly",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/filtro-aceite-3.jpg",
+    "titulo": "3318853 CUMMINS TJG115561 FORD OIL.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:3318853_CUMMINS_TJG115561_FORD_OIL.jpg",
+    "autor": "Depurox filtration",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/filtro-aceite-4.jpg",
+    "titulo": "Engine oil filter cutaway.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Engine_oil_filter_cutaway.JPG",
+    "autor": "Harrikkamies",
+    "licencia": "Public domain",
+    "licencia_url": ""
+  },
+  {
+    "archivo": "img/productos/filtro-aire.jpg",
+    "titulo": "Filtro aria pannello.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Filtro_aria_pannello.JPG",
+    "autor": "Elwood",
+    "licencia": "Public domain",
+    "licencia_url": ""
+  },
+  {
+    "archivo": "img/productos/filtro-aire-2.jpg",
+    "titulo": "Air filter for Toyota 1KR-FE.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Air_filter_for_Toyota_1KR-FE.jpg",
+    "autor": "Ilya Plekhanov",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/filtro-aire-3.jpg",
+    "titulo": "Dirty-air-filter.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Dirty-air-filter.jpg",
+    "autor": "Ahanix1989 at English Wikipedia",
+    "licencia": "Public domain",
+    "licencia_url": ""
+  },
+  {
+    "archivo": "img/productos/filtro-combustible.jpg",
+    "titulo": "HTKC filters auto uit folder gehaald.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:HTKC_filters_auto_uit_folder_gehaald.jpg",
+    "autor": "Vanhoorensteven",
+    "licencia": "CC0",
+    "licencia_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+  },
+  {
+    "archivo": "img/productos/filtro-combustible-2.jpg",
+    "titulo": "Dieselfilter PKW VAG.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Dieselfilter_PKW_VAG.jpg",
+    "autor": "Johann H. Addicks",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/productos/filtro-combustible-3.jpg",
+    "titulo": "Manege Station exhibition. Diesel bus parts 01.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Manege_Station_exhibition._Diesel_bus_parts_01.jpg",
+    "autor": "Retired electrician",
+    "licencia": "CC0",
+    "licencia_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+  },
+  {
+    "archivo": "img/productos/filtro-habitaculo.jpg",
+    "titulo": "Panasonic AIR PURIFIER FILTER FOR Panasonic F-ZXFP35C, F-ZXFP35X, F-ZXFP35W AIR PURIFIER.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Panasonic_AIR_PURIFIER_FILTER_FOR_Panasonic_F-ZXFP35C,_F-ZXFP35X,_F-ZXFP35W_AIR_PURIFIER.jpg",
+    "autor": "Dinkun Chen",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/filtro-habitaculo-2.jpg",
+    "titulo": "HEPA Filter.png",
+    "fuente": "https://commons.wikimedia.org/wiki/File:HEPA_Filter.png",
+    "autor": "BruceBlaus",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/bujia.jpg",
+    "titulo": "Bujía Bosch Yttrium Super Plus.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Buj%C3%ADa_Bosch_Yttrium_Super_Plus.JPG",
+    "autor": "Schumi4ever",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/bujia-2.jpg",
+    "titulo": "Spark plug 2.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Spark_plug_2.jpg",
+    "autor": "ProjectManhattan",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/bujia-3.jpg",
+    "titulo": "Bougie.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Bougie.jpg",
+    "autor": "M.Minderhoud",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/productos/bobina.jpg",
+    "titulo": "Bobina a scarica persa.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Bobina_a_scarica_persa.jpg",
+    "autor": "A7N8X",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/bobina-2.jpg",
+    "titulo": "Bobine.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Bobine.jpg",
+    "autor": "Michiel1972 at Dutch Wikipedia",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/productos/bobina-3.jpg",
+    "titulo": "Ignition coils.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Ignition_coils.jpg",
+    "autor": "Honda CB77 Restoration",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0"
+  },
+  {
+    "archivo": "img/productos/cables-bujia.jpg",
+    "titulo": "KA24ITB17.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:KA24ITB17.jpg",
+    "autor": "en:User:Saen1978",
+    "licencia": "CC BY-SA 2.5",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/2.5"
+  },
+  {
+    "archivo": "img/productos/bujia-precalentamiento.jpg",
+    "titulo": "Gluehkerze (fcm).jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Gluehkerze_(fcm).jpg",
+    "autor": "Desconocido",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/bujia-precalentamiento-2.jpg",
+    "titulo": "Glühkerzen Diesel Direkteinspritzer PKW.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Gl%C3%BChkerzen_Diesel_Direkteinspritzer_PKW.jpg",
+    "autor": "Johann H. Addicks",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/productos/kit-distribucion.jpg",
+    "titulo": "Cinghia di distribuzione.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Cinghia_di_distribuzione.jpg",
+    "autor": "A7N8X",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/kit-distribucion-2.jpg",
+    "titulo": "Cinghia distribuzione.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Cinghia_distribuzione.JPG",
+    "autor": "Riccardo Nicola",
+    "licencia": "Public domain",
+    "licencia_url": ""
+  },
+  {
+    "archivo": "img/productos/kit-distribucion-3.jpg",
+    "titulo": "Replacing a timing belt.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Replacing_a_timing_belt.jpg",
+    "autor": "Petar Milošević",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/kit-cadena.jpg",
+    "titulo": "Timing Chain.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Timing_Chain.jpg",
+    "autor": "Logansenf",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/kit-cadena-2.jpg",
+    "titulo": "Nockenwellenantrieb.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Nockenwellenantrieb.jpg",
+    "autor": "Kolossos",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/productos/correa-poly-v.jpg",
+    "titulo": "Belt drive systen 01.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Belt_drive_systen_01.JPG",
+    "autor": "Miya.m",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/correa-poly-v-2.jpg",
+    "titulo": "Tensioner.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Tensioner.jpg",
+    "autor": "Una Smith",
+    "licencia": "CC BY 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/3.0"
+  },
+  {
+    "archivo": "img/productos/tensor.jpg",
+    "titulo": "Tensioner.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Tensioner.jpg",
+    "autor": "Una Smith",
+    "licencia": "CC BY 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/3.0"
+  },
+  {
+    "archivo": "img/productos/pastillas-freno.jpg",
+    "titulo": "Performance Disk Brake Pads.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Performance_Disk_Brake_Pads.jpg",
+    "autor": "Treemonster86",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/pastillas-freno-2.jpg",
+    "titulo": "Brakepad.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Brakepad.jpg",
+    "autor": "Tokino",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/productos/disco-freno.jpg",
+    "titulo": "Pekniencia powierzchniowe.png",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Pekniencia_powierzchniowe.png",
+    "autor": "Englishsquare.pl Sp. z o.o.",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/disco-freno-2.jpg",
+    "titulo": "Disk brake dsc03682.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Disk_brake_dsc03682.jpg",
+    "autor": "Desconocido",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/productos/disco-freno-3.jpg",
+    "titulo": "Dülmen, Sportwagenmanufaktur Wiesmann (Gewerbegebiet -An der Lehmkuhle-) -- 2008 -- 0623.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Sportwagenmanufaktur_Wiesmann_(Gewerbegebiet_-An_der_Lehmkuhle-)_--_2008_--_0623.jpg",
+    "autor": "Dietmar Rabich",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/campana-freno.jpg",
+    "titulo": "Drum brake testrender.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Drum_brake_testrender.jpg",
+    "autor": "Wapcaplet",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/productos/zapatas.jpg",
+    "titulo": "Brake shoes.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Brake_shoes.jpg",
+    "autor": "Maly LOLek",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/productos/zapatas-2.jpg",
+    "titulo": "Brake-band 012.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Brake-band_012.jpg",
+    "autor": "Amuzujoe",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/liquido-frenos.jpg",
+    "titulo": "Líquido para frenos Bardahl DOT 3, 350cc.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:L%C3%ADquido_para_frenos_Bardahl_DOT_3,_350cc.jpg",
+    "autor": "Just a Man",
+    "licencia": "CC BY 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/4.0"
+  },
+  {
+    "archivo": "img/productos/liquido-frenos-2.jpg",
+    "titulo": "Líquido para frenos Bardahl DOT 3, 1000cc.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:L%C3%ADquido_para_frenos_Bardahl_DOT_3,_1000cc.jpg",
+    "autor": "Just a Man",
+    "licencia": "CC BY 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/4.0"
+  },
+  {
+    "archivo": "img/productos/amortiguador.jpg",
+    "titulo": "Front suspension of Toyota Land Cruiser J60.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Front_suspension_of_Toyota_Land_Cruiser_J60.jpg",
+    "autor": "Pittigrilli",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/amortiguador-2.jpg",
+    "titulo": "Mini Shocks.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Mini_Shocks.JPG",
+    "autor": "Avsar Aras",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/amortiguador-3.jpg",
+    "titulo": "1987 Penske PC-6 Monroe Shock.png",
+    "fuente": "https://commons.wikimedia.org/wiki/File:1987_Penske_PC-6_Monroe_Shock.png",
+    "autor": "Penske PC-6",
+    "licencia": "CC BY 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/4.0"
+  },
+  {
+    "archivo": "img/productos/parrilla.jpg",
+    "titulo": "Gm epsilon arm.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Gm_epsilon_arm.jpg",
+    "autor": "No machine-readable author provided. Sigmund~commonswiki assumed (based on copyright claims).",
+    "licencia": "Public domain",
+    "licencia_url": ""
+  },
+  {
+    "archivo": "img/productos/parrilla-2.jpg",
+    "titulo": "Double wishbone suspension.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Double_wishbone_suspension.jpg",
+    "autor": "RB30DE",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/rotula.jpg",
+    "titulo": "New upper and lower ball joints, tie rod ends, boots, shocks and brake pads. (3517829024).jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:New_upper_and_lower_ball_joints,_tie_rod_ends,_boots,_shocks_and_brake_pads._(3517829024).jpg",
+    "autor": "Craig Howell",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0"
+  },
+  {
+    "archivo": "img/productos/extremo-direccion.jpg",
+    "titulo": "Tie rod end.jpeg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Tie_rod_end.jpeg",
+    "autor": "Craig Howell",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0"
+  },
+  {
+    "archivo": "img/productos/bieleta.jpg",
+    "titulo": "Alfetta front suspension antiroll.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Alfetta_front_suspension_antiroll.jpg",
+    "autor": "Evan Mason",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/kit-embrague.jpg",
+    "titulo": "Clutch Kit (553673775).jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Clutch_Kit_(553673775).jpg",
+    "autor": "dave_7 from Lethbridge, Canada",
+    "licencia": "CC BY-SA 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  {
+    "archivo": "img/productos/kit-embrague-2.jpg",
+    "titulo": "Изношенный диск сцепления на автомобиль ШКОДА-ФАБИЯ 1. Фото А. Щекинова.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:%D0%98%D0%B7%D0%BD%D0%BE%D1%88%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9_%D0%B4%D0%B8%D1%81%D0%BA_%D1%81%D1%86%D0%B5%D0%BF%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F_%D0%BD%D0%B0_%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%BE%D0%B1%D0%B8%D0%BB%D1%8C_%D0%A8%D0%9A%D0%9E%D0%94%D0%90-%D0%A4%D0%90%D0%91%D0%98%D0%AF_1._%D0%A4%D0%BE%D1%82%D0%BE_%D0%90._%D0%A9%D0%B5%D0%BA%D0%B8%D0%BD%D0%BE%D0%B2%D0%B0.jpg",
+    "autor": "Schekinov Alexey Victorovich",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/crapodina.jpg",
+    "titulo": "M5OD transmission, input.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:M5OD_transmission,_input.jpg",
+    "autor": "J.C. Fields (Talk) (Uploads)",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/radiador.jpg",
+    "titulo": "Radiateur r4.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Radiateur_r4.JPG",
+    "autor": "Snoopy1974",
+    "licencia": "Public domain",
+    "licencia_url": ""
+  },
+  {
+    "archivo": "img/productos/termostato.jpg",
+    "titulo": "Double valve automotive thermostat.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Double_valve_automotive_thermostat.jpg",
+    "autor": "Dougsim",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/refrigerante.jpg",
+    "titulo": "Antifreeze in the radiator.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Antifreeze_in_the_radiator.jpg",
+    "autor": "EvelynGiggles",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0"
+  },
+  {
+    "archivo": "img/productos/refrigerante-2.jpg",
+    "titulo": "Antifriz.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Antifriz.jpg",
+    "autor": "photo Moma SM",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/electroventilador.jpg",
+    "titulo": "RADIATOR FAN.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:RADIATOR_FAN.jpg",
+    "autor": "Nadinviki",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/electroventilador-2.jpg",
+    "titulo": "2015 Birkenhead Park Festival of Transport 41.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:2015_Birkenhead_Park_Festival_of_Transport_41.jpg",
+    "autor": "RichardAsh1981",
+    "licencia": "CC BY-SA 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/2.0"
+  },
+  {
+    "archivo": "img/productos/lampara-halogena.jpg",
+    "titulo": "Philips Xtreme Power headlight bulb.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Philips_Xtreme_Power_headlight_bulb.JPG",
+    "autor": "Schumi4ever",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/lampara-halogena-2.jpg",
+    "titulo": "Bilux.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Bilux.jpg",
+    "autor": "Ulfbastel",
+    "licencia": "Public domain",
+    "licencia_url": ""
+  },
+  {
+    "archivo": "img/productos/lampara-halogena-3.jpg",
+    "titulo": "H4neu.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:H4neu.JPG",
+    "autor": "Mib18",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "http://creativecommons.org/licenses/by-sa/3.0/"
+  },
+  {
+    "archivo": "img/productos/lampara-led.jpg",
+    "titulo": "Road-legal H4 LED retrofit (Philips Ultinon Pro6000).jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Road-legal_H4_LED_retrofit_(Philips_Ultinon_Pro6000).jpg",
+    "autor": "Phiarc",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/lampara-led-2.jpg",
+    "titulo": "Automotive LED Solution.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Automotive_LED_Solution.jpg",
+    "autor": "Formularally",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/optica.jpg",
+    "titulo": "Geneva MotorShow 2013 - Jaguar F-type front light.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Geneva_MotorShow_2013_-_Jaguar_F-type_front_light.jpg",
+    "autor": "Clément Bucco-Lechat",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/optica-2.jpg",
+    "titulo": "Jeep, Ribnitz-Damgarten ( 1060461).jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Jeep,_Ribnitz-Damgarten_(_1060461).jpg",
+    "autor": "Matti Blume",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/bateria.jpg",
+    "titulo": "Batterie TUNDRA EFB.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Batterie_TUNDRA_EFB.jpg",
+    "autor": "Rombat france",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/bateria-2.jpg",
+    "titulo": "Batería de marca LTH 02.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Bater%C3%ADa_de_marca_LTH_02.jpg",
+    "autor": "Álvaro de la Paz Franco",
+    "licencia": "CC0",
+    "licencia_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+  },
+  {
+    "archivo": "img/productos/bateria-3.jpg",
+    "titulo": "Starterbatterie Blei-Calcium.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Starterbatterie_Blei-Calcium.jpg",
+    "autor": "Rainer Kamenz",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/aceite-motor.jpg",
+    "titulo": "Motor oil refill with funnel.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Motor_oil_refill_with_funnel.JPG",
+    "autor": "Dvortygirl",
+    "licencia": "CC BY-SA 3.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/3.0"
+  },
+  {
+    "archivo": "img/productos/aceite-motor-2.jpg",
+    "titulo": "Motor oil.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Motor_oil.JPG",
+    "autor": "originally Interiot; retouched by Where next Columbus?; brand name removed by H Padleckas",
+    "licencia": "Public domain",
+    "licencia_url": ""
+  },
+  {
+    "archivo": "img/productos/aceite-motor-3.jpg",
+    "titulo": "Woltec New Pack.jpg",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Woltec_New_Pack.jpg",
+    "autor": "Wolgerman",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/aceite-caja.jpg",
+    "titulo": "Шприцы Жане и трансмиссионное масло ТАД-17.JPG",
+    "fuente": "https://commons.wikimedia.org/wiki/File:%D0%A8%D0%BF%D1%80%D0%B8%D1%86%D1%8B_%D0%96%D0%B0%D0%BD%D0%B5_%D0%B8_%D1%82%D1%80%D0%B0%D0%BD%D1%81%D0%BC%D0%B8%D1%81%D1%81%D0%B8%D0%BE%D0%BD%D0%BD%D0%BE%D0%B5_%D0%BC%D0%B0%D1%81%D0%BB%D0%BE_%D0%A2%D0%90%D0%94-17.JPG",
+    "autor": "Andshel",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  },
+  {
+    "archivo": "img/productos/aceite-caja-2.jpg",
+    "titulo": "Shell GELCO POWER GEAR (Gear Oil).png",
+    "fuente": "https://commons.wikimedia.org/wiki/File:Shell_GELCO_POWER_GEAR_(Gear_Oil).png",
+    "autor": "Mj-bird",
+    "licencia": "CC BY-SA 4.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/4.0"
+  }
+]

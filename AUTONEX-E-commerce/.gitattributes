@@ -1,0 +1,2 @@
+# Todo el texto se guarda y se usa con saltos de línea LF (el proyecto corre en un servidor Linux)
+* text=auto eol=lf

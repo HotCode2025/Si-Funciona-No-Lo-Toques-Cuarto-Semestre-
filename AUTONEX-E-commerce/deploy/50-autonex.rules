@@ -1,0 +1,11 @@
+// polkit: deja que el usuario lautarom inicie, detenga y reinicie el servicio autonex sin ser root.
+// Lo usan deploy/desplegar.sh y deploy/recargar-catalogo.sh: después de compilar la tienda hay que reiniciar AUTONEX.
+// Va en /etc/polkit-1/rules.d/50-autonex.rules (lo copia root). Solo vale para autonex.service.
+polkit.addRule(function (action, subject) {
+  if (action.id === 'org.freedesktop.systemd1.manage-units'
+      && action.lookup('unit') === 'autonex.service'
+      && subject.user === 'lautarom') {
+    var verbo = action.lookup('verb');
+    if (verbo === 'start' || verbo === 'stop' || verbo === 'restart') return polkit.Result.YES;
+  }
+});

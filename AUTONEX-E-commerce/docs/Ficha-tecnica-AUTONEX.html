@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ficha técnica AUTONEX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:ital,wght@0,600;0,700;1,800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  /* Ficha imprimible (A4): banda de marca, diagrama de arquitectura y tarjetas por capa; misma identidad que la tienda */
+  :root {
+    --naranja: #ff6a13;
+    --naranja-osc: #c94f08;
+    --naranja-suave: #fff1e8;
+    --carbon: #0e0f11;
+    --texto: #1b1d21;
+    --gris: #5f6672;
+    --linea: #e1e4e9;
+    --fondo: #f6f7f9;
+    --azul-mp: #009ee3;
+    --fuente: 'Barlow', system-ui, 'Segoe UI', Roboto, Arial, sans-serif;
+    --titulos: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  }
+  @page { size: A4; margin: 13mm 13mm 14mm; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; background: #fff; color: var(--texto); font-family: var(--fuente); font-size: 10.3pt; line-height: 1.42; }
+  .hoja { max-width: 780px; margin: 0 auto; padding: 0 16px 24px; }
+  @media print { .hoja { padding: 0; max-width: none; } }
+
+  .banda { background: var(--carbon); color: #f1f2f4; padding: 18px 22px 16px; border-bottom: 4px solid var(--naranja); border-radius: 4px 4px 0 0; }
+  .marca { font-family: var(--titulos); font-style: italic; font-weight: 800; font-size: 14pt; letter-spacing: .04em; color: var(--naranja); margin: 0; }
+  h1 { font-family: var(--titulos); font-weight: 700; font-size: 24pt; line-height: 1.05; margin: 3px 0 6px; }
+  .banda p { margin: 0; color: #c9ccd2; font-size: 10pt; }
+  .banda a { color: #ffb27f; }
+
+  .resumen { margin: 12px 0 4px; padding: 10px 14px; border-left: 5px solid var(--naranja); background: var(--naranja-suave); border-radius: 3px; font-size: 10.6pt; }
+
+  h2 { font-family: var(--titulos); font-weight: 700; font-size: 15.5pt; margin: 16px 0 6px; padding-bottom: 2px; border-bottom: 2px solid var(--naranja); break-after: avoid; }
+  h2 .num { color: var(--naranja); margin-right: 6px; }
+  p { margin: 4px 0; }
+  ul { margin: 4px 0; padding-left: 18px; }
+  li { margin: 2px 0; }
+  .mono { font-family: var(--mono); font-size: 8.8pt; }
+  .gris { color: var(--gris); }
+
+  /* Diagrama de arquitectura */
+  .arquitectura { display: flex; align-items: stretch; gap: 0; margin: 8px 0 4px; }
+  .nodo { flex: 1 1 0; border: 1.5px solid var(--carbon); border-radius: 6px; padding: 8px 9px; background: #fff; text-align: center; break-inside: avoid; }
+  .nodo strong { display: block; font-family: var(--titulos); font-size: 12.5pt; line-height: 1.1; }
+  .nodo span { display: block; font-size: 8.6pt; color: var(--gris); line-height: 1.3; margin-top: 3px; }
+  .nodo--marca { border-color: var(--naranja); background: var(--naranja-suave); }
+  .nodo--mp { border-color: var(--azul-mp); background: #e8f6fd; }
+  .flecha { flex: 0 0 26px; display: flex; align-items: center; justify-content: center; color: var(--naranja); font-weight: 700; font-size: 14pt; }
+  .pie-diagrama { font-size: 8.8pt; color: var(--gris); text-align: center; margin: 2px 0 0; }
+
+  /* Tarjetas por capa */
+  .grilla { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
+  .tarjeta { border: 1px solid var(--linea); border-top: 3px solid var(--naranja); border-radius: 4px; padding: 9px 12px; background: #fff; break-inside: avoid; }
+  .tarjeta h3 { font-family: var(--titulos); font-weight: 700; font-size: 12.5pt; margin: 0 0 4px; }
+  .tarjeta h3 small { font-family: var(--fuente); font-weight: 500; font-size: 8.8pt; color: var(--gris); margin-left: 4px; }
+  .tarjeta ul { padding-left: 16px; }
+  .tarjeta--mp { border-top-color: var(--azul-mp); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 9.3pt; margin: 6px 0 2px; }
+  th { text-align: left; background: var(--carbon); color: #fff; font-weight: 600; padding: 4px 7px; font-size: 8.7pt; }
+  td { padding: 4px 7px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--fondo); }
+  tr { break-inside: avoid; }
+
+  .funciones { columns: 2; column-gap: 22px; margin: 6px 0 0; }
+  .funciones li { break-inside: avoid; }
+  .salto { break-before: page; }
+  .pie { margin-top: 14px; padding-top: 7px; border-top: 1px solid var(--linea); color: var(--gris); font-size: 8.4pt; }
+
+  @media (max-width: 640px) {
+    .arquitectura { flex-direction: column; }
+    .flecha { flex-basis: 22px; transform: rotate(90deg); }
+    .grilla { grid-template-columns: 1fr; }
+    .funciones { columns: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="hoja">
+
+  <header class="banda">
+    <p class="marca">AUTONEX</p>
+    <h1>Ficha técnica del proyecto</h1>
+    <p>Marketplace de autopartes y repuestos de motos · Versión demo · <a href="https://gnuino.com.ar/AUTONEX/">gnuino.com.ar/AUTONEX</a></p>
+  </header>
+
+  <p class="resumen"><strong>En una frase:</strong> es un marketplace de autopartes hecho con <strong>React y Vite</strong> en el
+     frontend, una <strong>API REST en Node.js con Fastify</strong>, base de datos <strong>PostgreSQL</strong>, pagos con
+     <strong>Mercado Pago Checkout Pro</strong> y publicado en un servidor <strong>Linux con nginx y systemd</strong>.
+     Todo el código está escrito en <strong>JavaScript</strong>.</p>
+
+  <h2><span class="num">1</span>Arquitectura</h2>
+  <div class="arquitectura" role="img" aria-label="El navegador se conecta por HTTPS a nginx, que pasa las consultas a la API en Node.js con Fastify; la API usa PostgreSQL y se comunica con Mercado Pago para los pagos y con Resend para los mails">
+    <div class="nodo"><strong>Navegador</strong><span>Página en React (computadora o celular)</span></div>
+    <div class="flecha">→</div>
+    <div class="nodo"><strong>nginx</strong><span>HTTPS · publica el sitio en /AUTONEX</span></div>
+    <div class="flecha">→</div>
+    <div class="nodo nodo--marca"><strong>API Node.js + Fastify</strong><span>Servicio de systemd · puerto 3200 · sirve también la página</span></div>
+    <div class="flecha">↔</div>
+    <div class="nodo"><strong>PostgreSQL</strong><span>Catálogo, vendedores, compras, pedidos y pagos</span></div>
+    <div class="flecha">↔</div>
+    <div class="nodo nodo--mp"><strong>Mercado Pago y mails</strong><span>Pagos (Checkout Pro y webhook) · mails</span></div>
+  </div>
+  <p class="pie-diagrama">El frontend nunca habla directo con la base, ni con Mercado Pago ni con el servicio de mails: todo pasa por la API.</p>
+
+  <h2><span class="num">2</span>Tecnologías por capa</h2>
+  <div class="grilla">
+    <section class="tarjeta">
+      <h3>Frontend <small>carpeta client/</small></h3>
+      <ul>
+        <li><strong>React 18</strong>: interfaz armada por componentes.</li>
+        <li><strong>Vite 6</strong>: compila el proyecto y levanta el entorno de desarrollo.</li>
+        <li><strong>React Router 7</strong>: navegación entre páginas sin recargar.</li>
+        <li><strong>CSS propio</strong>, sin frameworks; responsive (computadora y celular).</li>
+        <li>Íconos <strong>Lucide</strong>; tipografías <strong>Barlow</strong> y <strong>JetBrains Mono</strong>.</li>
+      </ul>
+    </section>
+    <section class="tarjeta">
+      <h3>Backend <small>carpeta server/</small></h3>
+      <ul>
+        <li><strong>Node.js 20</strong> con <strong>Fastify 5</strong>: API REST en <span class="mono">/api/…</span>.</li>
+        <li>Validación de cada pedido a la API con esquemas JSON.</li>
+        <li><strong>JWT</strong> para las sesiones y <strong>bcrypt</strong> para guardar las contraseñas encriptadas.</li>
+        <li>Roles: <strong>comprador</strong>, <strong>vendedor</strong> y <strong>administrador</strong>.</li>
+        <li>Importación de datos desde <strong>CSV, Excel y XML</strong> (csv-parse, exceljs, fast-xml-parser).</li>
+        <li><strong>Mails por SMTP (Gmail, con <span class="mono">nodemailer</span>) o Resend</strong>: confirmación de la cuenta, comprobante, recuperación de contraseña y reintegros.</li>
+      </ul>
+    </section>
+    <section class="tarjeta">
+      <h3>Base de datos</h3>
+      <ul>
+        <li><strong>PostgreSQL 17</strong>, conectada con la librería <strong>pg</strong>.</li>
+        <li><strong>Migraciones SQL numeradas</strong> (<span class="mono">001</span> a <span class="mono">013</span>): la estructura cambia sin perder datos.</li>
+        <li>Las compras se guardan en <strong>transacciones</strong>: precios, stock y envíos se recalculan en el servidor.</li>
+      </ul>
+    </section>
+    <section class="tarjeta tarjeta--mp">
+      <h3>Pagos</h3>
+      <ul>
+        <li><strong>Mercado Pago Checkout Pro</strong> con su SDK oficial para Node.</li>
+        <li>El backend crea la orden de pago y, al volver, <strong>consulta el pago a Mercado Pago</strong> (no confía en la URL).</li>
+        <li><strong>Webhook</strong>: Mercado Pago avisa al servidor cuando un pago se aprueba.</li>
+      </ul>
+    </section>
+    <section class="tarjeta">
+      <h3>Servidor y publicación</h3>
+      <ul>
+        <li>Servidor <strong>Linux Debian 13</strong> (gnuino.com.ar).</li>
+        <li><strong>nginx</strong> como proxy con <strong>HTTPS</strong>.</li>
+        <li><strong>systemd</strong>: la app corre como servicio y arranca sola si el servidor se reinicia.</li>
+      </ul>
+    </section>
+    <section class="tarjeta">
+      <h3>Pruebas</h3>
+      <ul>
+        <li><strong>65 tests automáticos</strong> con el test runner de Node (<span class="mono">node:test</span>).</li>
+        <li>Prueban la API completa sobre una <strong>base de datos de prueba separada</strong> y un Mercado Pago simulado.</li>
+      </ul>
+    </section>
+  </div>
+
+  <h2><span class="num">3</span>Qué hace el sistema</h2>
+  <ul class="funciones">
+    <li>Búsqueda de repuestos por texto, código de pieza o <strong>vehículo</strong> (auto o moto: marca, modelo, año, versión).</li>
+    <li>Compatibilidades de cada repuesto con los vehículos.</li>
+    <li>Varios vendedores por producto: se comparan precios, stock y ubicación.</li>
+    <li>Carrito con productos de distintos vendedores en una sola compra.</li>
+    <li>Checkout <strong>con o sin cuenta</strong>: entrega por retiro en el local o envío a domicilio.</li>
+    <li>Pago con Mercado Pago y pantalla de resultado (aprobado, pendiente o rechazado).</li>
+    <li><strong>Seguí tu compra</strong>: estado de cada pedido y número de seguimiento del envío.</li>
+    <li><strong>Comprobante</strong> para descargar en PDF, compartir y también por mail.</li>
+    <li>Cuentas con <strong>confirmación de email</strong>, recuperación de contraseña y opción de <strong>eliminar la cuenta</strong>.</li>
+    <li><strong>Términos, privacidad y botón de arrepentimiento</strong> (Ley 24.240).</li>
+    <li><strong>Panel del vendedor</strong>: logo del local, publicaciones propias con fotos y descripción, precios, stock y pedidos. Las fotos se validan y optimizan con <span class="mono">sharp</span> (WebP) y se guardan en PostgreSQL.</li>
+    <li><strong>Panel de administración</strong>: catálogo e importaciones de datos.</li>
+  </ul>
+
+  <h2><span class="num">4</span>De dónde salen los datos</h2>
+  <table>
+    <thead><tr><th>Dato</th><th>Fuente</th></tr></thead>
+    <tbody>
+      <tr><td>Marcas y modelos de autos</td><td>Datos abiertos de la <strong>DNRPA</strong> (registro automotor argentino)</td></tr>
+      <tr><td>Modelos de motos, fotos y logos</td><td><strong>Wikidata</strong> y <strong>Wikimedia Commons</strong>, con créditos en la página "Créditos"</td></tr>
+      <tr><td>Repuestos, precios y vendedores</td><td>Datos de <strong>demostración</strong> (el proyecto es una demo)</td></tr>
+    </tbody>
+  </table>
+
+  <h2><span class="num">5</span>Estructura del proyecto</h2>
+  <table>
+    <thead><tr><th>Carpeta</th><th>Contenido</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">client/src/pages</td><td>Pantallas: inicio, catálogo, producto, carrito, checkout, compras, paneles</td></tr>
+      <tr><td class="mono">client/src/components</td><td>Piezas reutilizables: encabezado, selector de vehículo, tarjetas de producto</td></tr>
+      <tr><td class="mono">server/src/routes</td><td>Rutas de la API (catálogo, compras, pagos, panel del vendedor, administración)</td></tr>
+      <tr><td class="mono">server/src/services</td><td>Lógica de negocio: compras, envíos, pagos, Mercado Pago</td></tr>
+      <tr><td class="mono">server/db</td><td>Migraciones SQL y carga inicial de datos (seed)</td></tr>
+      <tr><td class="mono">server/test</td><td>Tests automáticos de la API</td></tr>
+      <tr><td class="mono">deploy</td><td>Configuración de nginx y del servicio de systemd</td></tr>
+    </tbody>
+  </table>
+
+  <p class="pie">AUTONEX · versión demo · Ficha técnica actualizada el 21/10/2026 · Más detalle en el README del proyecto y en
+     el Brief de AUTONEX.</p>
+</div>
+</body>
+</html>

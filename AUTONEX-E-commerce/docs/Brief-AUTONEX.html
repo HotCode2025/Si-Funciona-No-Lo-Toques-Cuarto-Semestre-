@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Brief AUTONEX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,800&family=Barlow+Condensed:ital,wght@0,600;0,700;1,700;1,800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Layout: banda de marca en carbón + documento de una columna (~760px) con fichas y tablas; misma identidad que la tienda */
+  :root {
+    --naranja: #ff6a13;
+    --naranja-suave: #fff1e8;
+    --carbon: #0e0f11;
+    --grafito: #24272d;
+    --fondo: #f3f4f6;
+    --papel: #ffffff;
+    --texto: #1b1d21;
+    --gris: #5f6672;
+    --linea: #e1e4e9;
+    --verde: #1d8f4e;
+    --verde-suave: #e7f6ed;
+    --ambar: #9a6412;
+    --ambar-suave: #fff6e0;
+    --fuente: 'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    --titulos: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --naranja: #ff7a2e; --naranja-suave: #2a1a10; --carbon: #08090a; --grafito: #2c3037; --fondo: #121417;
+      --papel: #1a1d22; --texto: #e9ebef; --gris: #a3aab5; --linea: #2f343c; --verde: #4cc685; --verde-suave: #12261b;
+      --ambar: #e3b155; --ambar-suave: #2a2112; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --naranja: #ff7a2e; --naranja-suave: #2a1a10; --carbon: #08090a; --grafito: #2c3037; --fondo: #121417;
+    --papel: #1a1d22; --texto: #e9ebef; --gris: #a3aab5; --linea: #2f343c; --verde: #4cc685; --verde-suave: #12261b;
+    --ambar: #e3b155; --ambar-suave: #2a2112; color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: var(--fuente);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  a { color: var(--naranja); }
+  a:focus-visible { outline: 2px solid var(--naranja); outline-offset: 2px; }
+
+  .banda {
+    background: var(--carbon);
+    color: #f1f2f4;
+    padding-inline: 16px;
+    padding-block: 36px 40px;
+    border-bottom: 4px solid var(--naranja);
+  }
+  .banda__interior, .doc { max-width: 820px; margin-inline: auto; }
+  .banda svg { width: min(340px, 100%); height: auto; display: block; }
+  .eyebrow {
+    margin: 26px 0 6px;
+    font-family: var(--titulos);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--naranja);
+    font-size: 15px;
+  }
+  .banda h1 {
+    margin: 0;
+    font-family: var(--titulos);
+    font-style: italic;
+    font-weight: 800;
+    font-size: clamp(34px, 6vw, 52px);
+    line-height: 1.02;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .banda h1 span { color: var(--naranja); }
+  .banda p { max-width: 62ch; color: #c9cdd3; font-size: 18px; margin: 14px 0 0; }
+
+  .doc { padding-inline: 16px; padding-block: 28px 56px; display: grid; gap: 34px; }
+
+  .ficha {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1px;
+    background: var(--linea);
+    border: 1px solid var(--linea);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 0;
+  }
+  .ficha div { background: var(--papel); padding: 14px 16px; min-width: 0; }
+  .ficha dt {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gris);
+  }
+  .ficha dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
+
+  section { display: grid; gap: 12px; min-width: 0; }
+  h2 {
+    margin: 0;
+    font-family: var(--titulos);
+    font-style: italic;
+    font-weight: 800;
+    font-size: 28px;
+    line-height: 1.1;
+    text-transform: uppercase;
+    text-wrap: balance;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2::before {
+    content: '';
+    width: 22px;
+    height: 12px;
+    background: var(--naranja);
+    transform: skewX(-20deg);
+    flex: none;
+  }
+  h3 { margin: 0; font-family: var(--titulos); font-weight: 700; font-size: 20px; text-transform: uppercase; letter-spacing: 0.02em; }
+  p { margin: 0; max-width: 68ch; }
+  ul, ol { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 70ch; }
+  li::marker { color: var(--naranja); font-weight: 700; }
+  .nota { color: var(--gris); font-size: 14px; }
+  code, .mono { font-family: var(--mono); font-size: 0.86em; }
+  .codigo {
+    font-family: var(--mono); font-size: 13px; background: var(--grafito); color: #f1f2f4;
+    padding: 1px 7px; border-radius: 5px; white-space: nowrap;
+  }
+
+  .columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .bloque {
+    background: var(--papel);
+    border: 1px solid var(--linea);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    min-width: 0;
+  }
+  .bloque ul { font-size: 15px; }
+  .bloque p { font-size: 15px; }
+
+  .recorrido { list-style: none; padding: 0; counter-reset: paso; gap: 0; max-width: none; }
+  .recorrido li {
+    counter-increment: paso;
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--linea);
+  }
+  .recorrido li::before {
+    content: counter(paso);
+    display: grid; place-items: center;
+    width: 30px; height: 30px;
+    background: var(--carbon); color: #fff;
+    font-family: var(--titulos); font-weight: 800; font-style: italic; font-size: 17px;
+    clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
+  }
+  .recorrido strong { display: block; }
+  .recorrido span { color: var(--gris); font-size: 15px; }
+
+  .tabla { overflow-x: auto; border: 1px solid var(--linea); border-radius: 14px; background: var(--papel); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 560px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  th { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gris); font-weight: 700; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+  .sello { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .sello--real { background: var(--verde-suave); color: var(--verde); }
+  .sello--demo { background: var(--ambar-suave); color: var(--ambar); }
+
+  .paleta { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .muestra { border: 1px solid var(--linea); border-radius: 12px; overflow: hidden; background: var(--papel); }
+  .muestra i { display: block; height: 54px; }
+  .muestra span { display: block; padding: 8px 10px; font-size: 13px; line-height: 1.35; }
+  .muestra b { display: block; }
+
+  .tipos { display: grid; gap: 10px; }
+  .tipo { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; padding: 12px 16px; background: var(--papel); border: 1px solid var(--linea); border-radius: 12px; }
+  .tipo__muestra { font-size: 26px; line-height: 1.1; }
+  .tipo small { color: var(--gris); font-size: 14px; }
+
+  .pie {
+    border-top: 1px solid var(--linea);
+    padding-top: 18px;
+    color: var(--gris);
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    body { font-size: 15px; }
+    h2 { font-size: 24px; }
+  }
+
+  /* Impresión / PDF (A4) */
+  @page { size: A4; margin: 12mm 12mm 14mm; }
+  @media print {
+    :root { --fondo: #ffffff; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-size: 13.5px; }
+    .banda { padding-block: 22px 26px; }
+    .banda p { font-size: 15px; }
+    .doc { padding-block: 18px 0; gap: 22px; }
+    .bloque, .ficha, .tabla, tr, .muestra, .tipo, .recorrido li, .paleta { break-inside: avoid; }
+    h2 { break-after: avoid; }
+    .tabla { overflow: visible; }
+    table { min-width: 0; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<header class="banda">
+  <div class="banda__interior">
+    <svg viewBox="0 0 520 120" role="img" aria-label="AUTONEX, tu marketplace de autopartes">
+      <rect width="520" height="120" rx="16" fill="#0E0F11"/>
+      <g transform="translate(20 14)">
+        <path d="M4 82 L36 15 Q38.8 9.5 45 9.5 Q51.2 9.5 54 15 L86 82 H67.5 L45 34 L22.5 82 Z" fill="#FFFFFF"/>
+        <path d="M18 82 L38.5 55.5 Q43.8 48.8 52.6 48.4 L96 45.8 L90 56 L58 58.2 Q52.9 58.6 49.7 62.8 L36.6 82 Z" fill="#FF6A13"/>
+      </g>
+      <text x="128" y="74" font-family="'Barlow','Arial Black',Arial,sans-serif" font-weight="800" font-style="italic" font-size="60" letter-spacing="1.5" fill="#FFFFFF">AUTON<tspan fill="#FF6A13">EX</tspan></text>
+      <text x="131" y="100" font-family="'Barlow','Arial',sans-serif" font-weight="500" font-size="13" letter-spacing="4.2" fill="#C9CDD3">TU MARKETPLACE DE AUTOPARTES</text>
+    </svg>
+    <p class="eyebrow">Brief del e-commerce · Octubre 2026</p>
+    <h1>El repuesto justo <span>para tu auto y tu moto</span></h1>
+    <p>
+      AUTONEX es un marketplace de repuestos: casas de repuestos de todo el país publican sus productos, el comprador ve
+      solo lo que le sirve a su vehículo, compara las ofertas y paga todo junto con Mercado Pago.
+    </p>
+  </div>
+</header>
+
+<main class="doc">
+  <dl class="ficha">
+    <div><dt>Qué es</dt><dd>Marketplace multivendedor de repuestos para autos, camionetas y motos</dd></div>
+    <div><dt>Estado</dt><dd>Demo pública con pagos de prueba · proyecto universitario</dd></div>
+    <div><dt>Dirección</dt><dd><a href="https://gnuino.com.ar/AUTONEX/">gnuino.com.ar/AUTONEX</a></dd></div>
+    <div><dt>Mercado</dt><dd>Argentina · precios en pesos · español rioplatense</dd></div>
+    <div><dt>Pago</dt><dd>Mercado Pago Checkout Pro, un solo pago por compra</dd></div>
+    <div><dt>Compra</dt><dd>Con cuenta o sin cuenta (como invitado)</dd></div>
+  </dl>
+
+  <section>
+    <h2>El problema</h2>
+    <ul>
+      <li>Para comprar un repuesto hay que saber qué pieza le sirve a la versión exacta del vehículo, y esa información está repartida entre catálogos de fabricantes, mostradores y consultas por WhatsApp.</li>
+      <li>El mismo repuesto tiene precios distintos en cada casa, y comparar casas de varias provincias lleva tiempo.</li>
+      <li>Si las piezas están en dos casas distintas, son dos compras, dos pagos y dos envíos para coordinar.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>La propuesta</h2>
+    <div class="columnas">
+      <div class="bloque"><h3>Solo lo compatible</h3><p>Elegís tu vehículo una vez (marca, modelo, año y versión) y el catálogo muestra los repuestos que le sirven, más los universales.</p></div>
+      <div class="bloque"><h3>Todas las ofertas</h3><p>Cada repuesto muestra todas sus ofertas: precio, stock, nuevo o usado y la ciudad de cada casa, con el mejor precio marcado.</p></div>
+      <div class="bloque"><h3>Un carrito, un pago</h3><p>Un carrito con varias casas y un único pago con Mercado Pago. Por cada casa elegís retiro en el local o envío.</p></div>
+      <div class="bloque"><h3>Datos con fuente</h3><p>Cada compatibilidad dice si está verificada con una fuente. Lo que no está verificado nunca se presenta como seguro.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Objetivos</h2>
+    <ul>
+      <li>Demostrar un e-commerce multivendedor completo: catálogo, búsqueda, carrito, checkout, pago, pedidos y paneles de gestión.</li>
+      <li>Usar datos reales de vehículos (registro automotor y Wikidata) en lugar de listas inventadas.</li>
+      <li>Que un comprador encuentre el repuesto correcto en pocos pasos, desde la computadora o el celular.</li>
+      <li>Dejar listo el camino para cargar catálogos reales de proveedores sin modificar el código.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Público</h2>
+    <div class="columnas">
+      <div class="bloque">
+        <h3>Comprador</h3>
+        <p>Personas con auto, camioneta o moto que compran repuestos para mantenimiento o reparación.</p>
+        <p class="nota">Necesita: certeza de que la pieza sirve, buen precio y entrega rápida.</p>
+      </div>
+      <div class="bloque">
+        <h3>Casa de repuestos</h3>
+        <p>Locales y desarmaderos de todo el país que venden repuestos nuevos y usados.</p>
+        <p class="nota">Necesita: publicar precio y stock, recibir pedidos y coordinar retiro o envío.</p>
+      </div>
+      <div class="bloque">
+        <h3>Administrador</h3>
+        <p>El equipo de AUTONEX que mantiene el catálogo de vehículos, repuestos y compatibilidades.</p>
+        <p class="nota">Necesita: importar catálogos, verificar datos y resolver duplicados.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Recorrido de compra</h2>
+    <ol class="recorrido">
+      <li><div><strong>Elegir el vehículo</strong><span>Marca, modelo, año y versión. Autos, comerciales, pesados y motos, con fotos y categorías en las motos.</span></div></li>
+      <li><div><strong>Buscar</strong><span>Por nombre, número de pieza, OEM o EAN. El buscador reconoce el vehículo en el texto: "pastillas hilux", "cadena KTM 300 EXC".</span></div></li>
+      <li><div><strong>Ver el repuesto</strong><span>Aviso de compatibilidad (verificada, sin verificar o sin datos), ficha técnica y comparación de ofertas.</span></div></li>
+      <li><div><strong>Agregar al carrito</strong><span>Productos de una o varias casas, agrupados por vendedor y sin pasar el stock.</span></div></li>
+      <li><div><strong>Checkout</strong><span>Datos del comprador, con o sin cuenta. Retiro o envío por cada casa, transportista y resumen.</span></div></li>
+      <li><div><strong>Pagar</strong><span>Un solo pago en Mercado Pago. El stock se descuenta recién cuando el pago se aprueba.</span></div></li>
+      <li><div><strong>Comprobante</strong><span>Al aprobarse el pago: comprobante para descargar en PDF o compartir por WhatsApp, con el número de compra y el de seguimiento del envío.</span></div></li>
+      <li><div><strong>Seguir el pedido</strong><span>"Mis compras" con cuenta o con número de compra y email sin cuenta. Cada casa actualiza su pedido hasta la entrega y carga el número de seguimiento del transportista.</span></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Funcionalidades</h2>
+    <div class="columnas">
+      <div class="bloque">
+        <h3>Tienda</h3>
+        <ul>
+          <li>Selector "Mi vehículo" guardado en el navegador</li>
+          <li>Búsqueda con detección del vehículo</li>
+          <li>Filtros: categoría, marca, rubro, precio, provincia, condición, stock y N° de parte</li>
+          <li>Ficha con ofertas y compra directa</li>
+          <li>Carrito multivendedor</li>
+          <li>Checkout con o sin cuenta (sin cuenta no queda nada guardado en el navegador)</li>
+          <li>Comprobante en PDF o para compartir</li>
+          <li>Seguimiento del pedido con número de envío</li>
+          <li>Comprobante de la compra por mail</li>
+          <li>Cuentas con confirmación de email obligatoria, recuperación de contraseña, foto de perfil opcional y opción de eliminar la cuenta</li>
+          <li>Página de cada casa con logo, horario de la semana y "abierto ahora"</li>
+          <li>Botón de arrepentimiento</li>
+          <li>Marcas de repuestos para motos</li>
+        </ul>
+      </div>
+      <div class="bloque">
+        <h3>Panel del vendedor</h3>
+        <ul>
+          <li>Pedidos: pagado, en preparación, enviado o listo para retirar, entregado</li>
+          <li>Número de seguimiento del transportista al despachar</li>
+          <li>Arrepentimientos: el pedido queda frenado; el vendedor lo cancela y se reintegra el total con Mercado Pago</li>
+          <li>Publicaciones: solo las del propio local; precio, stock y pausa</li>
+          <li>Carga de productos con hasta 6 fotos propias y descripción (quedan sin verificar)</li>
+          <li>Misma pieza en otra casa: se suma a su ficha para comparar precios</li>
+          <li>Datos del local: logo, dirección, WhatsApp y horario por día (corrido o cortado, "abierto ahora")</li>
+        </ul>
+      </div>
+      <div class="bloque">
+        <h3>Administración</h3>
+        <ul>
+          <li>Altas y cambios de marcas, modelos, versiones, repuestos y fuentes</li>
+          <li>Importación en CSV, Excel, JSON, XML o por API, con vista previa</li>
+          <li>Verificación de datos con historial</li>
+          <li>Posibles duplicados para revisar</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Legales y protección del consumidor</h2>
+    <ul>
+      <li><strong>Términos y condiciones</strong> para todos los usuarios y <strong>términos para vendedores</strong> (alta, publicaciones, plazos de los pedidos, facturación y comisión), según la Ley 24.240 de Defensa del Consumidor y el Código Civil y Comercial.</li>
+      <li><strong>Política de privacidad</strong> según la Ley 25.326 de Protección de los Datos Personales. Cada usuario puede eliminar su cuenta desde "Mi cuenta".</li>
+      <li><strong>Botón de arrepentimiento</strong> (Resolución 424/2020): revocar la compra dentro de los 10 días corridos, con un código de identificación en el momento.</li>
+      <li>Garantía legal informada (6 meses para productos nuevos y 3 para usados) y enlace a Defensa del Consumidor para reclamos.</li>
+      <li>Los términos se aceptan al crear la cuenta y antes de pagar.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Catálogo: qué es real y qué es demo</h2>
+    <div class="tabla">
+      <table>
+        <thead><tr><th>Dato</th><th>Cantidad</th><th>Origen</th><th>Tipo</th></tr></thead>
+        <tbody>
+          <tr><td>Versiones de autos, camionetas y pesados</td><td class="num">14.883</td><td>Registro automotor (DNRPA), datos abiertos CC BY 4.0</td><td><span class="sello sello--real">Real</span></td></tr>
+          <tr><td>Marcas y modelos de autos</td><td class="num">233 · 3.621</td><td>DNRPA (solo marcas vendidas en Argentina)</td><td><span class="sello sello--real">Real</span></td></tr>
+          <tr><td>Modelos de motos</td><td class="num">2.425</td><td>Lista de AUTONEX y Wikidata (CC0)</td><td><span class="sello sello--real">Real</span></td></tr>
+          <tr><td>Fotos de motos</td><td class="num">1.459</td><td>Wikimedia Commons, con autor y licencia</td><td><span class="sello sello--real">Real</span></td></tr>
+          <tr><td>Logos de marcas</td><td class="num">159 · 31</td><td>Vehículos y repuestos, de Wikimedia Commons (y Beepaway para autos)</td><td><span class="sello sello--real">Real</span></td></tr>
+          <tr><td>Marcas de repuestos para motos y qué fabrican</td><td class="num">79 · 292 líneas</td><td>Lista de AUTONEX</td><td><span class="sello sello--real">Real</span></td></tr>
+          <tr><td>Repuestos con número de pieza</td><td class="num">289</td><td>Inventados para la demo</td><td><span class="sello sello--demo">Demo</span></td></tr>
+          <tr><td>Casas de repuestos</td><td class="num">34</td><td>Ficticias, en las 24 provincias</td><td><span class="sello sello--demo">Demo</span></td></tr>
+          <tr><td>Precios, stock y compatibilidades de los repuestos</td><td class="num">1.175 ofertas</td><td>Inventados; las compatibilidades figuran sin verificar</td><td><span class="sello sello--demo">Demo</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">Regla del proyecto: no se inventan datos de catálogo nuevos. Lo que no tiene una fuente verificable queda vacío o "a revisar" hasta que se importe el catálogo de un fabricante o distribuidor.</p>
+  </section>
+
+  <section>
+    <h2>Modelo de negocio</h2>
+    <ul>
+      <li><strong>Comisión por venta.</strong> En producción cada casa cobra su parte directamente con el modelo marketplace de Mercado Pago, y AUTONEX retiene una comisión por pedido (la documentación usa 8 % del subtotal como ejemplo; el porcentaje está a definir).</li>
+      <li><strong>Hoy, en la demo,</strong> cobra una sola cuenta y la liquidación a cada casa sería posterior.</li>
+      <li><strong>Envíos:</strong> el comprador paga el envío de cada pedido. Hoy las tarifas de Andreani, OCA, Correo Argentino y moto mensajería son simuladas.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Identidad</h2>
+    <div class="paleta">
+      <div class="muestra"><i style="background:#FF6A13"></i><span><b>Naranja AUTONEX</b><span class="mono">#FF6A13</span></span></div>
+      <div class="muestra"><i style="background:#0E0F11"></i><span><b>Carbón</b><span class="mono">#0E0F11</span></span></div>
+      <div class="muestra"><i style="background:#24272D"></i><span><b>Grafito</b><span class="mono">#24272D</span></span></div>
+      <div class="muestra"><i style="background:#F3F4F6"></i><span><b>Fondo</b><span class="mono">#F3F4F6</span></span></div>
+      <div class="muestra"><i style="background:#1D8F4E"></i><span><b>Verificado</b><span class="mono">#1D8F4E</span></span></div>
+      <div class="muestra"><i style="background:#B7791F"></i><span><b>Sin verificar</b><span class="mono">#B7791F</span></span></div>
+    </div>
+    <div class="tipos">
+      <div class="tipo"><span class="tipo__muestra" style="font-family:var(--titulos);font-style:italic;font-weight:800;text-transform:uppercase">Barlow Condensed</span><small>Títulos y botones, en itálica y mayúsculas</small></div>
+      <div class="tipo"><span class="tipo__muestra" style="font-family:var(--fuente)">Barlow</span><small>Textos, fichas y formularios</small></div>
+      <div class="tipo"><span class="tipo__muestra"><span class="codigo">BO-PF-330</span></span><small>JetBrains Mono para números de pieza y SKU, con estética de etiqueta estampada</small></div>
+    </div>
+    <p><strong>Tono:</strong> español rioplatense con voseo, directo y claro ("Elegí tu vehículo", "Compará las ofertas"). Lemas: "Tu marketplace de autopartes" y "El repuesto justo para tu auto".</p>
+  </section>
+
+  <section>
+    <h2>Tecnología</h2>
+    <div class="tabla">
+      <table>
+        <thead><tr><th>Capa</th><th>Herramienta</th></tr></thead>
+        <tbody>
+          <tr><td>Frontend</td><td>React 18, Vite y React Router</td></tr>
+          <tr><td>Backend</td><td>Node.js 20 con Fastify 5, validación y mensajes de error en español</td></tr>
+          <tr><td>Base de datos</td><td>PostgreSQL 17, con migraciones y trazabilidad de cada dato (fuente, importación, estado)</td></tr>
+          <tr><td>Cuentas</td><td>JWT y contraseñas con bcrypt; confirmación obligatoria del email y recuperación de contraseña con links de un solo uso; compra sin cuenta con código de acceso</td></tr>
+          <tr><td>Mails</td><td>Gmail por SMTP (o Resend con dominio propio): confirmación de la cuenta, comprobante de cada compra, recuperación de contraseña y reintegros</td></tr>
+          <tr><td>Pagos</td><td>SDK oficial de Mercado Pago (Checkout Pro), confirmación del pago consultando a Mercado Pago y webhook (valida la firma si se configura la clave secreta)</td></tr>
+          <tr><td>Servidor</td><td>Debian 13, servicio de systemd y nginx con HTTPS en gnuino.com.ar/AUTONEX</td></tr>
+          <tr><td>Calidad</td><td>65 tests de punta a punta sobre la API, con Mercado Pago y los mails simulados</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Alcance de la demo</h2>
+    <ul>
+      <li>Repuestos, casas, precios y stock son ficticios y así figuran en el sitio.</li>
+      <li>Mercado Pago funciona con credenciales de prueba: se paga con tarjetas de prueba y no se cobra dinero real. Hay compras de prueba aprobadas de punta a punta, con el aviso del webhook.</li>
+      <li>Los envíos se cotizan con una tabla simulada.</li>
+      <li>Los mails salen desde una cuenta de Gmail del proyecto (por SMTP): llegan a cualquier dirección, con un límite de unos 500 por día.</li>
+      <li>Las motos no tienen años, versiones ni repuestos con número de parte hasta que se importe un catálogo.</li>
+      <li>No hay búsqueda por patente o VIN: hace falta un servicio autorizado.</li>
+      <li>Los usuarios de prueba tienen una contraseña conocida; la del administrador hay que cambiarla porque el sitio es público.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Próximos pasos</h2>
+    <ol>
+      <li>Cambiar la contraseña del administrador de prueba.</li>
+      <li>Sumar casas de repuestos reales y sus catálogos (CSV, Excel o API).</li>
+      <li>Integrar envíos reales: cotización y etiquetas de los transportistas.</li>
+      <li>Mercado Pago en producción, con cobro directo a cada casa y comisión de AUTONEX.</li>
+      <li>A futuro, mandar los mails desde un dominio propio (Resend) y completar los datos del titular (razón social, CUIT y domicilio) en los términos.</li>
+      <li>Medición: búsquedas, conversión y abandono de carrito.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Indicadores propuestos</h2>
+    <div class="columnas">
+      <div class="bloque"><h3>Conversión</h3><p>Visitas al catálogo que terminan en una compra pagada.</p></div>
+      <div class="bloque"><h3>Búsqueda útil</h3><p>Búsquedas con resultados y con el vehículo reconocido.</p></div>
+      <div class="bloque"><h3>Calidad del dato</h3><p>Compatibilidades verificadas sobre el total cargado.</p></div>
+      <div class="bloque"><h3>Ticket y casas por compra</h3><p>Monto promedio y cantidad de vendedores en cada compra.</p></div>
+      <div class="bloque"><h3>Cobertura</h3><p>Casas activas y provincias cubiertas (hoy 34 casas en 24 provincias, de demo).</p></div>
+      <div class="bloque"><h3>Preparación</h3><p>Tiempo desde el pago hasta "enviado" o "listo para retirar".</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Documentación</h2>
+    <ul>
+      <li><span class="mono">README.md</span>: instalación, usuarios de prueba, Mercado Pago, API y despliegue.</li>
+      <li><span class="mono">docs/CATALOGO.md</span>: de dónde sale cada dato y cómo importar catálogos.</li>
+      <li><span class="mono">docs/Manual-de-uso-AUTONEX.pdf</span>: manual de uso con capturas del sitio.</li>
+      <li><span class="mono">docs/Guion-video-AUTONEX.pdf</span>: guion del video demostrativo (30 minutos).</li>
+      <li><span class="mono">docs/Ficha-tecnica-AUTONEX.pdf</span>: tecnologías y arquitectura.</li>
+      <li><span class="mono">CREDITOS-IMAGENES.md</span>: autor y licencia de cada foto y logo.</li>
+    </ul>
+  </section>
+
+  <p class="pie">AUTONEX · Proyecto universitario de demostración. Los vendedores, precios y repuestos son ficticios; los vehículos provienen de datos abiertos del registro automotor (DNRPA, CC BY 4.0).</p>
+</main>
+</body>
+</html>
