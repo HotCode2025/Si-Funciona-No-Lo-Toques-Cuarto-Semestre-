@@ -1,0 +1,5 @@
+datos/fotos.db
+datos/imagenes/
+__pycache__/
+*.pyc
+.pytest_cache/

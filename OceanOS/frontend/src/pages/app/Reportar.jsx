@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Crosshair, Check } from 'lucide-react';
 import { useFetch } from '../../hooks/useFetch.js';
@@ -10,6 +10,8 @@ import {
   Panel, Boton, Campo, Entrada, Area, Selector, CajaError, Etiqueta,
 } from '../../components/ui/index.jsx';
 import { numero, TIPOS } from '../../utils/format.js';
+import AnalisisFoto from '../../components/ia/AnalisisFoto.jsx';
+import { IA_BASE, etiquetarFoto, iaConfigurada } from '../../services/ia.js';
 
 const PREMIOS = {
   reporte_basico:  'Reporte enviado',
@@ -38,12 +40,35 @@ export default function Reportar() {
   const [error, setError] = useState(null);
   const [listo, setListo] = useState(null);
   const [gps, setGps] = useState(null);
+  const [foto, setFoto] = useState(null);
 
   const { data: zonas } = useFetch('/ecosistema/zonas');
   const { data: zonaData } = useFetch(`/ecosistema/zonas/${zonaSlug}`, [zonaSlug]);
   const { data: esp } = useFetch('/ecosistema/especies');
+  const [taxonomia, setTaxonomia] = useState(null);
+  useEffect(() => {
+    if (!iaConfigurada()) return;
+    fetch(`${IA_BASE}/taxonomia`).then((r) => r.json()).then(setTaxonomia).catch(() => setTaxonomia(null));
+  }, []);
 
   const especiesDelTipo = (esp?.especies ?? []).filter((e) => e.kind === kind);
+
+  // La foto confirmada completa sola el tipo y la especie; la persona puede cambiarlos después.
+  const alCambiarFoto = (f) => {
+    setFoto(f);
+    if (!f?.claseId || !f.tipo || f.tipo === 'ninguno') return;
+    const e = (esp?.especies ?? []).find((x) => f.cientifico && x.scientific_name === f.cientifico);
+    setKind(f.tipo);
+    setForm((prev) => ({ ...prev, speciesId: e?.id ?? '' }));
+  };
+
+  const usarUbicacionFoto = ({ lat, lng }) => {
+    const z = zonaData?.zona;
+    if (z && (lat < z.min_lat || lat > z.max_lat || lng < z.min_lng || lng > z.max_lng)) {
+      setGps(`La ubicación de la foto queda fuera de ${z.name}. Tocá el mapa para marcar el punto.`); return;
+    }
+    setPunto({ lat, lng }); setGps(null);
+  };
 
   const usarGps = () => {
     if (!navigator.geolocation) { setGps('Tu navegador no comparte ubicación'); return; }
@@ -81,13 +106,16 @@ export default function Reportar() {
         individuals: form.individuals ? Number(form.individuals) : undefined,
         kelpCoverPct: form.kelpCoverPct ? Number(form.kelpCoverPct) : undefined,
         notes: form.notes || undefined,
-        // En la app móvil este número lo pone el modelo on-device. Acá,
-        // sin foto, el reporte entra sin clasificar y lo revisa la
-        // comunidad.
-        aiConfidence: undefined,
+        // La foto y la especie que la persona confirmó viajan con el reporte. La confianza de la
+        // IA solo se envía si el modelo está validado y la persona confirmó justo lo que sugirió:
+        // con ese número el sistema verifica solo y paga tokens.
+        photoUrl: foto?.imagen ? `${IA_BASE}${foto.imagen}?clase=${foto.claseId ?? ''}` : undefined,
+        aiLabel: foto?.nombre || undefined,
+        aiConfidence: foto?.puedeAuto ? foto.confianza : undefined,
       });
       setListo(r);
       refrescar();
+      if (foto?.fotoId && foto.etiqueta) etiquetarFoto(foto.fotoId, foto.etiqueta, 'usuario', user?.id, r?.id).catch(() => {});
     } catch (e) {
       setError(e);
     } finally {
@@ -137,7 +165,7 @@ export default function Reportar() {
           )}
           <div className="mt-6 flex justify-center gap-3">
             <Boton variante="kelp" onClick={() => { setListo(null); setPunto(null);
-              setForm({ speciesId: '', depthM: '', individuals: '', kelpCoverPct: '', notes: '' }); }}>
+              setForm({ speciesId: '', depthM: '', individuals: '', kelpCoverPct: '', notes: '' }); setFoto(null); }}>
               Cargar otro
             </Boton>
             <Boton variante="linea" onClick={() => navegar('/app')}>Ver el mapa</Boton>
@@ -155,6 +183,8 @@ export default function Reportar() {
       </p>
 
       <form onSubmit={enviar} className="mt-6 space-y-5">
+        <AnalisisFoto taxonomia={taxonomia} onChange={alCambiarFoto} onUsarUbicacion={usarUbicacionFoto} />
+
         {/* Tipo: lo primero y lo más grande */}
         <div>
           <span className="mb-2 block text-sm font-500">¿Qué viste?</span>

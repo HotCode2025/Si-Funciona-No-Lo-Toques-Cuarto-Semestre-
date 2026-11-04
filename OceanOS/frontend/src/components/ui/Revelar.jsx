@@ -31,8 +31,8 @@ export default function Revelar({ children, className = '', retraso = 0, direcci
     <Component
       ref={ref}
       style={{ transitionDelay: `${retraso}ms` }}
-      className={`transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        visible ? 'opacity-100 translate-y-0 translate-x-0 scale-100' : `opacity-0 ${transformInicial}`
+      className={`transition-all duration-1000 will-change-transform ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        visible ? 'opacity-100 blur-0 translate-y-0 translate-x-0 scale-100' : `opacity-0 blur-[6px] ${transformInicial}`
       } ${className}`}
     >
       {children}

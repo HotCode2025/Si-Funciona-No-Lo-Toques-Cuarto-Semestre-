@@ -55,7 +55,7 @@ export function Boton({ children, variante = 'principal', className = '', cargan
     // Sobre agua el primario se invierte: relleno claro, tinta profunda.
     // Con bg-abismo desaparecía contra el fondo de la página.
     principal: 'bg-carta text-abismo hover:bg-sonda hover:shadow-[0_0_15px_rgb(127_181_176_/_0.3)]',
-    kelp:      'bg-kelp text-abismo hover:bg-kelp-alto hover:shadow-[0_0_20px_rgb(200_135_47_/_0.4)]',
+    kelp:      'btn-brillo bg-kelp text-abismo hover:bg-kelp-alto hover:shadow-[0_0_20px_rgb(200_135_47_/_0.4)]',
     linea:     'border border-trazo bg-transparent hover:bg-columna/25',
     lineaClara:'border border-columna text-carta hover:bg-columna/40 hover:shadow-[0_0_15px_rgb(127_181_176_/_0.2)]',
     texto:     'px-1 underline underline-offset-4 hover:text-kelp',

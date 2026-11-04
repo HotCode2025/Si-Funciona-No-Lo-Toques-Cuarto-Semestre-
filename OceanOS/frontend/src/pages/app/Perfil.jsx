@@ -3,6 +3,7 @@ import { useDemo } from '../../contexts/DemoContext.jsx';
 import { useFetch } from '../../hooks/useFetch.js';
 import { useReglas } from '../../hooks/useReglas.js';
 import { Panel, Sonda, Etiqueta, Barra } from '../../components/ui/index.jsx';
+import Logros from '../../components/app/Logros.jsx';
 import { numero, fecha, PLANES } from '../../utils/format.js';
 
 export default function Perfil() {
@@ -23,6 +24,8 @@ export default function Perfil() {
         <Sonda valor={user?.reportes_verificados ?? 0} rotulo="verificados" />
         <Sonda valor={user?.streak_days ?? 0} rotulo="días de racha" />
       </div>
+
+      <div className="mt-6"><Logros user={user} /></div>
 
       <Panel className="mt-6 p-5">
         <div className="flex items-baseline justify-between">

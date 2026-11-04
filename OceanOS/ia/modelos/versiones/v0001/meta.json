@@ -1,0 +1,42 @@
+{
+  "fecha": "2026-10-19T21:15:11Z",
+  "encoder": "efficientnet-b0",
+  "fotos": 168,
+  "clases": {
+    "aves_marinas": {
+      "fotos": 30,
+      "grupos": 1,
+      "validada": false
+    },
+    "ballena": {
+      "fotos": 72,
+      "grupos": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "validada": false
+    },
+    "orca": {
+      "fotos": 36,
+      "grupos": 1,
+      "validada": false
+    },
+    "sin_fauna": {
+      "fotos": 30,
+      "grupos": 1,
+      "validada": false
+    }
+  },
+  "en_recoleccion": {},
+  "metricas": {
+    "exactitud": 0.0,
+    "f1_macro": 0.0,
+    "evaluadas": 72,
+    "pliegues": 5,
+    "nll": 1.431
+  },
+  "C": 0.1,
+  "temperatura": 6.0,
+  "umbral_desconocido": 0.438,
+  "apto_autoverificar": false,
+  "version": "v0001"
+}
