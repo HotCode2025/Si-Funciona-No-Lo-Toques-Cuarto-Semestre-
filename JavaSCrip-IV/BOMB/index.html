@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Botón de autodestrucción</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="scene" id="scene">
+    <div class="base"></div>
+    <div class="label l1">WARNING: DANGER</div>
+    <div class="label l2">SELF-DESTRUCT</div>
+    <div class="btn" id="btn">
+      <div class="ring" id="ring"></div>
+      <div class="cap" id="cap"></div>
+    </div>
+    <div class="lid" id="lid" title="Abrir tapa">
+      <div class="f-top"></div><div class="f-fr"></div><div class="f-bk"></div><div class="f-l"></div><div class="f-r"></div>
+    </div>
+  </div>
+</div>
+
+<button id="snd" aria-label="Activar o desactivar sonido" title="Sonido">
+  <svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="x" d="M17 9l5 6M22 9l-5 6"/></svg>
+</button>
+
+<div id="white"></div>
+<div id="alarm" role="alertdialog" aria-live="assertive">
+  <div class="panel">
+    <h1>WARNING</h1>
+    <div class="dots"></div>
+    <h2>DEVICE SELF-DESTRUCTION</h2>
+    <div id="time">00:10</div>
+    <button id="abort">ABORT</button>
+    <h1 id="boom">DETONATE</h1>
+  </div>
+</div>
+
+<script src="scripts.js"></script>
+</body>
+</html>
